@@ -1,0 +1,36 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<body>
+    
+
+    <div class="scrollable-table">
+        <table >
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%for(let datas of data){%>
+                    
+                <tr>
+                    <td><%= datas.bill_number %></td>
+                    <td><%= new Date(datas.date).toLocaleDateString('en-GB') %>                    </td>
+                    <td> ₹ <%= datas.amount %></td>
+                </tr>
+                    
+                <%}%>
+            </tbody>
+        </table>
+    </div>
+        <br>
+    <form action="/danev_son_mathiya_bill" method="get" class="offset-5 mb-3">
+        <button  class="btn btn-info" >Add bill</button>
+    </form>
+
+    <div>
+        <h1>Total : <%= total%></h1>
+    </div>
+</body>

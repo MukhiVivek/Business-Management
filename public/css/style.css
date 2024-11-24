@@ -1,0 +1,262 @@
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main{
+    flex: 1;
+}
+
+.container{
+    right: 0;
+}
+
+
+
+/* navbar */
+
+/* nav{
+    background-color: white(172, 140, 140) ;
+}
+
+.navbar{
+    height: 4rem;
+    background-color: rgb(255, 255, 255)!important ;
+    
+}
+
+.container-fluid{
+    background-color: white;
+}
+
+.fa-compass{
+    color: red;
+    font-size: 2rem;
+}
+
+.nav-link{
+    color: rgb(0, 0, 0) !important;
+} */
+/* Sidebar styles */
+
+
+.sidebar {
+    height: 100%; /* Full height */
+    width: 0 ; /* Initially hidden */
+    position: fixed !important; /* Stay in place */
+    top: 0;
+    left: 0;
+    background-color: #120843 ; /* Dark background */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.3s; /* Smooth opening/closing */
+     /* Padding at the top */
+     z-index: 100;
+  }
+  
+.add_invoiceb{
+    border-radius: 20px !important;
+}
+
+.in-side-nav{
+    height: 100%;
+    width: 60px;  
+    background-color: #111;
+}
+  
+  /* Sidebar links */
+  .sidebar a {
+    padding: 8px 16px;
+    text-decoration: none;
+    font-size: 18px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidebar ul{
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .sidebar a:hover {
+    background-color: #575757;
+  }
+  
+  /* Close button inside sidebar */
+  .close-btn {
+    font-size: 30px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    
+  }
+  
+  /* Open button */
+  .open-btn {
+    font-size: 20px;
+    cursor: pointer;
+    background-color: #0c0845;
+    color: white;
+    border: none;
+    height: 100%;
+    width: 60px;
+  }
+  
+  .open-btn:hover {
+    background-color: #575757;
+  }
+  
+
+/* Footer */
+
+.f-info-link a{
+    text-decoration: none;
+    color: #222222;
+}
+
+.f-info-link a:hover{
+    color: #d30707;
+    text-decoration: underline;
+}
+.f-info-link,
+.f-info-socials,
+.f-info-brand{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+.f-info-socials i {
+    font-size: 1.2rem;
+    margin-right: 1rem;
+
+}
+
+.f-info{
+    text-align: center;
+    height: 8rem;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: space-evenly;
+    background-color: rgb(196, 190, 181);
+}
+
+/* show pags */
+
+.show-img{
+    height: 30vh;
+}
+
+/* cards */
+
+.card{
+    margin-bottom: 2rem;
+}
+
+.card-img-top{
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+/* table  */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: #222222;
+    
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+
+.amount{
+    text-decoration: none;
+    color: black;
+}
+
+/* Styling the table header */
+thead {
+    border-top: 2px solid black;
+    background-color: #f2f2f2;
+    position: sticky; /* Sticky positioning */
+    top: 0;           /* Stick it to the top */
+    z-index: 1;       /* Ensure it stays above the table body */
+}
+
+
+/* Create a scrollable tbody */
+.scrollable-table {
+    height: 550px;  /* Set the height to show only 10 rows, adjust as needed */
+    overflow-y: scroll;
+    border: 4px solid black;
+}
+.scrollable-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.totalAmount{
+    padding-top: 10px;
+    border: 2px solid black;
+    margin-bottom: 10px;
+}
+
+
+/* parties */
+
+.boxrow{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.box{
+    margin-bottom: 20px;
+    padding-top: 10px;
+    /* border: 2px solid black; */
+    border-radius: 20px;
+    display: grid;
+}
+
+.totalpay{
+    text-align: end;
+}
+
+.boxp{
+    margin: 0;
+}
+
+.boxa{
+    text-decoration: none;
+    color: black;
+}
+
+
+/* customer css */
+
+.Addres{
+    border: 2px solid black;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+
+.addButton{
+    padding-bottom: 100px ;
+
+}
+
+.add_customerb{
+    border-radius: 20px !important;
+}

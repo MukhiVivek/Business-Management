@@ -1,0 +1,41 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<body>
+    <br>
+    <br>
+   
+    <br>
+    <div class="tableaa ">
+        <table class="table table-bordered ">
+            <thead >
+            <tr >
+                <th class="table-light " scope="col">#</th>
+                <th class="table-light" scope="col">Item Name</th>
+                <th class="table-light" scope="col">Item Code</th>
+                <th class="table-light " scope="col">Stock QTY</th>
+                <th class="table-light" scope="col">Selling Price</th>
+                <th class="table-light " scope="col">Purchase Price</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <%for(let datas of data){%>
+                  
+                <th scope="row">1</th>
+                <td><%= datas.item_name%></td>
+                <td><%= datas.item_code%></td>
+                <td><%= datas.item_stock%></td>
+                <td><%= datas.item_sellingprice%></td>
+                <td><%= datas.item_purchaseprice%></td>
+              </tr>
+              <%}%>
+            </tbody>
+        </table>
+    </div>
+    <form action="/item/add" method="get">
+      <div class="position-absolute top-100 start-50 translate-middle addButton" >
+      <button type="submit" class="btn btn-primary add_customerb">+ Add Item</button>
+    </div>
+    </form>
+    
+</body>

@@ -1,0 +1,30 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<h3>Danev son bill :  </h3>
+
+<form action="/danev_son/<%=data._id%>?_method=put" method="post">
+    <div class="row">
+        <div class="col-8 offset-2">
+
+            <div class="mb-3">
+                <label for="Item" class="from-label">Bill Number </label>
+                <input type="number"  name="data[bill_number]" value="<%= data.bill_number %>" class="form-control" required> 
+            </div>
+            <div class="mb-3">
+                <label for="Item" class="from-label">Date </label>
+                <input type="date"  name="data[date]" value="<%= new Date(data.date).toISOString().substring(0, 10 )%>" class="form-control" required> 
+            </div>
+            <div class="row mb-3">
+                <div class="mb-3 col-md-4">
+                    <label for="Item" class="from-label">Amount </label>
+                    <input type="number"  name="data[amount]" value="<%= data.amount %>" placeholder="Enter Amount" class="form-control" required> 
+                </div>
+                <div class="mb-3 col-md-8">
+                    <label for="Item" class="from-label">Add Amount </label>
+                    <input type="number"  name="data[add]" placeholder="Enter Add Amount" value="<%= data.add%>"  class="form-control" required> 
+                </div>
+            </div>
+            <button class="btn btn-primary" >submit</button><br>
+        </div>
+    </div>
+</form>

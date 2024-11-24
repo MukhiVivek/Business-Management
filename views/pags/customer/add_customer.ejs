@@ -1,0 +1,57 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<body>
+    <div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <h3>Add customer</h3>
+                <br>
+                <form action="/customer/add" method="post"> 
+                    <div class="mb-3">
+                      <label for="customer" class="from-label">customer Name:</label>
+                      <input type="text"  name="data[customer_name]" placeholder="Enter customer Name" class="form-control" required> 
+                    </div>
+                    <div class="mb-3">
+                      <label for="customer" class="from-label">customer code:</label>
+                      <input type="number"  name="data[customer_code]" placeholder="Enter customer code" class="form-control" required> 
+                    </div>
+                   
+                    <div class="mb-3 ">
+                     <label for="customer" class="from-label">customer phone_number:</label>
+                     <input type="number"  name="data[customer_phone_number]" placeholder="Enter customer phone_number" class="form-control" required> 
+                    </div> 
+                    <label for="customer" class="from-label mb-3">customer Address: *</label>
+                    <div class="Addres mb-3">
+                        <div>
+                            <label for="customer" class="from-label">customer Street Address:</label>
+                            <input type="text"  name="data[customer_billing_address.street_addres]" placeholder="Enter customer Street Addres" class="form-control" >     
+                        </div>
+                        
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <label for="customer" class="from-label">customer Area:</label>
+                                <input type="text"  name="data[customer_billing_address.area]" placeholder="Enter customer Area" class="form-control" >     
+                            </div>
+                            <div class="mb-3 col-md-8">
+                                <label for="customer" class="from-label">customer city:</label>
+                                <input type="text"  name="data[customer_billing_address.city]" placeholder="Enter customer city" class="form-control" >     
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <label for="customer" class="from-label">customer State:</label>
+                                <input type="text"  name="data[customer_billing_address.state]" placeholder="Enter customer State" class="form-control" >     
+                            </div>
+                            <div class="mb-3 col-md-8">
+                                <label for="customer" class="from-label">customer pincode:</label>
+                                <input type="number"  name="data[customer_billing_address.pincode]" placeholder="Enter customer pincode" class="form-control" >     
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" >submit</button><br>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</body>

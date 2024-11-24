@@ -1,0 +1,26 @@
+<% layout('/layout/boilerplate.ejs') -%>
+<div class="row">
+<div class="col-8 offset-2">
+    <body>
+        <h3>Add Party </h3>
+        <form action="/parties/add" method="post" novalidate class="needs-validation" >
+        <br>
+        
+        <div class="mb-3">
+            <label for="Item" class="from-label">Party Name </label>
+            <input type="text"  name="data[party_name]" min="10" max="10" placeholder="Enter Item" class="form-control" required> 
+        </div>
+        <div class="mb-3">
+            <label for="Phone Number" class="from-label">Phone Number</label>
+            <input type="number"  name="data[phone_number]" placeholder="Enter Phone Number" class="form-control" required> 
+        </div>
+        <div class="mb-3">
+            <label for="payment" class="from-label">Open Balance</label>
+            <input type="number"  name="data[payment]" placeholder="Enter Balance" class="form-control" required> 
+        </div>
+        <button class="btn btn-primary" >submit</button><br>
+    </div>
+</div>
+    </form>
+    <br>
+</body>

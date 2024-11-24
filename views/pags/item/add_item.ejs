@@ -1,0 +1,50 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<body>
+    <div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <h3>Add Items </h3>
+                <br>
+                <form action="/item/add" method="post"> 
+                    <div class="mb-3">
+                      <label for="item" class="from-label">Item Name:</label>
+                      <input type="text"  name="data[item_name]" placeholder="Enter Item Name" class="form-control" required> 
+                    </div>
+                    <div class="mb-3">
+                      <label for="item" class="from-label">Item code:</label>
+                      <input type="number"  name="data[item_code]" placeholder="Enter Item code" class="form-control" required> 
+                    </div>
+                   <div class="row ">
+                    <div class="mb-3 col-md-4">
+                     <label for="item" class="from-label">Item Stock:</label>
+                     <input type="number"  name="data[item_stock]" placeholder="Enter Item Stock" class="form-control" required> 
+                    </div> 
+                    <div class="mb-3 col-md-8">
+                    <label for="item" class="from-label">Select Measuring Unit:</label>
+                    <select class="form-select " name="data[item_unit]" aria-label="Default select example">
+                        <option selected value="kg">Kilograms(KGS)</option>
+                        <option value="pouch">Pouch(POCH)</option>                           
+                        <option value="box">Box(BOX)</option>                           
+                        <option value="gm">Grams(GMS)</option>                           
+                    </select>
+                </div>
+                </div>
+
+                    <div class="row mb-3">
+                        <div class="mb-3 col-md-4">
+                          <label for="item" class="from-label">Item Selling Price :</label>
+                          <input type="number"  name="data[item_sellingprice]" placeholder="Enter Item price" class="form-control" required> 
+                        </div>
+                        <div class="mb-3 col-md-8">
+                          <label for="item" class="from-label">Item Purchase Price :</label>
+                          <input type="number"  name="data[item_purchaseprice]" placeholder="Enter Item price" class="form-control" required> 
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" >submit</button><br>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+</body>

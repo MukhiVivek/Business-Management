@@ -1,0 +1,24 @@
+{
+  "name": "kumar-gruh-udhyog",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@pdftron/pdfnet-node": "^11.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "ejs-mate": "^4.0.0",
+    "express": "^4.21.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.7.1",
+    "nodemon": "^3.1.7",
+    "pdfkit": "^0.15.1",
+    "xlsx": "^0.18.5"
+  }
+}
