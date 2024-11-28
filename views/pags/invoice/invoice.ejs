@@ -1,7 +1,7 @@
 <% layout('/layout/boilerplate.ejs') -%>
 
 <body>    
-    <form action="/invoice" method="post">
+    <form action="/invoice/invoice" method="post">
     <div class="border invoice-box">
         <div>
             <div class="invoice-header row">
@@ -11,17 +11,19 @@
 
                         <button class="btn btn-secondary btttn " id="openModalBtn" type="button" >Change Customer </button>
                     </div>
-                    <div>
-                        <p class="mb-5 " id="partyDisplay"><br>Phone Number: 6353766754</p>
+                    <div class="mb-5">
+                        <p  id="customerDisplay2"> Customer Name : </p>
+                        <div id="customer_phone_number2"> Phone Number :</div>
                     </div>
                 </div>
                 <div class="border  col-4">
                     <h4 class="border-bottom kks ">Ship To</h4>
-                    <p>Business Name<br>Phone Number: 6353766754</p>
+                    <p  id="customerDisplay"> Customer Name : </p>
+                    <div id="customer_phone_number"> Phone Number :</div>
                 </div>
                 <div class="border-bottom col-4">
-                    <div class="mt-5">Sales Invoice No: <input type="text" name="invoice_number" value="1"></div>
-                    <div>Sales Invoice Date: <input type="date" name="date" value="2024-11-21"></div>
+                    <div class="mt-5">Sales Invoice No: <input type="text" name="data[invoice_number]" value="1"></div>
+                    <div>Sales Invoice Date: <input type="date" name="data[date]" value="2024-11-21"></div>
                 </div>
             </div>
         </div>
@@ -40,8 +42,8 @@
                 </thead>
                 <tbody id="item-rows">
                     <tr class="item-row">
-                        <td>1</td>
-                        <div ></div><td><input type="text" name="data[item_name]"  class="form-control item-name" placeholder="Item Name" required>                       </td></div>
+                        <td> 1 </td>
+                        <td><input type="text" name="data[item_name]"  class="form-control item-name" placeholder="Item Name" required>                       </td></div>
                         <td><input type="number" name="data[qty]" class="form-control qty" placeholder="Qty" required></td>
                         <td><input type="number" name="data[item_price]" class="form-control price item-price" placeholder="Selling Price" required></td>
                         <td><input type="number" name="data[amount]"  class="form-control amount" placeholder="Amount" readonly required></td>
@@ -62,7 +64,9 @@
             </table>
         </div>
 
-       
+       <div > 
+        <input type="text"  name="data[customers]" id="customer_id_input">
+       </div>
         
         <div class="text-center mb-3">
             <button class="btn btn-primary">Download Invoice</button>
@@ -74,9 +78,8 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <div id="search-container">
-                <input type="text" class="form-control" id="searchBar" placeholder="Search Party Name...">
+                <input type="text" class="form-control" id="searchBar" placeholder="Search customer Name...">
                 <div id="suggestions"></div>
-                <button class="btn-primary party_name_buttom" type="submit"></button>
             </div>
         </div>
     </div>
