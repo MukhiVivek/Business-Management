@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const purchaseSchema = new Schema({
     party_name: String,
     item: String,
-    weight:Number,
+    box:Number,
+    box_weight:Number,
     rate:Number,
     date:Date,
 })

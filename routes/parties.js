@@ -10,9 +10,7 @@ const formattedDate = today.toISOString().split('T')[0];
 
 router.get("/" , async(req,res) => {
 
-    let data = await party_name.find({})
-
-    console.log(data)
+    let data = await party_name.find({}) 
     
     res.render("pags/parties/parties.ejs" , {data})
 }) 
@@ -34,6 +32,8 @@ router.get("/purchase" , async (req,res) => {
 
     const data = await party_name.find({})
 
+
+
     res.render("pags/parties/purchase.ejs" , {data ,formattedDate})
 });
 
@@ -43,9 +43,11 @@ router.post("/purchase" , async (req,res) => {
 
     let data = new purchase(req.body.data);
     console.log(data);
+
+    await party_name.findOneAndUpdate({ party_name : data.party_name} , { $inc: { payment: - (data.box * data.box_weight * data.rate) } },  { new: true })   
+
     await data.save()
-    res.redirect("/");
-    // res.send(data);
+    res.redirect("/parties");
 })
 
 // party payment out 
@@ -53,6 +55,7 @@ router.post("/purchase" , async (req,res) => {
 router.get("/party_payment" , async (req,res) => {
 
     const data = await party_name.find({})
+
 
     
     
@@ -63,8 +66,9 @@ router.get("/party_payment" , async (req,res) => {
 router.post("/party_payment" , async (req,res) => {
 
     let data = new party_payment(req.body.data);
-
     console.log(data)
+
+    await party_name.findOneAndUpdate({ party_name : data.party_name} , { $inc: { payment: data.amount } },  { new: true })   
         
     await data.save();
 

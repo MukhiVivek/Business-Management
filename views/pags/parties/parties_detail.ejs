@@ -1,44 +1,38 @@
 <% layout('/layout/boilerplate.ejs') -%>
 
 <body>
-    <h3>Milan Bhai</h3>
+    <h3><%=data.party_name%></h3>
 
     <ul class="nav nav-tabs">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">profile</a>
+          <a class="nav-link detail_party " aria-current="page" href="#">profile</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <button class="nav-link active  list_of_purchase" id="" href="#">Purchase</button>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="#">Transaction</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
       </ul>
     
-    <div class="card">
-        <div class="card-header">
-            General Details
-        </div>
-        <div>
-
-        </div>
-
-    </div>
+    
 
 
-    <h2>Purchase list :</h2>
+    
 
-    <div class="tableaa ">
+    <div class="list_of_purchase">
+      <h2>Purchase list :</h2>
       <table class="table table-bordered ">
           <thead >
           <tr >
               <th class="table-light " scope="col">#</th>
               <th class="table-light" scope="col">Date</th>
               <th class="table-light" scope="col">Item Name</th>
-              <th class="table-light" scope="col">Weight</th>
+              <th class="table-light" scope="col">Box-Weight</th>
+              <th class="table-light" scope="col">Box</th>
               <th class="table-light " scope="col">Rate</th>
               <th class="table-light" scope="col">Total</th>
               
@@ -49,11 +43,12 @@
               <%for(let datas of data1){%>
                 
               <th scope="row">1</th>
-              <td><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
-              <td><%= datas.item%></td>
-              <td><%= datas.weight%></td>
+              <td class="p_box"><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
+              <td class="p_item"><%= datas.item%></td>
+              <td class="p_box text-center "><%= datas.box_weight%></td>
+              <td><%= datas.box%></td>
               <td><%= datas.rate%></td>
-              <td> ₹ <%=Intl.NumberFormat('en-IN').format(datas.weight * datas.rate)%> /-</td>
+              <td class="p_box"> ₹ <%=Intl.NumberFormat('en-IN').format(datas.box_weight * datas.box * datas.rate)%> /-</td>
               
               
             </tr>
