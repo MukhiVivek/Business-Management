@@ -1,118 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party Name Search</title>
-    <style>
-        #search-container {
-            position: relative;
-            width: 300px;
-        }
-
-        #searchBar {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        #suggestions {
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-top: none;
-            width: 100%;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 1;
-            border-radius: 5px;
-        }
-
-        #suggestions div {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        #suggestions div:hover {
-            background-color: #f0f0f0;
-        }
-
-        #partyDisplay {
-            margin-top: 20px;
-        }
-    </style>
+  <title>Hide Elements by Class</title>
 </head>
 <body>
-    <div id="search-container">
-        <input type="text" id="searchBar" placeholder="Search Party Name...">
-        <div id="suggestions"></div>
-        <button id="showPartyBtn">Show Party Name</button>
-    </div>
 
-    <!-- Display selected party name here -->
-    <h1 id="partyDisplay"></h1>
+  <div class="element">This is Element 1</div>
+  <div class="element">This is Element 2</div>
+  <div class="element">This is Element 3</div>
+  
+  <!-- Button to hide elements -->
+  <button id="hideBtn">Hide Elements</button>
 
-    <script>
-        // Example data (simulating data from a database)
-        const partyData = [
-            {
-                _id: '6726a8e17d9c313697f68e55',
-                party_name: 'Milan Bhai',
-                phone_number: 9909222286,
-                payment: 2200000
-            },
-            {
-                _id: '673ca8c54b1acc08dc8662d4',
-                party_name: 'Shree Ram Food',
-                phone_number: 9824041144,
-                payment: 0
-            }
-        ];
+  <script>
+    // Function to hide all elements with a given class name
+    function hideElementsByClass(className) {
+      const elements = document.getElementsByClassName(className);
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = 'none';  // Hide each element
+      }
+    }
 
-        const searchBar = document.getElementById('searchBar');
-        const suggestionsBox = document.getElementById('suggestions');
-        const showPartyBtn = document.getElementById('showPartyBtn');
-        const partyDisplay = document.getElementById('partyDisplay');
+    // Attach click event to the button
+    document.getElementById('hideBtn').onclick = function() {
+      hideElementsByClass('element');  // Hides all elements with class 'element'
+    };
+  </script>
 
-        let selectedParty = '';  // Store the selected party name
-
-        searchBar.addEventListener('input', function() {
-            const query = searchBar.value.trim().toLowerCase();
-            suggestionsBox.innerHTML = '';  // Clear previous suggestions
-
-            if (query.length === 0) return;  // Don't show suggestions if input is empty
-
-            // Filter items based on the query
-            const filteredParties = partyData.filter(party =>
-                party.party_name.toLowerCase().includes(query)
-            );
-
-            // Display suggestions
-            filteredParties.forEach(party => {
-                const suggestion = document.createElement('div');
-                suggestion.textContent = party.party_name;
-                suggestion.addEventListener('click', () => {
-                    searchBar.value = party.party_name;  // Set clicked suggestion to input
-                    selectedParty = party.party_name;  // Store selected party name
-                    suggestionsBox.innerHTML = '';  // Clear suggestions
-                });
-                suggestionsBox.appendChild(suggestion);
-            });
-
-            if (filteredParties.length === 0) {
-                suggestionsBox.innerHTML = '<div>No results found</div>';
-            }
-        });
-
-        // Display selected party name in the H1 tag when button is clicked
-        showPartyBtn.addEventListener('click', function() {
-            if (selectedParty) {
-                partyDisplay.textContent = selectedParty;
-            } else {
-                partyDisplay.textContent = 'No party selected!';
-            }
-        });
-    </script>
 </body>
 </html>
