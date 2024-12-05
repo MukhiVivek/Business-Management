@@ -5,6 +5,7 @@ const customerSchema = new Schema({
     customer_name:String,
     customer_phone_number:Number,
     customer_code:Number,
+    payment:Number,
     customer_billing_address:{
         street_addres:String,
         state:String,

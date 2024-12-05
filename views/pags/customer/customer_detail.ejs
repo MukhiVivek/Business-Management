@@ -1,0 +1,57 @@
+<% layout('/layout/boilerplate.ejs') -%>
+
+<body>
+    <h3><%=data.customer_name%></h3>
+
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link detail_party " aria-current="page" href="#">profile</a>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link active  list_of_purchase" id="" href="#">Purchase</button>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Transaction</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        </li>
+      </ul>
+    
+    
+
+
+    
+
+    <div class="list_of_purchase">
+      <h2>Purchase list :</h2>
+      <table class="table table-bordered ">
+          <thead >
+          <tr >
+              <th class="table-light " scope="col">Invoice Number</th>
+              <th class="table-light" scope="col">Date</th>
+              <th class="table-light" scope="col">amount</th>
+              <th class="table-light " scope="col">view</th>
+              <th class="table-light" scope="col">Edit</th>
+              
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <%for(let datas of data1){%>
+                
+              <th class="c_box text-center" ><%= datas.invoice_number%></th>
+              <td ><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
+              <td><%= datas.subtotal%></td>
+              <td class="text-center c_customer"><a href="/invoice/pdfinvoice/<%= datas.invoice_number%>"><i class="fa-solid fa-file-invoice"></i></a></td>
+              <td class="text-center c_customer"><a href="/invoice/edit/<%= datas._id%>"><i class="fa-solid fa-file-pen"></i></a></td>
+              
+              
+            </tr>
+            <%}%>
+          </tbody>
+      </table>
+  </div>
+    
+    
+</body>

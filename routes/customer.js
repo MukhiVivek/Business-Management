@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router({mergeParams : true});
 const customer = require('../models/customer.js');
+const invoice = require("../models/invoice.js");
 
 router.get("/" ,async (req,res) => {
 
@@ -43,7 +44,17 @@ router.get('/search', async (req, res) => {
     } catch (err) {
       res.status(500).json({ message: 'Error fetching data', error: err });
     }
-  });
+});
 
+router.get('/:id' ,async (req,res) => {
+  let { id } = req.params;
+
+  let data = await customer.findById(id);
+  console.log(data);
+  
+  let data1 = await invoice.find({ customers : id})
+
+  res.render("pags/customer/customer_detail.ejs" , {data , data1 })
+})
 
 module.exports = router;

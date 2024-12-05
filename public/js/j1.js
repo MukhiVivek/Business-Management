@@ -21,7 +21,6 @@ async function fetchItemsData() {
   try {
     const response = await fetch('http://192.168.29.191:8000/item/api/items'); // Adjust URL if hosted elsewhere
     itemsData = await response.json(); // Update the itemsData array with the fetched data
-    console.log('Items data loaded:', itemsData);
   } catch (error) {
     console.error('Error fetching items data:', error);
   }

@@ -3,7 +3,7 @@
 <body>
     <div class="row boxrow">
         <%for(let datas of data){%>
-        <a href="/parties/<%=datas._id%>" method="post" class="boxa"> <div class="col-lg-8 offset-lg-2 box border border-black text-bg-light p-3" >
+        <a href="/parties/<%=datas._id%>/parchase" method="post" class="boxa"> <div class="col-lg-8 offset-lg-2 box border border-black text-bg-light p-3" >
             <div class="row ">
                 <h4 class="col " ><%=datas.party_name%></h4>
                 <h5 class="col totalpay">₹<%= datas.payment %> </h5>
@@ -17,7 +17,7 @@
     </div>
     <form action="/parties/add" method="get">
         <div class="position-absolute top-100 start-50 translate-middle addButton" >
-           <button type="submit" class="btn btn-primary add_customerb">+ Add Parties</button>
+           <button type="submit" class="btn btn-primary add_customerb fix">+ Add Parties</button>
        </div>
    </form> 
 </body>

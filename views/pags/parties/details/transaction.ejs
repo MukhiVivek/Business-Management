@@ -1,0 +1,39 @@
+<% layout ('/pags/parties/parties_detail.ejs') -%>
+
+<div class="list_of_purchase">
+    <h2>Purchase list :</h2>
+    <table class="table table-bordered ">
+        <thead >
+        <tr >
+            <th class="table-light " scope="col">#</th>
+            <th class="table-light" scope="col">Date</th>
+            <th class="table-light" scope="col">parties Name</th>
+            <th class="table-light" scope="col">Amount </th>
+            <th class="table-light" scope="col">Method</th>
+            <th class="table-light" scope="col"></th>
+            <th class="table-light" scope="col"></th>
+            
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <%for(let datas of data1){%>
+            
+            <th scope="row"><%=datas.payment_number %></th>
+            <td class="p_box"><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
+            <td class="p_item"><%= datas.party_name%></td>
+            
+            <td><%= new Intl.NumberFormat('en-IN').format(datas.amount)%> /-</td>
+            <td><%= datas.payment_method%></td>
+            <td><form action="/parties/edit/<%=datas._id%>?_method=delete">
+                <button class="delete-btn"><i class="fa-solid fa-pen"></i></button>
+              </form></td>
+            <td><form action="/parties/delete/<%=datas._id%>?_method=delete">
+              <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+            </form></td>
+          </tr>
+          <%}%>
+        </tbody>
+    </table>
+</div>
+  

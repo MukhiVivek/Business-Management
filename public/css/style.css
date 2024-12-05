@@ -13,7 +13,6 @@ main{
 }
 
 
-
 /* navbar */
 
 /* nav{
@@ -200,7 +199,6 @@ thead {
 .scrollable-table {
     height: 550px;  /* Set the height to show only 10 rows, adjust as needed */
     overflow-y: scroll;
-    border: 4px solid black;
 }
 .scrollable-table table {
     width: 100%;
@@ -259,4 +257,49 @@ thead {
 
 .add_customerb{
     border-radius: 20px !important;
+}
+
+.delete-btn{
+    border: 0;
+    background-color: white;
+}
+
+.backk{
+    /* background-color: #bab9c2; */
+}
+
+.pricess{
+    width: 200px;
+    background-color:rgb(182, 238, 98);
+    border: solid 0.5px rgb(144, 203, 55);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.red-pricess{
+    width: 200px;
+    background-color:rgb(235, 58, 58);
+    border: solid 0.5px rgb(108, 22, 22);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+}
+
+.home-table{
+    width: 50%;
+    margin: 10px;
+    padding: 0px !important;
+    height: 400px !important;
+}
+
+.today_invoice{
+    margin: 10px;
+    height: 400px;
+    border: solid 0.5px gray;
+    border-radius: 10px;
+}
+
+.card-body{
+    padding: 0px !important;
 }

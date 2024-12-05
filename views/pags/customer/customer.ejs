@@ -3,10 +3,10 @@
 <body>
     <div class="row boxrow">
         <%for(let datas of data){%>
-        <a href="/parties/<%=datas._id%>" method="post" class="boxa"> <div class="col-lg-8 offset-lg-2 box border border-black text-bg-light p-3" >
+        <a href="/customer/<%=datas._id%>" method="post" class="boxa"> <div class="col-lg-8 offset-lg-2 box border border-black text-bg-light p-3" >
             <div class="row ">
                 <h4 class="col " ><%=datas.customer_name%></h4>
-                <h5 class="col totalpay">₹ 20,00,000</h5>
+                <h5 class="col totalpay">₹ <%=datas.payment%></h5>
             </div>
             <div >
                 <p class="boxp" >Customer </p>

@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const party_paymentSchema = new Schema({
     party_name: String,
+    payment_number: Number,
     amount: {
         type:Number,
         min:10,

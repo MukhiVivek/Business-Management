@@ -22,8 +22,8 @@
                     <div id="customer_phone_number"> Phone Number :</div>
                 </div>
                 <div class="border-bottom col-4">
-                    <div class="mt-5">Sales Invoice No: <input type="text" name="data[invoice_number]" value="1"></div>
-                    <div>Sales Invoice Date: <input type="date" name="data[date]" value="2024-11-21"></div>
+                    <div class="mt-5">Sales Invoice No: <input type="text" name="data[invoice_number]" value="<%= nextInvoice + 1%>"></div>
+                    <div>Sales Invoice Date: <input type="date" name="data[date]" value="<%= formattedDate%>"></div>
                 </div>
             </div>
         </div>
@@ -80,6 +80,9 @@
             <div id="search-container">
                 <input type="text" class="form-control" id="searchBar" placeholder="Search customer Name...">
                 <div id="suggestions"></div>
+                <div class="position-absolute top-100 start-50 translate-middle addButton" >
+                    <a href="/customer/add"><button type="button" class="btn btn-primary add_customerb" onclick="window.location.href='/invoice'" >+ Add Customer</button></a>
+                </div>
             </div>
         </div>
     </div>

@@ -1,40 +1,47 @@
 <% layout('/layout/boilerplate.ejs') -%>
 
-<body>
+    <body>
 
-    <div class="totalAmount ">
-        <h3>Total Amount : ₹ <%= total%></h3>
-        <h3>Total Amount add : ₹ <%= totaladd%></h3>
-    </div>
-    
+        <div class="totalAmount ">
+            <h3>Total Amount : ₹ <%= total%>
+            </h3>
+            <h3>Total Amount add : ₹ <%= totaladd%>
+            </h3>
+        </div>
 
-    <div class="scrollable-table">
-        <table >
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Date</th>
-                    <th>Amount</th>
-                    <th>Add</th>
-                </tr>
-            </thead>
-            <tbody>
-                <%for(let datas of data){%>
-                    
-                <tr>
-                    <td><%= datas.bill_number %></td>
-                    <td><%= new Date(datas.date).toLocaleDateString('en-GB') %>                    </td>
-                    <td> <a href="/danev_son/<%=datas._id%>/edit" class="amount">₹ <%= datas.amount %></a> </td>
-                    <td>₹ <%= datas.add %></td>
-                    
-                </tr>
-                    
-                <%}%>
-            </tbody>
-        </table>
-    </div>
+
+        <div class="scrollable-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Add</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%for(let datas of data){%>
+
+                        <tr>
+                            <td>
+                                <%= datas.bill_number %>
+                            </td>
+                            <td>
+                                <%= new Date(datas.date).toLocaleDateString('en-GB') %>
+                            </td>
+                            <td> <a href="/danev_son/<%=datas._id%>/edit" class="amount">₹ <%= datas.amount %></a> </td>
+                            <td>₹ <%= datas.add %>
+                            </td>
+
+                        </tr>
+
+                        <%}%>
+                </tbody>
+            </table>
+        </div>
         <br>
-    <form action="/danev_son_add_bill" method="get" class="offset-5 mb-3">
-        <button  class="btn btn-info" >Add bill</button>
-    </form>
-</body>
+        <form action="/danev_son_add_bill" method="get" class="offset-5 mb-3">
+            <button class="btn btn-info">Add bill</button>
+        </form>
+    </body>

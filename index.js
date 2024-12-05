@@ -7,9 +7,13 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const ejsmate = require('ejs-mate');
-const cors = require('cors');
+
+
+
 
 const {danev_son ,danev_son_mathiya } = require('./models/danev_son.js');
+const invoices = require('./models/invoice.js');
+const purchase = require('./models/party.js');
 
 
 const metodoverride = require("method-override");
@@ -22,6 +26,7 @@ const customer = require("./routes/customer.js");
 const parties = require("./routes/parties.js");
 const item = require("./routes/item.js");
 const invoice = require("./routes/invoice.js");
+
 
 
 app.use(express.json());
@@ -68,9 +73,19 @@ app.get("/" ,async (req,res) => {
 });
 
 
+
+
 //home
-app.get("/home" , async (req,res) => {
-    res.render("pags/home.ejs")
+app.get("/home" , async (req,res) => {    
+
+    let today  =new Date().toISOString().split('T')[0]; 
+   
+    let today_sales = await invoices.find({ date : today }).populate('customers')
+    
+    let purchase_data = await purchase.find({date : today}); 
+    
+    
+    res.render("pags/home.ejs" , {today_sales , purchase_data})
 });
 
 //Danev son pags

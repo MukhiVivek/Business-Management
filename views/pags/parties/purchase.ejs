@@ -1,46 +1,58 @@
 <% layout('/layout/boilerplate.ejs') -%>
-<div class="row">
-<div class="col-8 offset-2">
-    <body>
-        <h3>Create Purchase</h3>
-        <form action="/parties/purchase" method="post" novalidate class="needs-validation" ">
+    <div class="row">
+        <div class="col-8 offset-2">
+
+            <body>
+                <h3>Create Purchase</h3>
+                <form action="/parties/purchase" method="post" novalidate class="needs-validation" ">
         <br>
-        <!-- <div class="mb-3">
-            <label for="Party Name" class="from-label">Party Name</label>
-            <input type="text"  name="data[party_name]" placeholder="Enter Party Name" class="form-control" required>
+        <!-- <div class=" mb-3">
+                    <label for="Party Name" class="from-label">Party Name</label>
+                    <input type="text" name="data[party_name]" placeholder="Enter Party Name" class="form-control"
+                        required>
         </div> -->
         <select class="form-select mb-3" name="data[party_name]" aria-label="Default select example">
             <option selected>Select Party Name </option>
             <%for(let datas of data){%>
-            <option value="<%= datas.party_name%>" ><%= datas.party_name%></option>
-            <%}%>
-          </select>
-        <div class="mb-3">
-            <label for="Item" class="from-label">Item</label>
-            <input type="text"  name="data[item]" placeholder="Enter Item" class="form-control" required> 
+                <option value="<%= datas.party_name%>">
+                    <%= datas.party_name%>
+                </option>
+                <%}%>
+        </select>
+        <div class="row mb-3">
+            <div class="mb-3 col-md -8">
+                <label for="Item" class="from-label">Item</label>
+                <input type="text" name="data[item]" placeholder="Enter Item" class="form-control" required>
+            </div>
+            <div class="mb-3 col-md-4">
+                <label for="Purchase_number" class="from-label">Purchase Number</label>
+                <input type="number" name="data[Purchase_number]" value="<%= Purchase_no + 1%>" class="form-control"
+                    required>
+            </div>
         </div>
         <div class="row mb-3">
             <div class="mb-3 col-md-4">
                 <label for="box" class="from-label">Box</label>
-                <input type="number"  name="data[box]" placeholder="Enter Box" class="form-control"  required>
+                <input type="number" name="data[box]" placeholder="Enter Box" class="form-control" required>
             </div>
             <div class="mb-3 col-md-4">
                 <label for="box-Weight" class="from-label">Box-Weight</label>
-                <input type="number"  name="data[box_weight]" placeholder="Enter Box Weight" class="form-control"  required>
+                <input type="number" name="data[box_weight]" placeholder="Enter Box Weight" class="form-control"
+                    required>
             </div>
             <div class="mb-3 col-md-4">
                 <label for="Rate" class="from-label">Rate</label>
-                <input type="number"  name="data[rate]" placeholder="Enter Rate" class="form-control" required>
+                <input type="number" name="data[rate]" placeholder="Enter Rate" step="0.01" class="form-control" required>
             </div>
         </div>
         <div class="mb-3">
             <label for="Item" class="from-label">Date </label>
-            <input type="date"  name="data[date]" value="<%= formattedDate%>" class="form-control" required> 
+            <input type="date" name="data[date]" value="<%= formattedDate%>" class="form-control" required>
         </div>
         <br>
-        <button class="btn btn-primary" >submit</button><br>
-    </form>
-    <br>
-</body>
-</div>
-</div>
+        <button class="btn btn-primary">submit</button><br>
+        </form>
+        <br>
+        </body>
+    </div>
+    </div>

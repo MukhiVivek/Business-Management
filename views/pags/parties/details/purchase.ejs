@@ -1,0 +1,38 @@
+<% layout ('/pags/parties/parties_detail.ejs') -%>
+
+<div class="list_of_purchase">
+    <h2>Purchase list :</h2>
+    <table class="table table-bordered ">
+        <thead >
+        <tr >
+            <th class="table-light " scope="col">#</th>
+            <th class="table-light" scope="col">Date</th>
+            <th class="table-light" scope="col">Item Name</th>
+            <th class="table-light" scope="col">Box-Weight</th>
+            <th class="table-light" scope="col">Box</th>
+            <th class="table-light " scope="col">Rate</th>
+            <th class="table-light" scope="col">Total</th>
+            <th class="table-light" scope="col"></th>
+            
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <%for(let datas of data1){%>
+              
+            <th scope="row">1</th>
+            <td class="p_box"><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
+            <td class="p_item"><%= datas.item%></td>
+            <td class="p_box text-center "><%= datas.box_weight%></td>
+            <td><%= datas.box%></td>
+            <td><%= datas.rate%></td>
+            <td class="p_box"> ₹ <%=Intl.NumberFormat('en-IN').format(datas.box_weight * datas.box * datas.rate)%> /-</td>
+            <td><form action="/parties/delete/<%=datas._id%>?_method=delete">
+              <button class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+            </form></td>
+          </tr>
+          <%}%>
+        </tbody>
+    </table>
+</div>
+  

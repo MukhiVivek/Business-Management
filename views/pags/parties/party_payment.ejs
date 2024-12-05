@@ -1,36 +1,54 @@
 <% layout('/layout/boilerplate.ejs') -%>
 
-<div class="row">
-    <div class="col-8 offset-2">
-        <body>
-            <h3>Add Party </h3>
-            <form action="/parties/party_payment" method="post" novalidate class="needs-validation" >
-            <br>
-            <label for="Item" class="from-label">Party Name </label>
-            <select class="form-select mb-3" name="data[party_name]" aria-label="Default select example">
-                <option selected>Select Party Name </option>
-                <%for(let datas of data){%>
-                <option value="<%= datas.party_name%>" ><%= datas.party_name%></option>
-                <%}%>
-                <a href="/party_name">Add Party</a>
-              </select>
-            <div class="mb-3">
-                <label for="amount" class="from-label">Amount</label>
-                <input type="number"  name="data[amount]" placeholder="Enter amount" class="form-control" required> 
-            </div>
-            <div>
-                <label for="Payment" class="from-label">Select Payment method:</label>
-                <select class="form-select mb-3" name="data[payment_method]" aria-label="Default select example">
-                    <option value="cash" >Cash</option>
-                    <option value="bank" >bank</option>
-                    <option value="check" >Check</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="Item" class="from-label">Date </label>
-                <input type="date"  name="data[date]" value="<%= formattedDate%>" class="form-control" required> 
-            </div>
-            <button class="btn btn-primary" >submit</button><br>
+    <div class="row">
+        <div class="col-8 offset-2">
+
+            <body>
+                <span>
+                    <h3>Add Party </h3>
+                </span>
+
+                <form action="/parties/party_payment" method="post" novalidate class="needs-validation">
+                    <br>
+                    <div class="row mb-3">
+                        <div class=" col-9">
+                            <label for="Item" class="from-label">Party Name </label>
+                            <select class="form-select " name="data[party_name]" aria-label="Default select example">
+                                <option selected>Select Party Name </option>
+                                <%for(let datas of data){%>
+                                    <option value="<%= datas.party_name%>">
+                                        <%= datas.party_name%>
+                                    </option>
+                                    <%}%>
+                                        <a href="/party_name">Add Party</a>
+                            </select>
+                        </div>
+                        <div class=" col-3">
+                            <label for="amount" class="from-label">Payment Number</label>
+                            <input type="number" name="data[payment_number]" value="<%=payment_no%>"
+                                class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="from-label">Amount</label>
+                        <input type="number" name="data[amount]" placeholder="Enter amount" class="form-control"
+                            required>
+                    </div>
+                    <div>
+                        <label for="Payment" class="from-label">Select Payment method:</label>
+                        <select class="form-select mb-3" name="data[payment_method]"
+                            aria-label="Default select example">
+                            <option value="cash">Cash</option>
+                            <option value="bank">bank</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Item" class="from-label">Date </label>
+                        <input type="date" name="data[date]" value="<%= formattedDate%>" class="form-control" required>
+                    </div>
+                    <button class="btn btn-primary">submit</button><br>
         </div>
     </div>
- </form>
+    </form>
