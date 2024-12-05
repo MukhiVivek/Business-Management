@@ -189,8 +189,8 @@ app.post("/danev_son_mathiya_bill" ,async (req,res) => {
     res.redirect("/danev_son_mathiya_bill")
 })
 
-app.listen(8000 ,"192.168.29.191"  ,  () => {
-    console.log("server is listening to post http://192.168.29.191:8000");
+app.listen(8000,  () => {
+    console.log("server is listening to post on 8000");
 });
 
 
