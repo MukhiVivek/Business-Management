@@ -1,17 +1,27 @@
 const express = require("express");
+<<<<<<< HEAD
 const router = express.Router({ mergeParams: true });
+=======
+const router = express.Router({mergeParams : true});
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 const path = require("path");
 
 
 const { PDFNet } = require("@pdftron/pdfnet-node");
 const fs = require("fs");
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 const item = require('../models/item_name.js');
 const invoice = require('../models/invoice.js');
 const customer = require('../models/customer.js');
+<<<<<<< HEAD
 
+=======
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 async function item_data() {
   let data = await item.find({});
@@ -27,6 +37,7 @@ router.get("/", async (req, res) => {
 
   let data = await invoice.find({})
 
+<<<<<<< HEAD
   let nextInvoice = data.length;
 
   const today = new Date();
@@ -56,10 +67,21 @@ router.post('/invoice', async (req, res) => {
 })
 
 
+=======
+router.post("/" , async (req,res) => {
+    let data = new invoice(req.body.data);
+    console.log(data);
+    await data.save();
+
+    res.redirect("/home");
+})
+
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 
 
 // Initialize PDFNet with your license key
+<<<<<<< HEAD
 PDFNet.initialize(process.env.PDFNET_LINK);
 
 
@@ -69,12 +91,26 @@ router.get('/pdfInvoice/:no', async (req, res) => {
   let { no } = req.params;
 
   let data1 = await invoice.findOne({ invoice_number: no });
+=======
+PDFNet.initialize("demo:1731769745328:7ef78d2c0300000000c4e7a408d8174e500aae5a205c09705bd6949150");
+
+router.post('/invoice', async (req, res) => {
+
+  let data1 = new invoice(req.body.data);
+  
+  await data1.save();
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
   let data = await invoice.findById(data1._id).populate('customers');
   console.log(data);
 
+<<<<<<< HEAD
   let total_qty = 0;
 
+=======
+  
+  
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
   const inputPart = path.resolve(__dirname, `../files/invoicePdf.pdf`);
   const outputPart = path.resolve(__dirname, `../files/invoice.pdf`);
 
@@ -84,6 +120,7 @@ router.get('/pdfInvoice/:no', async (req, res) => {
     const replacer = await PDFNet.ContentReplacer.create();
     const page = await pdfdoc.getPage(1);
 
+<<<<<<< HEAD
     await replacer.addString('bill_number', `${data.invoice_number}`)
     await replacer.addString('date', `${new Date(data.date).toLocaleDateString('en-GB')}`)
     await replacer.addString('customer_name', `${data.customers.customer_name}`)
@@ -119,6 +156,40 @@ router.get('/pdfInvoice/:no', async (req, res) => {
     await replacer.process(page);
 
     pdfdoc.save(outputPart, PDFNet.SDFDoc.SaveOptions.e_linearized);
+=======
+    await replacer.addString('bill_number' , `${data.invoice_number}`)
+    await replacer.addString('date' , `${new Date(data.date).toLocaleDateString('en-GB')}`)
+    await replacer.addString('customer_name' , `${data.customers.customer_name}`)
+
+    
+        for(i=0; i<data.item_name.length; i++){
+            await replacer.addString(`no${i}` , `${[i + 1]}`)
+            await replacer.addString(`item_name${i}` , `${data.item_name[i]}`)
+            await replacer.addString(`qty${i}` , `${data.qty[i]}`)
+            await replacer.addString(`rate${i}` , `${data.item_price[i]}`)
+            await replacer.addString(`amont${i}` , `${data.amount[i]}`)
+          }
+          for(i=data.item_name.length; i<17; i++){
+            await replacer.addString(`no${i}` ,  ``)
+            await replacer.addString(`item_name${i}` , ``)
+            await replacer.addString(`qty${i}` , ``)
+            await replacer.addString(`rate${i}` , ``)
+            await replacer.addString(`amont${i}` , ``)
+        }
+
+    
+    
+    if("" == data.customers.customer_billing_address.street_addres){
+      await replacer.addString(`customer_address` ,  ``)
+    }else{
+      await replacer.addString(`customer_address` ,  `${data.customers.customer_billing_address.street_addres} , ${data.customers.customer_billing_address.area} , ${data.customers.customer_billing_address.city} , ${data.customers.customer_billing_address.state} - ${data.customers.customer_billing_address.pincode}    `)
+    }
+    
+    await replacer.addString('total_amount' , `${data.subtotal}`)
+    await replacer.process(page);
+
+    pdfdoc.save(outputPart , PDFNet.SDFDoc.SaveOptions.e_linearized);
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
   }
 
   try {
@@ -136,6 +207,7 @@ router.get('/pdfInvoice/:no', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 router.get('/api/inoice', async (req, res) => {
   try {
     const purchases = await invoice.find().populate('customers'); // Fetch all items
@@ -144,6 +216,9 @@ router.get('/api/inoice', async (req, res) => {
     res.status(500).send('Error fetching data');
   }
 });
+=======
+
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 
 

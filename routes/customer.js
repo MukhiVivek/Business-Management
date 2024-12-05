@@ -44,6 +44,7 @@ router.get('/search', async (req, res) => {
     } catch (err) {
       res.status(500).json({ message: 'Error fetching data', error: err });
     }
+<<<<<<< HEAD
 });
 
 router.get('/:id' ,async (req,res) => {
@@ -56,5 +57,9 @@ router.get('/:id' ,async (req,res) => {
 
   res.render("pags/customer/customer_detail.ejs" , {data , data1 })
 })
+=======
+  });
+
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 module.exports = router;

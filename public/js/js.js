@@ -27,6 +27,10 @@ async function fetchcustomerData() {
   try {
     const response = await fetch('http://192.168.29.191:8000/customer/api/customers'); // Adjust URL if hosted elsewhere
     customerData = await response.json(); // Update the customerData array with the fetched data
+<<<<<<< HEAD
+=======
+    console.log('Items data loaded:', customerData);
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
   } catch (error) {
     console.error('Error fetching items data:', error);
   }
@@ -35,8 +39,11 @@ async function fetchcustomerData() {
 // Call the function to fetch data when the page loads
 fetchcustomerData();
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 const searchBar = document.getElementById('searchBar');
 const suggestionsBox = document.getElementById('suggestions');
@@ -59,7 +66,11 @@ closeBtn.onclick = function () {
     modal.style.display = 'none';
 }
 
+<<<<<<< HEAD
 // Close the modal when clicking outside the modal content123
+=======
+// Close the modal when clicking outside the modal content
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 window.onclick = function(event) {
     if (event.target === modal) {
         modal.style.display = 'none';
@@ -83,13 +94,22 @@ searchBar.addEventListener('input', function() {
   // Display suggestions
   filteredParties.forEach(customer => {
       const suggestion = document.createElement('div');
+<<<<<<< HEAD
       suggestion.textContent123 = customer.customer_name;
+=======
+      suggestion.textContent = customer.customer_name;
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
       suggestion.addEventListener('click', () => {
           searchBar.value = customer.customer_name;  // Set clicked suggestion to input
           selectedcustomer = customer.customer_name; 
           customer_id_input.value = customer._id;
+<<<<<<< HEAD
           customer_phone_number.textContent123 = `Phone Number: ${customer.customer_phone_number}`;
           customer_phone_number2.textContent123 = `Phone Number: ${customer.customer_phone_number}`;
+=======
+          customer_phone_number.textContent = `Phone Number: ${customer.customer_phone_number}`;
+          customer_phone_number2.textContent = `Phone Number: ${customer.customer_phone_number}`;
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
           suggestionsBox.innerHTML = '';  // Clear suggestions
           // Optional: you can show more details or trigger other functions here
       });
@@ -114,11 +134,19 @@ let selectedcustomer = '';  // Store the selected customer name
 // Display selected customer name in the H1 tag when button is clicked
 suggestions.addEventListener('click', function() {
   if (selectedcustomer) {
+<<<<<<< HEAD
       customerDisplay.textContent123 = selectedcustomer;
       customerDisplay2.textContent123 = selectedcustomer;
       modal.style.display = 'none';
   } else {
       customerDisplay.textContent123 = 'No customer selected!';
+=======
+      customerDisplay.textContent = selectedcustomer;
+      customerDisplay2.textContent = selectedcustomer;
+      modal.style.display = 'none';
+  } else {
+      customerDisplay.textContent = 'No customer selected!';
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
   }
 });
 

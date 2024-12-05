@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Content Loading</title>
@@ -44,5 +45,33 @@
         // Optional: Load default content on page load
         window.onload = () => loadContent('home.html');
     </script>
+=======
+  <title>Hide Elements by Class</title>
+</head>
+<body>
+
+  <div class="element">This is Element 1</div>
+  <div class="element">This is Element 2</div>
+  <div class="element">This is Element 3</div>
+  
+  <!-- Button to hide elements -->
+  <button id="hideBtn">Hide Elements</button>
+
+  <script>
+    // Function to hide all elements with a given class name
+    function hideElementsByClass(className) {
+      const elements = document.getElementsByClassName(className);
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].style.display = 'none';  // Hide each element
+      }
+    }
+
+    // Attach click event to the button
+    document.getElementById('hideBtn').onclick = function() {
+      hideElementsByClass('element');  // Hides all elements with class 'element'
+    };
+  </script>
+
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 </body>
 </html>

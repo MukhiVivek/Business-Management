@@ -10,9 +10,19 @@ const formattedDate = today.toISOString().split('T')[0];
 
 router.get("/", async (req, res) => {
 
+<<<<<<< HEAD
   let data = await party_name.find({})
 
   res.render("pags/parties/parties.ejs", { data })
+=======
+    let data = await party_name.find({}) 
+    
+    res.render("pags/parties/parties.ejs" , {data})
+}) 
+
+router.get("/add" , (req,res) => {
+    res.render("pags/parties/party_name.ejs")
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 })
 
 router.get("/add", (req, res) => {
@@ -32,17 +42,24 @@ router.get("/purchase", async (req, res) => {
 
   const data = await party_name.find({})
 
+<<<<<<< HEAD
   const data1 = await purchase.find({});
 
   const Purchase_no = data1.length;
 
   res.render("pags/parties/purchase.ejs", { data, formattedDate , Purchase_no})
+=======
+
+
+    res.render("pags/parties/purchase.ejs" , {data ,formattedDate})
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 });
 
 //purchase party data save process 
 
 router.post("/purchase", async (req, res) => {
 
+<<<<<<< HEAD
   let data = new purchase(req.body.data);
   console.log(data);
 
@@ -50,6 +67,15 @@ router.post("/purchase", async (req, res) => {
 
   await data.save()
   res.redirect("/parties");
+=======
+    let data = new purchase(req.body.data);
+    console.log(data);
+
+    await party_name.findOneAndUpdate({ party_name : data.party_name} , { $inc: { payment: - (data.box * data.box_weight * data.rate) } },  { new: true })   
+
+    await data.save()
+    res.redirect("/parties");
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 })
 
 
@@ -60,7 +86,13 @@ router.get("/party_payment", async (req, res) => {
 
   const data = await party_name.find({})
 
+<<<<<<< HEAD
   const data1 = await party_payment.find({})
+=======
+
+    
+    
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
   payment_no = data1.length
 
@@ -69,6 +101,7 @@ router.get("/party_payment", async (req, res) => {
 
 router.post("/party_payment", async (req, res) => {
 
+<<<<<<< HEAD
   let data = new party_payment(req.body.data);
   console.log(data)
 
@@ -77,6 +110,14 @@ router.post("/party_payment", async (req, res) => {
   await data.save();
 
   res.redirect("/home")
+=======
+    let data = new party_payment(req.body.data);
+    console.log(data)
+
+    await party_name.findOneAndUpdate({ party_name : data.party_name} , { $inc: { payment: data.amount } },  { new: true })   
+        
+    await data.save();
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
 
 })
 

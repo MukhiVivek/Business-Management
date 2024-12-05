@@ -8,16 +8,64 @@
           <a class="nav-link detail_party " aria-current="page" href="#">profile</a>
         </li>
         <li class="nav-item">
+<<<<<<< HEAD
           <a class="nav-link active  list_of_purchase"  id="" href="/parties/<%=data._id%>/parchase">Purchase</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/parties/<%=data._id%>/transaction">Transaction</a>
+=======
+          <button class="nav-link active  list_of_purchase" id="" href="#">Purchase</button>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Transaction</a>
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>
         </li>
       </ul>
     
+<<<<<<< HEAD
+=======
+    
+
+
+    
+
+    <div class="list_of_purchase">
+      <h2>Purchase list :</h2>
+      <table class="table table-bordered ">
+          <thead >
+          <tr >
+              <th class="table-light " scope="col">#</th>
+              <th class="table-light" scope="col">Date</th>
+              <th class="table-light" scope="col">Item Name</th>
+              <th class="table-light" scope="col">Box-Weight</th>
+              <th class="table-light" scope="col">Box</th>
+              <th class="table-light " scope="col">Rate</th>
+              <th class="table-light" scope="col">Total</th>
+              
+          </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <%for(let datas of data1){%>
+                
+              <th scope="row">1</th>
+              <td class="p_box"><%= new Date(datas.date).toLocaleDateString('en-GB') %> </td>
+              <td class="p_item"><%= datas.item%></td>
+              <td class="p_box text-center "><%= datas.box_weight%></td>
+              <td><%= datas.box%></td>
+              <td><%= datas.rate%></td>
+              <td class="p_box"> ₹ <%=Intl.NumberFormat('en-IN').format(datas.box_weight * datas.box * datas.rate)%> /-</td>
+              
+              
+            </tr>
+            <%}%>
+          </tbody>
+      </table>
+  </div>
+>>>>>>> d133687dbe7b5eb04afcf79eae9556e490d72ce2
     
       <div id="content">
         <%- body%>
