@@ -63,6 +63,7 @@ $(document).ready(function () {
           <td><i class="fas fa-trash text-danger delete-row" style="cursor: pointer;"></i></td>
       </tr>`;
       document.getElementById('item-rows').insertAdjacentHTML('beforeend', newRow);
+      
   });
 
   $(document).on('click', '.delete-row', function () {
@@ -127,28 +128,6 @@ document.getElementById('item-rows').addEventListener('click', function(event) {
   }
 });
 
-
-// JavaScript to handle modal behavior
-const modal = document.getElementById('myModal');
-const openBtn = document.getElementById('openModalBtn');
-const closeBtn = document.getElementsByClassName('close')[0];
-
-// Open the modal when the button is clicked
-openBtn.onclick = function() {
-    modal.style.display = 'block';
-}
-
-// Close the modal when the 'X' is clicked
-closeBtn.onclick = function() {
-    modal.style.display = 'none';
-}
-
-// Close the modal when clicking outside the modal content
-window.onclick = function(event) {
-    if (event.target === modal) {
-        modal.style.display = 'none';
-    }
-}
 
 
 

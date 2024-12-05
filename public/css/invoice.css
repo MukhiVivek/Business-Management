@@ -123,3 +123,7 @@
 #suggestions div:hover {
     background-color: #f0f0f0;
 }
+
+#customer_id_input{
+    display: none; /* Hidden by default */
+}
