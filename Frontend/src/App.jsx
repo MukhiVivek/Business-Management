@@ -1,6 +1,6 @@
 import './App.css'
-import Home from './landing_page/home/Home'
-import Sidebar from './landing_page/includes/Sidebar';
+import Dashboard from './landing_page/Dashboard/Dashboard';
+import Sidebar from './landing_page/includes/Sidebar/Sidebar';
 
 function App() {
   return (
@@ -8,7 +8,7 @@ function App() {
       <div className="App flex h-screen bg-gray-100">
         <Sidebar />
         <div className="main-content flex-1">
-          <Home />
+          <Dashboard />
         </div>
       </div>
     </>
