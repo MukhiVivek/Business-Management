@@ -20,7 +20,7 @@ const Dropdown = () => {
         aria-haspopup="true"
         aria-expanded={isOpen ? 'true' : 'false'}
         onClick={handleClick}
-        className="text-white text-xl flex" 
+        className="text-white text-xl flex cursor-pointer" 
         ref={buttonRef} 
       >
         <img

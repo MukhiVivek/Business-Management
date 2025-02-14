@@ -4,3 +4,13 @@
 .sidebar {
     font-family: "Lexend Deca", serif;
 }
+
+@media (max-width: 767px) {
+    .sidebar {
+      width: 100%; 
+    }
+    .business{
+      margin-left: 10px;
+    }
+  }
+  

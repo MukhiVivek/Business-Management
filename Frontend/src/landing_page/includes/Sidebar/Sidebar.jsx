@@ -5,12 +5,12 @@ import Dropdown from "./Dropdown/Dropdown";
 const Sidebar = () => {
 
   return (
-    <div className="sidebar flex flex-col flex-shrink-0 p-3 w-64 bg-gray-800 text-white">
+    <div className="sidebar flex flex-col flex-shrink-0 p-3 w-64 bg-gray-800 text-white md:w-64">
       <a
         href="/"
         className="flex items-center rounded-md bg-gray-700 text-white text-decoration-none"
       >
-        <span className="business text-2xl ml-15">Business</span>
+        <span className="business text-2xl ml-15 md:ml-15">Business</span>
       </a>
       <hr className="my-3" />
       <ul className="nav nav-pills flex-col mb-auto">
