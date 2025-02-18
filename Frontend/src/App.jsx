@@ -9,7 +9,7 @@ import Orders from './landing_page/Orders/Orders'
 function App() {
   return (
     <Router>
-      <div className="App flex min-h-screen bg-gray-100">
+      <div className="App flex min-h-screen">
         <Sidebar/>
         <div className="main-content flex-1 overflow-y-auto">
           <Routes>

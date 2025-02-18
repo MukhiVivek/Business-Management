@@ -6,11 +6,12 @@ import { dataset, valueFormatter } from './dataset/weather';
 const chartSetting = {
   yAxis: [
     {
-      label: 'Recent Sales (₹)',
+      label: 'Latest Sales (₹)',
     },
   ],
-  width: 500,
-  height: 300,
+  width: 600,
+  margin: { left: 100, right: 50 },
+  height: 280,
   sx: {
     [`.${axisClasses.left} .${axisClasses.label}`]: {
       transform: 'translate(-20px, 0px)',
@@ -21,7 +22,7 @@ const chartSetting = {
 export default function BarsDataset() {
   return (
     <BarChart
-      className='items-center'
+      className='items-center bg-gray-100 rounded-md shadow-md'
       xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
       dataset={dataset}
       series={[ 
