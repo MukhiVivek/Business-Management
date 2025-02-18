@@ -6,14 +6,14 @@ import { dataset, valueFormatter } from './dataset/weather';
 const chartSetting = {
   yAxis: [
     {
-      label: 'rainfall (mm)',
+      label: 'Recent Sales (₹)',
     },
   ],
-  width: 900,
-  height: 600,
+  width: 500,
+  height: 300,
   sx: {
     [`.${axisClasses.left} .${axisClasses.label}`]: {
-      transform: 'translate(-20px, 0)',
+      transform: 'translate(-20px, 0px)',
     },
   },
 };
@@ -22,13 +22,13 @@ export default function BarsDataset() {
   return (
     <BarChart
       className='items-center'
-      dataset={dataset}
       xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-      series={[
-        { dataKey: 'london', label: 'London', valueFormatter },
-        { dataKey: 'paris', label: 'Paris', valueFormatter },
-        { dataKey: 'newYork', label: 'New York', valueFormatter },
-        { dataKey: 'seoul', label: 'Seoul', valueFormatter },
+      dataset={dataset}
+      series={[ 
+        { dataKey: 'ahmedabad', label: 'Ahmedabad', valueFormatter },
+        { dataKey: 'mumbai', label: 'Mumbai', valueFormatter },
+        { dataKey: 'bangalore', label: 'Bangalore', valueFormatter },
+        { dataKey: 'odisha', label: 'Odisha', valueFormatter },
       ]}
       {...chartSetting}
     />
