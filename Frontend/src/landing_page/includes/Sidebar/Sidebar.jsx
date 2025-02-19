@@ -4,9 +4,10 @@ import "./Sidebar.css";
 import Dropdown from "./Dropdown/Dropdown";
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
-  // Navigation items with SVG icons
+
+  // Navigation items with SVG icons and Path
   const navItems = [
     {
       path: "/",
@@ -89,28 +90,34 @@ const Sidebar = () => {
       ),
     },
   ];
-
+  
   return (
     <div
       className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 p-4 bg-gray-800 text-white transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}>
 
-      {/* Business App Link */}
-      <Link
-        to="/"
-        className="flex items-center rounded-md bg-gray-700 text-white p-1">
+      <div className="business">
 
-        {!isCollapsed && <span className="text-2xl ml-3">Business App</span>}
-        {isCollapsed && <span className="text-2xl ml-1">B</span>}
-      </Link>
+        {/* Business App Link */}
+        <div
+          className="flex items-center rounded-md text-white p-1">
 
-      {/* Toggle Collapse Button */}
-      <button
-        className="mb-4 mt-4 p-0 rounded-md text-white"
-        onClick={() => setIsCollapsed(!isCollapsed)}>
-        {isCollapsed ? "→" : "←"}
-      </button>
+          {/* When sidebar is open */}
+          {!isCollapsed && <span className="text-2xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </span>}
+
+          {/* When sidebar is closed */}
+          {isCollapsed && 
+          <span className="text-2xl" >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6" onClick={() => setIsCollapsed(!isCollapsed)}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" / >
+            </svg>
+          </span>}
+        </div>
+      </div>
 
       <hr className="my-3" />
 
