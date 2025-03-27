@@ -11,7 +11,7 @@ function App() {
     <Router>
       <div className="App flex min-h-screen">
         <Sidebar/>
-        <div className="main-content flex-1 overflow-y-auto">
+        <div className="main-content">
           <Routes>
             <Route exact path='/' element={<Dashboard/>} />
             <Route exact path='/dashboard' element={<Dashboard/>} />

@@ -9,9 +9,9 @@ const chartSetting = {
       label: 'Latest Sales (₹)',
     },
   ],
-  width: 600,
-  margin: { left: 100, right: 50 },
-  height: 280,
+  width: 800,
+  margin: { left: 90, right: 30, top: -100, bottom: -100 },
+  height: 275,
   sx: {
     [`.${axisClasses.left} .${axisClasses.label}`]: {
       transform: 'translate(-20px, 0px)',

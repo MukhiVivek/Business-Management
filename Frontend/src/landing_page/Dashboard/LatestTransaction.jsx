@@ -22,12 +22,12 @@ const LatestTransaction = () => {
             { name: "Rameshbhai Patel", type: "Sales", date: "15/2/2025", amount: "₹9000" },
           ].map((transaction, index) => (
             <tr key={index} className="bg-white border-b dark:bg-gray-100 dark:border-gray-100">
-              <th scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
+              <th scope="row" className="px-4 py-4  font-bold text-gray-900 whitespace-nowrap dark:text-black">
                 {transaction.name}
               </th>
-              <td className="px-4 py-4">{transaction.type}</td>
-              <td className="px-4 py-4">{transaction.date}</td>
-              <td className="px-4 py-4">{transaction.amount}</td>
+              <td className="text-black px-4 py-4">{transaction.type}</td>
+              <td className="text-black px-4 py-4">{transaction.date}</td>
+              <td className="text-black px-4 py-4">{transaction.amount}</td>
             </tr>
           ))}
         </tbody>

@@ -5,7 +5,8 @@ import Dropdown from "./Dropdown/Dropdown";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
-
+  // isCollapsed(true) = sidebar is closed
+  // setIsCollapsed(!isCollapsed) = sidebar is open
 
   // Navigation items with SVG icons and Path
   const navItems = [
@@ -90,32 +91,37 @@ const Sidebar = () => {
       ),
     },
   ];
-  
+
   return (
     <div
-      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 p-4 bg-gray-800 text-white transition-all duration-300 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}>
+      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 p-4 bg-gray-800 text-white transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"
+        }`}>
 
       <div className="business">
 
         {/* Business App Link */}
         <div
-          className="flex items-center rounded-md text-white p-1">
+          className="flex items-center rounded-md text-white p-1" onClick={() => setIsCollapsed(!isCollapsed)}>
 
           {/* When sidebar is open */}
-          {!isCollapsed && <span className="text-2xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </span>}
+          {!isCollapsed && 
+            <span className="text-2xl flex gap-1">
+              {/* Hamburger bar */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+              <h1 className="flex">App</h1>
+            </span>}
 
           {/* When sidebar is closed */}
-          {isCollapsed && 
-          <span className="text-2xl" >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6" onClick={() => setIsCollapsed(!isCollapsed)}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" / >
-            </svg>
-          </span>}
+          {isCollapsed &&
+            <span className="text-2xl">
+              {/* Hamburger bar */}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6" onClick={() => setIsCollapsed(!isCollapsed)}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </span>}
+
         </div>
       </div>
 
