@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
 import Dropdown from "./Dropdown/Dropdown";
+import { TbFileInvoice } from "react-icons/tb";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -10,6 +11,13 @@ const Sidebar = () => {
 
   // Navigation items with SVG icons and Path
   const navItems = [
+    {
+      path: "/invoice",
+      label: "Invoice",
+      icon: (
+        <TbFileInvoice className="text-2xl" />
+      )
+    },
     {
       path: "/",
       label: "Dashboard",

@@ -5,6 +5,7 @@ import Dashboard from './landing_page/Dashboard/Dashboard';
 import Products from './landing_page/Products/Products'
 import Customers from './landing_page/Customers/Customers'
 import Orders from './landing_page/Orders/Orders'
+import Invoice from './landing_page/Invoice/Invoice';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <div className="main-content">
           <Routes>
             <Route exact path='/' element={<Dashboard/>} />
+            <Route exact path='/invoice' element={<Invoice/>} />
             <Route exact path='/dashboard' element={<Dashboard/>} />
             <Route exact path='/products' element={<Products/>} />
             <Route exact path='/orders' element={<Orders/>} />
