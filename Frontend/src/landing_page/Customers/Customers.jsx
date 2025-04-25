@@ -1,13 +1,16 @@
 import React from 'react'
+import Top from './Component/Top'
+import CustomersList from './Component/CustomersList'
 
 const Customers = () => {
   return (
     <div className='flex'>
-      <div className="order p-3 m-3 rounded-2xl ml-64 md:ml-64 min-h-screen w-full">
-        This is the customers page
+      <div className="mx-1 bg-white min-h-screen font-sans text-sm text-gray-900">
+        <Top />
+        <CustomersList />
       </div>
     </div>
   )
 }
 
-export default Customers
+export default Customers;

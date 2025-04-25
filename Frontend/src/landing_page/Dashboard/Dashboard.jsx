@@ -8,7 +8,7 @@ function Dashboard() {
         <>
         <div className="flex">
             {/* Sidebar is fixed, so add margin-left to the dashboard */}
-            <div className="dashboard rounded-2xl md:ml-64 min-h-screen w-full">
+            <div className="dashboard rounded-2xl min-h-screen w-full">
                 {/* Dashboard and Chat Support */}
                 {/* <div className="top flex justify-between"> */}
         

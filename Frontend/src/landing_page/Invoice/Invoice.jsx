@@ -25,10 +25,10 @@ const Invoice = () => {
     items.reduce((sum, item) => sum + item.qty * item.price, 0);
 
   return (
-    <div className="flex-1">
-        <div className="invoice p-1 m-2 rounded-2xl ml-64 md:ml-64 min-h-screen w-full max-w-13xl">
+    <div className="">
+        <div className=" invoice p-1 m-2 rounded-2xl min-h-screen w-max mx-auto">
                 <div className="flex min-h-screen">
-            <div className="w-full max-w-10xl mx-auto pl-20 p-6">
+            <div className="w-full mx-auto ">
                 <div className="bg-white shadow-lg rounded-lg overflow-hidden">
                 {/* Header */}
                 <div className="bg-gray-800 text-white p-5">

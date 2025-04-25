@@ -1,6 +1,8 @@
 Backend /node_modules
 Frontend/node_modules
 
+.env
+
 # Logs
 logs
 *.log
