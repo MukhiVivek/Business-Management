@@ -15,7 +15,7 @@ const Sidebar = () => {
       )
     },
     {
-      path: "/",
+      path: "/dashboard",
       label: "Dashboard",
       icon: (
         <svg

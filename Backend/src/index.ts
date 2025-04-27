@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
+import cors from "cors"
 
 const app = express();
 app.use(express.json());
@@ -35,7 +35,6 @@ app.get("/", (req, res) =>{
   res.send("Server is on test-1");
 });
 
-
 app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+  console.log("Server is running on http://localhost:3000");
 });

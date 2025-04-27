@@ -4,8 +4,8 @@ import CustomersList from './Component/CustomersList'
 
 const Customers = () => {
   return (
-    <div className='flex'>
-      <div className="mx-1 bg-white min-h-screen font-sans text-sm text-gray-900">
+    <div className='flex justify-center py-5'>
+      <div className="bg-white min-h-screen font-sans text-sm text-gray-900">
         <Top />
         <CustomersList />
       </div>
