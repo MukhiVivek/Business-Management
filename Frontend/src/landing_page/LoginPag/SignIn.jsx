@@ -28,18 +28,18 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6"
+        className="bg-white  p-8 rounded-2xl shadow-xl w-full max-w-md space-y-6"
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-white">
-          Welcome Back
+        <h2 className="text-3xl font-bold text-center text-gray-800 ">
+          Welcome Back!
         </h2>
 
         {/* Username */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700 ">
             Username
           </label>
           <input
@@ -48,14 +48,14 @@ const SignIn = () => {
             value={form.username}
             onChange={handleChange}
             required
-            className="mt-1 block w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            className="mt-1 block w-full px-4 py-3 rounded-xl bg-gray-100  text-gray-900  border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
             placeholder="Enter your username"
           />
         </div>
 
         {/* Password */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label className="block text-sm font-medium text-gray-700">
             Password
           </label>
           <div className="relative mt-1">
@@ -65,7 +65,7 @@ const SignIn = () => {
               value={form.password}
               onChange={handleChange}
               required
-              className="block w-full px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="block w-full px-4 py-3 rounded-xl bg-gray-100 text-gray-900  border border-gray-300  focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
               placeholder="••••••••"
             />
             <button
@@ -84,7 +84,7 @@ const SignIn = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold py-3 rounded-xl shadow-md hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white font-semibold shadow-lg hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
         >
           Sign In
         </button>

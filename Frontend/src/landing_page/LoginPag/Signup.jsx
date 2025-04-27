@@ -86,7 +86,6 @@ const SignUp = () => {
         <button
           type="submit"
           className="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white font-semibold shadow-lg hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-          
         >
           Sign Up
         </button>
