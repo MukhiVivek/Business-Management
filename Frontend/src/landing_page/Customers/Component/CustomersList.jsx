@@ -1,9 +1,11 @@
+import '../../../App.css'
+
 function CustomersList() {
   return (
 
-    <div className="overflow-x-auto">
+    <div className="customers overflow-x-auto">
       <table className="min-w-full table-auto border-t text-left">
-        <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b">
+        <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b dark:bg-gray-100">
           <tr>
             <th className="px-4 py-3">
               <i className="fas fa-sliders-h"></i>
