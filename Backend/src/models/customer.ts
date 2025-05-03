@@ -3,8 +3,11 @@ const Schema = mongoose.Schema;
 
 const customerSchema = new Schema({
     name:String,
+    work_phone_number:Number,
     phone_number:Number,
-    type:String,
+    customer_type:String,
+    display_name:String,
+    email:String,
     balance:Number,
     location:String,
     customer_billing_address:{
@@ -14,7 +17,20 @@ const customerSchema = new Schema({
         city:String,
         area:String,
     },
+    creater_id:{
+        type:Schema.Types.ObjectId,
+        ref:"user"
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
+    updatedAt:{
+        type:Date,
+        default:Date.now
+    }
 });
+
 
 const customer = mongoose.model("customer" , customerSchema);
 

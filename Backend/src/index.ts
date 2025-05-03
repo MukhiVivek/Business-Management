@@ -26,7 +26,7 @@ async function main() {
 //routes
 
 import user from "./routes/user";
-import customer from "./routes/customer"
+import customer from "./routes/customer/customer"
 
 app.use("/api/v1/user", user);
 app.use("/api/v1/customer", customer);

@@ -12,7 +12,12 @@ function IsLogged() {
           </button>
         </li>
         <li>
-          <button  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
+          <button  
+            onClick={() => {
+              localStorage.removeItem("token");
+              window.location.href = "/";
+            }}
+          className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
             Logout
           </button>
         </li>
