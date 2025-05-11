@@ -8,7 +8,7 @@ function Top() {
                 <button 
                 className="bg-blue-600 font-bold hover:bg-blue-700 text-white px-4 py-2 rounded"
                 onClick={() => window.location.href = '/customers/add'}
-                >
+                > 
                     + New
                 </button>
             </div>

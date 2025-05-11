@@ -15,9 +15,8 @@ function App() {
     <Router>
       <div className="App min-h-screen">
         <Sidebar/>
-        <div className="pl-16 ">
+        <div>
           <Routes>
-            <Route exact path='/dashboard' element={<Dashboard/>} />
             <Route exact path='/' element={<SignIn />} />
             <Route exact path='/signin' element={<SignIn />} />
             <Route exact path='/signup' element={<SignUp/>} />

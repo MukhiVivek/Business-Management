@@ -3,8 +3,8 @@ import '../../../App.css'
 function CustomersList() {
   return (
 
-    <div className="customers overflow-x-auto">
-      <table className="min-w-full table-auto border-t text-left">
+    <div className="customers overflow-y-auto">
+      <table className="w-full table-fixed border-t text-left">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b dark:bg-gray-100">
           <tr>
             <th className="px-4 py-3">
@@ -26,8 +26,8 @@ function CustomersList() {
             </td>
             <td className="px-4 py-4 text-blue-600 font-medium cursor-pointer">Danev</td>
             <td className="px-4 py-4">Danev</td>
-            <td className="px-4 py-4"></td>
-            <td className="px-4 py-4"></td>
+            <td className="px-4 py-4">m</td>
+            <td className="px-4 py-4">123456789</td>
             <td className="px-4 py-4">₹0.00</td>
             <td className="px-4 py-4">₹0.00</td>
             <td className="px-4 py-4"></td>

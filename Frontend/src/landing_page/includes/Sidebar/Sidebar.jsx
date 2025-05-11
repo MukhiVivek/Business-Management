@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./Sidebar.css";
 import Dropdown from "./Dropdown/Dropdown";
 import { TbFileInvoice } from "react-icons/tb";
+import HomeIcon from "../../../icon/HomeIcon";
 
 const Sidebar = () => {
   // Navigation items with SVG icons and Path
@@ -17,22 +18,7 @@ const Sidebar = () => {
     {
       path: "/dashboard",
       label: "Dashboard",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-6 h-6"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z"
-          />
-        </svg>
-      ),
+      icon: <HomeIcon />,
     },
     {
       path: "/orders",
@@ -98,30 +84,11 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 p-4 bg-gray-800 text-white transition-all duration-300 w-16 `}>
-
-      <div className="business">
-
-        {/* Business App Link */}
-        <div
-          className="flex items-center rounded-md text-white p-1" 
-          
-        >
-            <span className="text-2xl">
-              {/* Hamburger bar */}
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6" onClick={() => setIsCollapsed(isCollapsed)}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </span>
-        </div>
-      </div>
-
-      <hr className="my-3" />
-
+      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 items-center justify-center bg-gray-800 text-white transition-all duration-300 w-12 `}>
       {/* Navigation Links */}
       <ul className="nav flex-col mb-auto">
         {navItems.map(({ path, icon, label }) => (
-          <li key={path} className="nav-item flex items-center gap-2 py-3">
+          <li key={path} className="nav-item flex items-center gap-2 py-2">
             <Link to={path} className="flex items-center rounded-md p-2">
               {icon}
             </Link>
@@ -129,7 +96,7 @@ const Sidebar = () => {
         ))}
       </ul>
 
-      <hr className="my-4" />
+      <hr  />
 
       {/* Dropdown Menu */}
       <div className="dropdown">

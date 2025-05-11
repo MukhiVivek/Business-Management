@@ -5,7 +5,7 @@ import '../../App.css'
 
 const Customers = () => {
   return (
-    <div className='customers flex justify-center py-5 rounded-lg sm:rounded-lg'>
+    <div className='pl-12 customers flex justify-center rounded-lg w-full'>
       <div className="bg-gray-100 shadow-lg min-h-screen font-sans text-sm text-gray-900">
         <Top />
         <CustomersList />

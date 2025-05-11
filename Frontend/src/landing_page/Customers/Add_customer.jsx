@@ -16,11 +16,10 @@ function Add_customer() {
     function submit() {
     }
     
-    
     return (
-        <div className="min-h-screen bg-white px-6 py-10 mx-auto">
-            <h1 className="text-3xl font-semibold mb-6">Add customer</h1>
-            <div className="md:w-160 ">
+        <div className="flex min-h-screen justify-center bg-white px-6 py-10 mx-auto">
+            <div className="md:w-160">
+            <h1 className="text-3xl font-semibold mb-6">Add customer : </h1>
                 <div className="mb-4 ">
                     <label className="block mb-1">customer Name:</label>
                     <input
