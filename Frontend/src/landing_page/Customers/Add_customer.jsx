@@ -12,12 +12,13 @@ function Add_customer() {
     const customer_pincode = useRef();
     const customer_city = useRef();
 
-    function submit() {}
+    function submit() { }
 
     return (
         <div className="flex min-h-screen pl-25 bg-white px-6 py-5 mx-auto">
 
             <div className="w-full">
+
                 <h1 className="text-3xl font-semibold mb-6">Add Customer </h1>
 
                 {/* customer form */}
@@ -156,7 +157,6 @@ function Add_customer() {
                                 Add Customer
                             </button>
                         </div>
-                        
                     </div>
                 </div>
             </div>

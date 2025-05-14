@@ -1,10 +1,27 @@
 import React from 'react'
+import ProductsList from './ProductsList'
 
 const Products = () => {
   return (
-    <div className='flex'>
-      <div className="order p-3 m-3 rounded-2xl ml-64 md:ml-64 min-h-screen w-full">
-        This is the products page
+    <div className='pl-12 customers flex justify-center rounded-lg w-full'>
+      <div className="bg-gray-50 shadow-lg min-h-screen font-sans text-sm text-gray-900">
+        
+        {/* Top Section of Products */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
+            <div className="text-3xl font-semibold">
+                All Products 
+          </div>
+            <div className="flex items-center gap-3">
+                <button 
+                className="bg-blue-600 font-bold hover:bg-blue-700 text-white px-4 py-2 rounded"
+                onClick={() => window.location.href = '/products/add'}
+                > 
+                    + New
+                </button>
+            </div>
+        </div>
+
+        <ProductsList />
       </div>
     </div>
   )
