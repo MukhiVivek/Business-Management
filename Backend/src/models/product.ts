@@ -1,14 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema; 
 
-const itemSchema = new Schema({
+const productSchema = new Schema({
     name:String,
-    unit:String,
     price:Number,
-    item_type:String,
-    display_name:String,
+    product_type:String,
     description:String,
-    image:String,
+    stock:Number,
     creater_id:{
         type:Schema.Types.ObjectId,
         ref:"user"
@@ -20,6 +18,6 @@ const itemSchema = new Schema({
     }
 });
 
-const item = mongoose.model("item" , itemSchema);
+const product = mongoose.model("product" , productSchema);
 
-export default item;
+export default product;

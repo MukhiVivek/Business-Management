@@ -1,6 +1,6 @@
 import express from "express";
 import { checkuserlogin } from "../../checkuser";
-import item from "../../models/item";
+import item from "../../models/product";
 
 const router = express.Router({ mergeParams: true });
 
