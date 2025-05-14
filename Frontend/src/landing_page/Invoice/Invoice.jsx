@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import './../../App.css';
+import Modal from './Modal';
+import CustomerSelector from "./CustomerSelector";
 
 const Invoice = () => {
     const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0 }]);
@@ -24,6 +26,16 @@ const Invoice = () => {
     const calculateSubtotal = () =>
         items.reduce((sum, item) => sum + item.qty * item.price, 0);
 
+    // state management for customer popup
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+    // customer function
+    const handleCustomerClick = (customer) => {
+        setSelectedCustomer(customer);
+        setIsPopupOpen(false);
+    };
+
     return (
         <div className=" invoice pl-12 min-h-screen w-full mx-auto">
             <div className="flex min-h-screen">
@@ -33,9 +45,37 @@ const Invoice = () => {
 
                         {/* Client Informationn */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6  border-b border-gray-200">
+
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
+
                                 <h2 className=" text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Bill To</h2>
-                                <h4 className="text-sm">Customer Name :</h4>
+                                
+                                <div className="flex" >
+
+                                    <h4 className="text-sm">Customer :</h4>
+
+                                    {/* Search Customer Button here */} 
+                                    <button type="button" onClick={()=>setIsPopupOpen(true)} className="rounded-md text-sm px-2 ml-1 pml-2 cursor-pointer bg-blue-600 hover:bg-blue-800 text-white" >
+                                        Select Customer
+                                    </button>
+
+                                </div>
+
+                                {selectedCustomer && (
+                                    <div className="mt-2 text-sm text-gray-700">
+                                        <p><strong>Name:</strong> {selectedCustomer.name}</p>
+                                        <p><strong>Company:</strong> {selectedCustomer.company}</p>
+                                        <p><strong>Email:</strong> {selectedCustomer.email}</p>
+                                        <p><strong>Phone:</strong> {selectedCustomer.phone}</p>
+                                    </div>
+                                )}
+
+                                {isPopupOpen && (
+                                    <Modal onClose={() => setIsPopupOpen(false)}>
+                                        <CustomerSelector onSelect={handleCustomerClick} />
+                                    </Modal>
+                                )}
+
                             </div>
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
                                 <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Ship To</h2>
