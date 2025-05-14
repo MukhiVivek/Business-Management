@@ -1,8 +1,26 @@
 import express from "express";
-import user from "../models/user";
+import user from "../../models/user";
 import jwt from "jsonwebtoken";
+import { checkuserlogin } from "../../checkuser";
 
 const router = express.Router({ mergeParams: true });
+
+// Done : data , signup , signin
+
+// pading : edit , delete
+
+
+router.get("/data", checkuserlogin , async (req, res) => {
+    try{
+        // @ts-ignore
+        const userData = await user.findById(req.userId);
+        res.json(userData);
+    } catch(e) {
+        res.status(303).json({
+            message: "Not Authorized"
+        })  
+    }
+});
 
 router.post("/signup", async (req, res) => {
   // TODO: zod validation , hash the password

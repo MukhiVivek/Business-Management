@@ -13,6 +13,8 @@ const Invoice = () => {
         setItems(updatedItems);
     };
 
+    console.log(items);
+
     const addItem = () => {
         setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0 }]);
     };
@@ -21,7 +23,7 @@ const Invoice = () => {
         setItems(items.filter((item) => item.id !== id));
     };
 
-    const calculateSubtotal = () =>
+    const Subtotal = () => 
         items.reduce((sum, item) => sum + item.qty * item.price, 0);
 
     return (
@@ -34,7 +36,10 @@ const Invoice = () => {
                         {/* Client Informationn */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6  border-b border-gray-200">
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
-                                <h2 className=" text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Bill To</h2>
+                                <div className=" grid grid-cols-2">
+                                    <h2 className=" text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Bill To</h2>
+                                    <button className="bg-blue-600 text-white px-4 py-2 rounded">Customer</button>
+                                </div>
                                 <h4 className="text-sm">Customer Name :</h4>
                             </div>
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
@@ -157,7 +162,7 @@ const Invoice = () => {
                         <div className="bg-gray-50 p-6 border-t border-gray-200">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-gray-800">Subtotal:</h3>
-                                <h3 className="text-xl font-bold text-gray-700">₹ {calculateSubtotal().toFixed(2)}</h3>
+                                <h3 className="text-xl font-bold text-gray-700">₹ {Subtotal().toFixed(2)}</h3>
                             </div>
                         </div>
 
