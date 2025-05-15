@@ -8,10 +8,10 @@ const router = express.Router({ mergeParams: true });
 
 // Done : data , add
  
-router.post("/data" , checkuserlogin , async(req, res)=> {
+router.get("/data" , checkuserlogin , async(req, res)=> {
     try {
         // @ts-ignore
-        const data = await customer.find({ creater_id: req.userId })
+        const data = await customer.find()
 
         res.json({
             data

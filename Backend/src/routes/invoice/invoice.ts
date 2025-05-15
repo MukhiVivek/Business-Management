@@ -7,7 +7,7 @@ const router = express.Router({ mergeParams: true });
 router.get("/data", checkuserlogin , async (req, res) => {
     try{
         // @ts-ignore
-        const invoicedata = await invoice.find({creator_id : req.userId});
+        const invoicedata = await invoice.find({creator_id :req.userId});
         res.json(invoicedata);
     } catch(e) {
         res.status(303).json({
@@ -36,7 +36,7 @@ router.post("/add", checkuserlogin , async (req, res) => {
             invoiceDate,
             Subtotal,
             due_date,
-            status,
+            status: "Pending",
             description,
             items,
             // @ts-ignore
