@@ -1,57 +1,53 @@
 import React from "react";
-import './Dashboard.css'
+import "./Dashboard.css";
 import BarsDataset from "./BarChart/BarChart";
 import LatestTransaction from "./LatestTransaction";
 
 function Dashboard() {
-    return ( 
-        <>
-        <div className="flex">
-            {/* Sidebar is fixed, so add margin-left to the dashboard */}
-            <div className="dashboard rounded-2xl min-h-screen w-full">
-                
+  return (
+    <div className="flex">
 
-                {/* To collect & To pay */}
-                <div className="section-1 flex justify-evenly py-6">
-                    <h1 className="flex text-5xl">Dashboard</h1>
-                    {/* To collect */}
-                    <div className="to-collect flex bg-gray-100 text-black px-6 py-5 rounded-lg shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                        </svg>
-                        <div className="flex justify-evenly">
-                            <h1 className="text-xl text-left mx-10">To Collect</h1>
-                            <p className="text-2xl">₹12003</p>
-                        </div>
-                    </div>
+      {/* Main Content  */}
+      <div className="dashboard rounded-2xl min-h-screen w-full ml-15 p-8 bg-white">
 
-                    {/* To pay */}
-                    <div className="to-pay flex bg-gray-100 text-black px-6 py-5 rounded-lg shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
-                        </svg>
-                        <div className="flex justify-evenly">
-                            <h1 className="text-xl text-left mx-10">To Pay</h1>
-                            <p className="text-2xl">₹2100</p>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Latest Transaction & BarChart */}
-                <div className="section-2 flex justify-evenly">
-                    <div className="latest-transaction py-2 w-1/2">
-                        <LatestTransaction/>
-                    </div>
-
-                    <div className="bars-dataset flex justify-center w-1/3">
-                        <BarsDataset/>
-                    </div>
-                </div>
-
-            </div>
+        {/* Header */}
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h2 className="text-lg text-gray-500">Welcome Back!</h2>
+            <h1 className="text-2xl font-bold text-gray-800">Dhyan</h1>
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold text-gray-700">Dashboard</h1>
+          </div>
         </div>
-        </>
-     );
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            
+          {/* To Collect */}
+          <div className="bg-green-100 border border-green-300 rounded-xl p-6 shadow-sm flex justify-between items-center">
+            <div>
+              <h2 className="text-gray-600 text-lg font-medium">To Collect</h2>
+            </div>
+            <div className="text-2xl font-semibold text-green-700">₹1,000</div>
+          </div>
+
+          {/* To Pay */}
+          <div className="bg-red-100 border border-red-300 rounded-xl p-6 shadow-sm flex justify-between items-center">
+            <div>
+              <h2 className="text-gray-600 text-lg font-medium">To Pay</h2>
+            </div>
+            <div className="text-2xl font-semibold text-red-700">₹1,000</div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+          <LatestTransaction />
+          <BarsDataset />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Dashboard ;
+export default Dashboard;

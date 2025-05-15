@@ -9,9 +9,9 @@ const chartSetting = {
       label: 'Latest Sales (₹)',
     },
   ],
-  width: 800,
-  margin: { left: 90, right: 30, top: -100, bottom: -100 },
-  height: 275,
+  width: undefined,   
+  height: 300,
+  margin: { left: 70, right: 30, top: 20, bottom: 40 },
   sx: {
     [`.${axisClasses.left} .${axisClasses.label}`]: {
       transform: 'translate(-20px, 0px)',
@@ -21,17 +21,30 @@ const chartSetting = {
 
 export default function BarsDataset() {
   return (
-    <BarChart
-      className='items-center bg-gray-100 rounded-md shadow-md'
-      xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
-      dataset={dataset}
-      series={[ 
-        { dataKey: 'ahmedabad', label: 'Ahmedabad', valueFormatter },
-        { dataKey: 'mumbai', label: 'Mumbai', valueFormatter },
-        { dataKey: 'bangalore', label: 'Bangalore', valueFormatter },
-        { dataKey: 'odisha', label: 'Odisha', valueFormatter },
-      ]}
-      {...chartSetting}
-    />
+    <div className="w-full bg-white p-6 rounded-2xl shadow-md">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">Sales by Region</h2>
+      <div className="w-full overflow-x-auto">
+        <BarChart
+          className="rounded-xl"
+          xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
+          dataset={dataset}
+          series={[
+            {
+              dataKey: 'ahmedabad',
+              label: 'Ahmedabad',
+              valueFormatter,
+              color: '#34D399',   
+            },
+            {
+              dataKey: 'mumbai',
+              label: 'Mumbai',
+              valueFormatter,
+              color: '#60A5FA',   
+            },
+          ]}
+          {...chartSetting}
+        />
+      </div>
+    </div>
   );
 }

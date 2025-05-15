@@ -1,48 +1,36 @@
 export const dataset = [
     {
-      ahmedabad: 59,
-      mumbai: 57,
-      bangalore: 86,
-      odisha: 80,
+      ahmedabad: 590,
+      mumbai: 570,
       month: 'Jan',
     },
     {
-      ahmedabad: 50,
-      mumbai: 52,
-      bangalore: 78,
-      odisha: 28,
+      ahmedabad: 500,
+      mumbai: 502,
       month: 'Feb',
     },
     {
-      ahmedabad: 47,
-      mumbai: 53,
-      bangalore: 106,
-      odisha: 41,
+      ahmedabad: 407,
+      mumbai: 530,
       month: 'Mar',
     },
     {
-      ahmedabad: 54,
-      mumbai: 56,
-      bangalore: 92,
-      odisha: 73,
+      ahmedabad: 540,
+      mumbai: 506,
       month: 'Apr',
     },
     {
-      ahmedabad: 57,
-      mumbai: 69,
-      bangalore: 92,
-      odisha: 99,
+      ahmedabad: 507,
+      mumbai: 690,
       month: 'May',
     },
     {
-      ahmedabad: 60,
-      mumbai: 63,
-      bangalore: 103,
-      odisha: 144,
+      ahmedabad: 600,
+      mumbai: 630,
       month: 'June',
     },
   ];
   
   export function valueFormatter(value) {
-    return `${value}mm`;
+    return `₹${value}`;
   }
