@@ -30,6 +30,6 @@ export function useCustomer() {
         }
     }, []);
     
-    return {data ,getData};
+    return {data};
 }
 

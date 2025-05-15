@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import './../../App.css';
 import Modal from './Modal';
 import CustomerSelector from "./CustomerSelector";
+import { useCustomer } from "../../hooks/useCustomer";
 
 const Invoice = () => {
     const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0 }]);
     const [invoiceNo, setInvoiceNo] = useState(71);
     const [invoiceDate, setInvoiceDate] = useState("2025-04-02");
+
+    const {data:customerdata} = useCustomer();
 
     const handleItemChange = (id, field, value) => {
         const updatedItems = items.map((item) =>
@@ -72,7 +75,7 @@ const Invoice = () => {
 
                                 {isPopupOpen && (
                                     <Modal onClose={() => setIsPopupOpen(false)}>
-                                        <CustomerSelector onSelect={handleCustomerClick} />
+                                        <CustomerSelector onSelect={handleCustomerClick} customerData={customerdata}/>
                                     </Modal>
                                 )}
 

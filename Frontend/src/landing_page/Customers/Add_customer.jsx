@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useRef } from "react";
+import { BACKEND_URL } from "../../Config";
 
 function Add_customer() {
     const customer_name = useRef();
@@ -12,7 +14,29 @@ function Add_customer() {
     const customer_pincode = useRef();
     const customer_city = useRef();
 
-    function submit() { }
+    async function submit() {
+        await axios.post(BACKEND_URL + "/api/v1/customer/add", {
+            name: customer_name.current.value,
+            work_phone_number: customer_phone_number.current.value,
+            phone_number: customer_phone_number.current.value,
+            customer_type: "individual",
+            display_name: customer_name.current.value,
+            email: customer_name.current.value,
+            balance: customer_balance.current.value,
+            location: customer_location.current.value,
+            customer_billing_address: {
+                street_addres: customer_street_address.current.value,
+                state: customer_state.current.value,
+                pincode: customer_pincode.current.value,
+                city: customer_city.current.value,
+                area: customer_area.current.value,
+            } }, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        })  
+        alert("Customer Successfully Added");
+    }
 
     return (
         <div className="flex min-h-screen pl-25 bg-white px-6 py-5 mx-auto">
