@@ -29,7 +29,7 @@ function Dashboard() {
             <div>
               <h2 className="text-gray-600 text-lg font-medium">To Collect</h2>
             </div>
-            <div className="text-2xl font-semibold text-green-700">₹1,000</div>
+            <div className="text-2xl font-semibold text-green-700">₹10,789</div>
           </div>
 
           {/* To Pay */}
@@ -37,7 +37,7 @@ function Dashboard() {
             <div>
               <h2 className="text-gray-600 text-lg font-medium">To Pay</h2>
             </div>
-            <div className="text-2xl font-semibold text-red-700">₹1,000</div>
+            <div className="text-2xl font-semibold text-red-700">₹14,156</div>
           </div>
         </div>
 
