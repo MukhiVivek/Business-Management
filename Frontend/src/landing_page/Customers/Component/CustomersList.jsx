@@ -18,18 +18,7 @@ function CustomersList({customerdata}) {
           </tr>
         </thead>
         <tbody className="divide-y">
-          {customerdata.map((customer) => (
-            <tr key={customer.id }>
-              {/* <td className="px-4 py-4"><input type="checkbox" /></td> */}
-              <td className="px-4 py-4 text-blue-600 font-medium cursor-pointer">{customer.name}</td>
-              <td className="px-4 py-4">{customer.company_name || '—'}</td>
-              <td className="px-4 py-4">{customer.email || '—'}</td>
-              <td className="px-4 py-4">+91 {customer.phone_number}</td>
-              <td className="px-4 py-4">₹{customer.receivables || '0.00'}</td>
-              <td className="px-4 py-4">₹{customer.unused_credits || '0.00'}</td>
-              <td className="px-4 py-4"><i className="fas fa-eye cursor-pointer text-gray-600"></i></td>
-            </tr>
-          ))}
+          
         </tbody>
       </table>
     </div>

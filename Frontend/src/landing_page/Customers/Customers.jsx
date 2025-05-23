@@ -1,4 +1,4 @@
-import Top from './Component/Top'
+import Top from './Component/Top.tsx'
 import CustomersList from './Component/CustomersList'
 import '../../App.css'
 import { useCustomer } from '../../hooks/useCustomer'
