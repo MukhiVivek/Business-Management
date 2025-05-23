@@ -18,18 +18,22 @@ function App() {
         <Sidebar/>
         <div>
           <Routes>
-            {/* Pages */}
             <Route exact path='/' element={<SignIn />} />
             <Route exact path='/signin' element={<SignIn />} />
             <Route exact path='/signup' element={<SignUp/>} />
             <Route exact path='/invoice' element={<Invoice/>} />
             <Route exact path='/dashboard' element={<Dashboard/>} />
+
             <Route exact path='/products' element={<Products/>} />
+            <Route exact path='/products/add' element={<AddProducts/>} />
+            
             <Route exact path='/orders' element={<Orders/>} />
+
             <Route exact path='/customers' element={<Customers/>} />
+
             {/* Sub Pages */}
             <Route exact path='/customers/add' element={<Add_customer/>} />
-            <Route exact path='/products/add' element={<AddProducts/>} />
+
           </Routes>
         </div>
       </div>

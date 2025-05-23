@@ -1,4 +1,3 @@
-import React, { use } from 'react'
 import Top from './Component/Top'
 import CustomersList from './Component/CustomersList'
 import '../../App.css'
@@ -12,7 +11,7 @@ const Customers = () => {
     <div className='pl-12 customers flex justify-center rounded-lg w-full'>
       <div className="bg-gray-100 shadow-lg min-h-screen font-sans text-sm text-gray-900">
         <Top />
-        <CustomersList customerdata={customerdata}/>
+        <CustomersList />
       </div>
     </div>
   )
