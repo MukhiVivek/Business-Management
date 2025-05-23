@@ -21,7 +21,7 @@ function Add_customer() {
             phone_number: customer_phone_number.current.value,
             customer_type: "individual",
             display_name: customer_name.current.value,
-            email: customer_name.current.value,
+            // email: ,
             balance: customer_balance.current.value,
             location: customer_location.current.value,
             customer_billing_address: {

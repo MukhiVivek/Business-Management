@@ -1,13 +1,13 @@
 import '../../../App.css'
 
-function CustomersList() {
-  return (
+function CustomersList({customerdata}) {
 
+  return (
     <div className="customers overflow-y-auto">
       <table className="w-full table-fixed border-t text-left">
         <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b dark:bg-gray-100">
           <tr>
-            <th className="px-4 py-3"><i className="fas fa-sliders-h"></i></th>
+            {/* <th className="px-4 py-3"><i className="fas fa-sliders-h"></i></th> */}
             <th className="px-4 py-3">Name <i className="fas fa-sort text-xs ml-1"></i></th>
             <th className="px-4 py-3">Company Name</th>
             <th className="px-4 py-3">Email</th>
@@ -18,28 +18,18 @@ function CustomersList() {
           </tr>
         </thead>
         <tbody className="divide-y">
-          <tr className="hover:bg-gray-50">
-            <td className="px-4 py-4"><input type="checkbox" /></td>
-            <td className="px-4 py-4 text-blue-600 font-medium cursor-pointer">Danev</td>
-            <td className="px-4 py-4">Danev</td>
-            <td className="px-4 py-4">m</td>
-            <td className="px-4 py-4">123456789</td>
-            <td className="px-4 py-4">₹0.00</td>
-            <td className="px-4 py-4">₹0.00</td>
-            <td className="px-4 py-4"></td>
-          </tr>
-          <tr className="hover:bg-gray-50">
-            <td className="px-4 py-4">
-              <input type="checkbox" />
-            </td>
-            <td className="px-4 py-4 text-blue-600 font-medium cursor-pointer">OSIYA HYPER RETAIL LIMITED</td>
-            <td className="px-4 py-4">OSIYA HYPER RETAIL LIMITED</td>
-            <td className="px-4 py-4"></td>
-            <td className="px-4 py-4">7096036829</td>
-            <td className="px-4 py-4">₹0.00</td>
-            <td className="px-4 py-4">₹0.00</td>
-            <td className="px-4 py-4"></td>
-          </tr>
+          {customerdata.map((customer) => (
+            <tr key={customer.id }>
+              {/* <td className="px-4 py-4"><input type="checkbox" /></td> */}
+              <td className="px-4 py-4 text-blue-600 font-medium cursor-pointer">{customer.name}</td>
+              <td className="px-4 py-4">{customer.company_name || '—'}</td>
+              <td className="px-4 py-4">{customer.email || '—'}</td>
+              <td className="px-4 py-4">+91 {customer.phone_number}</td>
+              <td className="px-4 py-4">₹{customer.receivables || '0.00'}</td>
+              <td className="px-4 py-4">₹{customer.unused_credits || '0.00'}</td>
+              <td className="px-4 py-4"><i className="fas fa-eye cursor-pointer text-gray-600"></i></td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

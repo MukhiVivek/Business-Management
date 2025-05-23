@@ -1,3 +1,5 @@
+import invoice from "./invoice";
+
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema; 
 
@@ -16,6 +18,10 @@ const customerSchema = new Schema({
         pincode:Number,
         city:String,
         area:String,
+    },
+    invoice:{
+        type: Number,
+        default: 0
     },
     creater_id:{
         type:Schema.Types.ObjectId,

@@ -28,10 +28,12 @@ async function main() {
 import user from "./routes/user/user";
 import customer from "./routes/customer/customer"
 import invoice from "./routes/invoice/invoice"
+import product from "./routes/produtct/product"
 
 app.use("/api/v1/user", user);
 app.use("/api/v1/customer", customer);
 app.use("/api/v1/invoice", invoice);
+app.use("/api/v1/product", product);
  
 app.get("/", (req, res) =>{
   res.send("Server is on test-1");

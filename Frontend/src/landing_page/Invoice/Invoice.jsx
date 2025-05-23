@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './../../App.css';
 import Modal from './Modal';
 import CustomerSelector from "./CustomerSelector";
 import { useCustomer } from "../../hooks/useCustomer";
+import axios from "axios";
+import { BACKEND_URL } from "../../Config";
 
 const Invoice = () => {
-    const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0 }]);
-    const [invoiceNo, setInvoiceNo] = useState(71);
-    const [invoiceDate, setInvoiceDate] = useState("2025-04-02");
 
-    const {data:customerdata} = useCustomer();
+    // state management for customer popup
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+    // customer function
+    const handleCustomerClick = (customer) => {
+        setSelectedCustomer(customer);
+        setIsPopupOpen(false);
+    };
+
+    const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0 }]);
+    const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
+    const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10));
+    const [Subtotal, setSubtotal] = useState(0);
+    console.log(items)
+
+    const { data: customerdata } = useCustomer();
 
     const handleItemChange = (id, field, value) => {
         const updatedItems = items.map((item) =>
@@ -26,64 +41,82 @@ const Invoice = () => {
         setItems(items.filter((item) => item.id !== id));
     };
 
-    const calculateSubtotal = () =>
-        items.reduce((sum, item) => sum + item.qty * item.price, 0);
-
-    // state management for customer popup
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
-
-    // customer function
-    const handleCustomerClick = (customer) => {
-        setSelectedCustomer(customer);
-        setIsPopupOpen(false);
+    useEffect(() => {
+        const calculateSubtotal = items => {
+        setSubtotal( items.reduce((sum, item) => {
+            const qty = Number(item.qty);
+            const price = Number(item.price);
+            return sum + (qty * price);
+        }, 0));
     };
+    calculateSubtotal(items);
+    }, [items]);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey) {
+                console.log("Hello");
+                addItem(); // or any other action
+            }
+        };
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [addItem]);
+
+
+    const submit = async () => {
+        await axios.post(BACKEND_URL + "/api/v1/invoice/add", {
+            invoice_number: invoiceNo,
+            invoice_date: invoiceDate,
+            customer_id: selectedCustomer?._id,
+            Subtotal: Subtotal,
+            // description: "",
+            items: items,
+        }, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        })
+        alert("Invoice Successfully Added");
+    }
+
+
 
     return (
         <div className=" invoice pl-12 min-h-screen w-full mx-auto">
             <div className="flex min-h-screen">
                 <div className="w-full mx-auto ">
                     <div className="bg-white overflow-hidden">
-                        
+
 
                         {/* Client Informationn */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6  border-b border-gray-200">
 
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
-
-                                <h2 className=" text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Bill To</h2>
-                                
-                                <div className="flex" >
-
-                                    <h4 className="text-sm">Customer :</h4>
-
-                                    {/* Search Customer Button here */} 
-                                    <button type="button" onClick={()=>setIsPopupOpen(true)} className="rounded-md text-sm px-2 ml-1 pml-2 cursor-pointer bg-blue-600 hover:bg-blue-800 text-white" >
+                                <div className="text-lg flex justify-between font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                                    <h2 className=" ">Bill To</h2>
+                                    {/* Search Customer Button here */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPopupOpen(true)}
+                                        className="rounded-md  justify-end text-sm px-2 ml-1 pml-2 cursor-pointer bg-blue-600 hover:bg-blue-800 text-white"
+                                    >
                                         Select Customer
                                     </button>
-
                                 </div>
-
-                                {selectedCustomer && (
-                                    <div className="mt-2 text-sm text-gray-700">
-                                        <p><strong>Name:</strong> {selectedCustomer.name}</p>
-                                        <p><strong>Company:</strong> {selectedCustomer.company}</p>
-                                        <p><strong>Email:</strong> {selectedCustomer.email}</p>
-                                        <p><strong>Phone:</strong> {selectedCustomer.phone}</p>
-                                    </div>
-                                )}
+                                <h4 className="text-sm">Customer : <b>{selectedCustomer?.name} </b> </h4>
 
                                 {isPopupOpen && (
                                     <Modal onClose={() => setIsPopupOpen(false)}>
-                                        <CustomerSelector onSelect={handleCustomerClick} customerData={customerdata}/>
+                                        <CustomerSelector onSelect={handleCustomerClick} customerData={customerdata} />
                                     </Modal>
                                 )}
 
                             </div>
                             <div className="space-y-3 p-6 border-r-1 border-gray-200">
                                 <h2 className="text-lg font-semibold text-gray-800 border-b border-gray-200 pb-2">Ship To</h2>
-                                <h5 className="text-sm">Phone Name : </h5>
-                                <h5 className="text-sm">Address : </h5>
+                                <h5 className="text-sm">Phone Name : <b> {selectedCustomer?.phone_number} </b></h5>
+                                <h5 className="text-sm">Address : <b>{selectedCustomer && selectedCustomer?.customer_billing_address?.street_addres && (selectedCustomer?.customer_billing_address?.street_addres + " , " + selectedCustomer?.customer_billing_address?.area + " , " + selectedCustomer?.customer_billing_address?.city + " , " + selectedCustomer?.customer_billing_address?.state + "-" + selectedCustomer?.customer_billing_address?.pincode)} </b></h5>
                             </div>
 
 
@@ -200,13 +233,15 @@ const Invoice = () => {
                         <div className="bg-gray-50 p-6 border-t border-gray-200">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-gray-800">Subtotal:</h3>
-                                <h3 className="text-xl font-bold text-gray-700">₹ {calculateSubtotal().toFixed(2)}</h3>
+                                <h3 className="text-xl font-bold text-gray-700">₹ {Subtotal.toFixed(2)}</h3>
                             </div>
                         </div>
 
                         {/* Download Button */}
                         <div className="text-center p-6 bg-gray-50 border-gray-200">
-                            <button className=" cursor-pointer bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition shadow-md">
+                            <button
+                                onClick={submit}
+                                className=" cursor-pointer bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition shadow-md">
                                 Download Invoice
                             </button>
                         </div>

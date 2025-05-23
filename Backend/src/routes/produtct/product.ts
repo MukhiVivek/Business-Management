@@ -1,6 +1,6 @@
 import express from "express";
 import { checkuserlogin } from "../../checkuser";
-import item from "../../models/product";
+import product from "../../models/product";
 
 const router = express.Router({ mergeParams: true });
 
@@ -8,10 +8,10 @@ const router = express.Router({ mergeParams: true });
 
 // Done :  data , add 
  
-router.post("/data" , checkuserlogin , async(req, res)=> {
+router.get("/data" , checkuserlogin , async(req, res)=> {
     try {
         // @ts-ignore
-        const data = await item.find({ creater_id: req.userId })
+        const data = await product.find({ creater_id: req.userId })
 
         res.json({
             data
@@ -30,17 +30,17 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             name,
             unit,
             price,
-            item_type,
+            product_type,
             display_name,
             description,
             image,
         } = req.body;
         
-        const newCustomer =await item.create({
+        const newCustomer =await product.create({
             name,
             unit,
             price,
-            item_type,
+            product_type,
             display_name,
             description,
             image,

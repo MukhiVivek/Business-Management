@@ -1,7 +1,11 @@
 import React from 'react'
 import ProductsList from './ProductsList'
+import { useProduct } from '../../hooks/useProduct';
 
 const Products = () => {
+
+   const {data:products} = useProduct();
+  
   return (
     <div className='pl-12 customers flex justify-center rounded-lg w-full'>
       <div className="bg-gray-50 shadow-lg min-h-screen font-sans text-sm text-gray-900">
@@ -21,7 +25,7 @@ const Products = () => {
             </div>
         </div>
 
-        <ProductsList />
+        <ProductsList data={products} />
       </div>
     </div>
   )

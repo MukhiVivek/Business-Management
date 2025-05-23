@@ -1,4 +1,6 @@
+import axios from "axios";
 import { useRef } from "react";
+import { BACKEND_URL } from "../../Config";
 
 function AddProducts() {
     const product_name = useRef();
@@ -7,7 +9,20 @@ function AddProducts() {
     const product_description = useRef();
     const product_stock = useRef();
 
-    function submit() { }
+    async function submit() { 
+        await axios.post(BACKEND_URL + "/api/v1/product/add", {
+            name: product_name.current.value,
+            price: product_price.current.value,
+            product_type: product_type.current.value,
+            description: product_description.current.value,
+            stock: product_stock.current.value,
+        }, {
+            headers: {
+                token: localStorage.getItem("token")
+            }
+        })
+        alert("Product Successfully Added");
+    }
 
     return (
         <div className="flex min-h-screen pl-25 bg-white px-6 py-5 mx-auto">

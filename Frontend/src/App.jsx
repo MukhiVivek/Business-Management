@@ -27,7 +27,6 @@ function App() {
             <Route exact path='/products' element={<Products/>} />
             <Route exact path='/orders' element={<Orders/>} />
             <Route exact path='/customers' element={<Customers/>} />
-
             {/* Sub Pages */}
             <Route exact path='/customers/add' element={<Add_customer/>} />
             <Route exact path='/products/add' element={<AddProducts/>} />

@@ -6,35 +6,18 @@ const invoiceSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:"customer",
     },
-    invoice_number:{
-        type:String,
-        required:true
-    },
-    invoice_date:{
-        type:Date,
-        required:true
-    },
-    due_date:{
-        type:Date,
-        required:true
-    },
-    Subtotal:{
-        type:Number,
-        required:true
-    },
-    status:{
-        type:String,
-        enum:["paid" , "unpaid"],
-        default:"unpaid"
-    },
+    invoice_number:Number,
+    invoice_date:Date,
+    due_date:Date,
+    Subtotal:Number,
+    status:String,
     description:String,
     items:[{
-        item_id:{
-            type:Schema.Types.ObjectId,
-            ref:"item"
-        },
+        id:Number,
+        name:String,
         qty:Number,
-        price:Number
+        price:Number,
+        amount:Number
     }],
     creater_id:{
         type:Schema.Types.ObjectId,

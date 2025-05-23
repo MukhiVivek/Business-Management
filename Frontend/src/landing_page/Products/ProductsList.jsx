@@ -1,6 +1,4 @@
-import React from 'react'
-
-function ProductsList() {
+function ProductsList({data}) {
   return (
     <div className='products overflow-y-auto'>
         <table className="w-full table-fixed border-t text-left">
@@ -16,14 +14,17 @@ function ProductsList() {
                 </tr>
             </thead>
             <tbody className="divide-y">
+                {data.map((product) => (
                 <tr className='hover:bg-gray-50 font-semibold'>
                     <td className="px-4 py-4"><input type="checkbox" /></td>
-                    <td className="px-4 py-4">SwamiNarayan Lot</td>
-                    <td className="px-4 py-4">₹1000</td>
-                    <td className='px-4 py-4'>Lot</td>
-                    <td className="px-4 py-4">description of lot</td>
-                    <td className="px-4 py-4">20</td>
+                    <td className="px-4 py-4">{product.name}</td>
+                    <td className="px-4 py-4">{product.price}</td>
+                    <td className='px-4 py-4'>{product.product_type}</td>
+                    <td className="px-4 py-4">{product.description}</td>
+                    <td className="px-4 py-4">{product.stock}</td>
+                    <td className="px-4 py-4"><i className="fas fa-eye cursor-pointer text-gray-600"></i></td>
                 </tr>
+                ))}
             </tbody>
         </table>
     </div>
