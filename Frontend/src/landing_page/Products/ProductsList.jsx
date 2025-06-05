@@ -1,6 +1,9 @@
+import '../.././App.css';
+import React from "react";
+
 function ProductsList({data}) {
   return (
-    <div className='products overflow-y-auto sm-rounded-lg'>
+    <div className='products sm-rounded-lg pt-4'>
         <table className="w-full text-black text-left">
             <thead className="bg-white text-gray-500 uppercase text-xs tracking-wider dark:bg-gray-100">
                 <tr>
