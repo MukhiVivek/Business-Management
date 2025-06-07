@@ -10,8 +10,8 @@ const Products = () => {
     <div className="rounded-2xl min-h-screen ml-13 p-8 bg-white">
       <div class="flex justify-between items-start mb-8">
         <div>
-          <h2 class="text-lg text-gray-500">Product Tag Line 2</h2>
-          <h1 class="text-2xl font-bold text-gray-800">Product Tag Line 1</h1>
+          <h2 class="text-lg text-gray-500">Track Your</h2>
+          <h1 class="text-2xl font-bold text-gray-800">Inventory</h1>
         </div>
         <div>
           <h1 class="text-xl font-semibold text-gray-700">Products</h1>
