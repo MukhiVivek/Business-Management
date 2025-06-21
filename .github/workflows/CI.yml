@@ -25,21 +25,21 @@ jobs:
       # Backend Tests
       - name: Install backend dependencies
         run: |
-          cd backend
+          cd Backend
           npm install
 
       - name: Run backend tests
         run: |
-          cd backend
+          cd Backend
           npm test
 
       # Frontend Tests
       - name: Install frontend dependencies
         run: |
-          cd frontend
+          cd Frontend
           npm install
 
       - name: Run frontend tests
         run: |
-          cd frontend
+          cd Frontend
           npm test
