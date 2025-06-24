@@ -85,6 +85,11 @@ const Sidebar = () => {
   return (
     <div
       className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 items-center justify-center bg-gray-800 text-white transition-all duration-300 w-12 `}>
+      {/* Logo */}
+      <div className="logo mb-4">
+        {/* Logo */}
+      </div>
+        
       {/* Navigation Links */}
       <ul className="nav flex-col mb-auto">
         {navItems.map(({ path, icon, label }) => (

@@ -10,13 +10,15 @@ import Add_customer from './landing_page/Customers/Add_customer';
 import SignIn from './landing_page/LoginPag/SignIn';
 import SignUp from './landing_page/LoginPag/Signup';
 import AddProducts from './landing_page/Products/AddProducts';
+import Topnavbar from './landing_page/includes/Sidebar/Topbar/Topnavbar';
 
 function App() {
   return (
     <Router>
       <div className="App min-h-screen">
+        <Topnavbar />
         <Sidebar/>
-        <div>
+        <div className='bg-gray-100 min-h-screen '>
           <Routes>
             <Route exact path='/' element={<SignIn />} />
             <Route exact path='/signin' element={<SignIn />} />
