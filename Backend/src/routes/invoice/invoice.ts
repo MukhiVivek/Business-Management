@@ -2,6 +2,8 @@ import express from "express";
 import { checkuserlogin } from "../../checkuser";
 import invoice from "../../models/invoice";
 import customer from "../../models/customer";
+import { generateInvoicePdf } from "./pdf";
+import fs from "fs";
 
 const router = express.Router({ mergeParams: true });
 
@@ -69,6 +71,29 @@ router.post("/add", checkuserlogin , async (req, res) => {
         })
     }
 })
+
+router.get('/:id/pdf', async (req : any , res : any) => {
+    try {
+        const id = req.params.id;
+        const data = await invoice.findById(id).populate('customers');
+        if (!data) {
+            return res.status(404).send("Invoice not found");
+        }
+
+        const outputPart = await generateInvoicePdf(data as any);
+
+        fs.readFile(outputPart, (err: NodeJS.ErrnoException | null, fileData: Buffer) => {
+            if (err) {
+                res.status(500).send("Error reading output PDF.");
+            } else {
+                res.setHeader("Content-Type", "application/pdf");
+                res.end(fileData);
+            }
+        });
+    } catch (err: any) {
+        res.status(500).send(`Error during conversion: ${err.message}`);
+    }
+});
 
 
 export default router;

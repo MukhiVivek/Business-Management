@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema; 
+import mongoose, { Schema } from "mongoose";
 
 const invoiceSchema = new Schema({
     customer_id:{
