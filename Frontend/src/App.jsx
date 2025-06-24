@@ -11,6 +11,7 @@ import SignIn from './landing_page/LoginPag/SignIn';
 import SignUp from './landing_page/LoginPag/Signup';
 import AddProducts from './landing_page/Products/AddProducts';
 import Topnavbar from './landing_page/includes/Sidebar/Topbar/Topnavbar';
+import Settings from './landing_page/includes/Sidebar/Topbar/Settings';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route exact path='/' element={<SignIn />} />
             <Route exact path='/signin' element={<SignIn />} />
             <Route exact path='/signup' element={<SignUp/>} />
+            <Route exact path='/settings' element={<Settings/>} />
             <Route exact path='/invoice' element={<Invoice/>} />
             <Route exact path='/dashboard' element={<Dashboard/>} />
 

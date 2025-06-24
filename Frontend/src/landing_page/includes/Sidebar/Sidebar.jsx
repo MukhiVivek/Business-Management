@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./Sidebar.css";
-import Dropdown from "./Dropdown/Dropdown";
 import { TbFileInvoice } from "react-icons/tb";
+import { Link } from "react-router-dom";
 import HomeIcon from "../../../icon/HomeIcon";
+import "./Sidebar.css";
+import Logo from "../../../assets/Logo.png";
 
 const Sidebar = () => {
   // Navigation items with SVG icons and Path
@@ -11,9 +10,7 @@ const Sidebar = () => {
     {
       path: "/invoice",
       label: "Invoice",
-      icon: (
-        <TbFileInvoice className="text-2xl" />
-      )
+      icon: <TbFileInvoice className="text-2xl" />,
     },
     {
       path: "/dashboard",
@@ -84,12 +81,13 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 items-center justify-center bg-gray-800 text-white transition-all duration-300 w-12 `}>
+      className={`sidebar fixed left-0 top-0 h-screen flex flex-col flex-shrink-0 items-center justify-center bg-gray-800 text-white transition-all duration-300 w-12 `}
+    >
       {/* Logo */}
-      <div className="logo mb-4">
-        {/* Logo */}
+      <div className="logo mb-4 mt-4">
+        <img src={Logo} alt="Logo" style={{ width: "32px", height: "32px" }} />
       </div>
-        
+
       {/* Navigation Links */}
       <ul className="nav flex-col mb-auto">
         {navItems.map(({ path, icon, label }) => (
@@ -101,13 +99,7 @@ const Sidebar = () => {
         ))}
       </ul>
 
-      <hr  />
-
-      {/* Dropdown Menu */}
-      <div className="dropdown">
-        <Dropdown />
-      </div>
-      
+      <hr />
     </div>
   );
 };
