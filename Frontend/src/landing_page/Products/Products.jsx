@@ -1,34 +1,42 @@
-import React from 'react'
-import ProductsList from './ProductsList'
-import { useProduct } from '../../hooks/useProduct';
+import React from "react";
+import ProductsList from "./ProductsList";
+import { useProduct } from "../../hooks/useProduct";
 
 const Products = () => {
+  const { data: products } = useProduct();
 
-   const {data:products} = useProduct();
-  
   return (
-    <div className='pl-12 customers flex justify-center rounded-lg m-7'>
-      <div className="bg-white w-full sm:rounded-lg shadow-lg text-sm">
-        
-        {/* Top Section */}
-        <div className="flex items-center justify-between px-6 py-2">
-            <div className="text-3xl font-semibold">
-                All Products 
-          </div>
-            <div className="flex items-center gap-3">
-                <button 
-                className="bg-blue-600 font-bold hover:bg-blue-700 text-white px-4 py-2 rounded shadow-md hover:shadow-lg"
-                onClick={() => window.location.href = '/products/add'}
-                > 
-                    + New
-                </button>
-            </div>
+    <div className="pl-18 pt-2 pr-9 min-h-screen block rounded-lg w-full">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-2 mt-1">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="🔍 Search"
+            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <h1 className="text-md mt-1">Count: {products.length}</h1>
         </div>
-
+        <div>
+          <h1 className="text-xl font-semibold text-gray-700">Products</h1>
+        </div>
+      </div>
+      <div className="min-h-screen font-sans text-sm">
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-semibold">Products List</h1>
+          <div className="flex items-center gap-2">
+            <button
+              className="hover:bg-blue-700 bg-blue-600 hover:shadow-5xl px-2 text-white mb-2 shadow-md cursor-pointer"
+              onClick={() => (window.location.href = "/products/add")}
+            >
+              <h1 className="text-[17px] py-1">✚ New</h1>
+            </button>
+          </div>
+        </div>
         <ProductsList data={products} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Products
+export default Products;

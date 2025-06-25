@@ -17,16 +17,15 @@ const Customers = () => {
             <input
               type="text"
               placeholder="🔍 Search"
-              className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 rounded-md focus:ring-blue-500"
+              className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {/* <FaHandshake size={30} className='inline'/> */}
             <h1 className='text-md mt-1'>Count: {customerdata.length}</h1>
           </div>
           <div>
             <h1 className="text-xl font-semibold text-gray-700">Customers</h1>
           </div>
         </div>
-      <div className="min-h-screen font-sans text-sm text-gray-900">
+      <div className="min-h-screen font-sans text-sm">
         <Top />
         <CustomersList />
       </div>
