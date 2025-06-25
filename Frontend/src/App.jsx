@@ -19,7 +19,7 @@ function App() {
       <div className="App min-h-screen">
         <Topnavbar />
         <Sidebar/>
-        <div className='bg-gray-100 min-h-screen '>
+        <div className="min-h-screen">
           <Routes>
             <Route exact path='/' element={<SignIn />} />
             <Route exact path='/signin' element={<SignIn />} />

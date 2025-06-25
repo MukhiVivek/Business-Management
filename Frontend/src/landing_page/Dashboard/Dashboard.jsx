@@ -8,16 +8,16 @@ function Dashboard() {
     <div className="flex">
 
       {/* Main Content  */}
-      <div className="dashboard rounded-2xl min-h-screen w-full ml-15 p-8 bg-white">
+      <div className="dashboard rounded-2xl min-h-screen w-full ml-11 p-5">
 
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h2 className="text-lg text-gray-500">Welcome Back!</h2>
-            <h1 className="text-2xl font-bold text-gray-800">Dhyan</h1>
+            <h2 className="text-md text-gray-500">Welcome Back!</h2>
+            <h1 className="text-xl font-bold text-gray-800">Dhyan</h1>
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-gray-700">Dashboard</h1>
+            <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
           </div>
         </div>
 

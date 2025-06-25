@@ -4,8 +4,8 @@ function CustomersList({customerdata}) {
 
   return (
     <div className="customers overflow-y-auto">
-      <table className="w-full table-fixed border-t text-left">
-        <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b dark:bg-gray-100">
+      <table className="w-full table-fixed border-t text-left rounded-sm">
+        <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider border-b border-l border-r dark:bg-gray-100">
           <tr>
             {/* <th className="px-4 py-3"><i className="fas fa-sliders-h"></i></th> */}
             <th className="px-4 py-3">Name <i className="fas fa-sort text-xs ml-1"></i></th>
