@@ -105,7 +105,7 @@ function AddProducts() {
               <button
                 type="submit"
                 onClick={submit}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 mx-auto"
+                className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-2 px-4 mx-auto"
               >
                 Add Product
               </button>

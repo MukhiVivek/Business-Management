@@ -2,7 +2,6 @@ import Top from './Component/Top.tsx'
 import CustomersList from './Component/CustomersList'
 import '../../App.css'
 import { useCustomer } from '../../hooks/useCustomer'
-import { FaHandshake } from "react-icons/fa6";
 
 const Customers = () => {
 
@@ -19,7 +18,7 @@ const Customers = () => {
               placeholder="🔍 Search"
               className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <h1 className='text-md mt-1'>Count: {customerdata.length}</h1>
+            <h1 className='text-md mt-1'>Total Count: {customerdata.length}</h1>
           </div>
           <div>
             <h1 className="text-xl font-semibold text-gray-700">Customers</h1>
