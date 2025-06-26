@@ -5,7 +5,7 @@ import Dropdown from "../Dropdown/Dropdown";
 const Topnavbar = () => {
 
   return (
-    <div className="flex gap-x-2 justify-end h-12 w-full items-center  bg-gray-800 text-white px-4">
+    <div className="sticky top-0 flex gap-x-2 justify-end h-12 w-full items-center  bg-gray-800 text-white px-4">
 
       {/* Theme Change */}
       <div className="theme flex w-8 h-8">
