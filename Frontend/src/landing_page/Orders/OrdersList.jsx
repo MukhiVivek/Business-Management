@@ -1,13 +1,27 @@
 import React from "react";
 
 const OrdersList = () => {
+  // Checks all the row entries
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll(
+      'input[name="customerCheckbox"]'
+    );
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+  };
+
   return (
     <div className="orders">
       <table className="w-full border-t text-left rounded-sm">
         <thead className="bg-gray-50 text-center text-gray-500 uppercase text-xs  border-b border-l border-r dark:bg-gray-100">
           <tr>
             <th className="px-2 py-1 pl-2">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                name="customerCheckbox"
+                onChange={handleSelectAll}
+              />
             </th>
             <th className="px-4 py-3">Order No</th>
             <th className="px-4 py-3">Date Created</th>
@@ -21,7 +35,7 @@ const OrdersList = () => {
           {/* Mock entries */}
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#001</td>
             <td className="px-4 py-3">12/06/2025</td>
@@ -32,7 +46,7 @@ const OrdersList = () => {
           </tr>
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#002</td>
             <td className="px-4 py-3">14/06/2025</td>
@@ -44,7 +58,7 @@ const OrdersList = () => {
 
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#003</td>
             <td className="px-4 py-3">16/06/2025</td>
@@ -56,7 +70,7 @@ const OrdersList = () => {
 
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#004</td>
             <td className="px-4 py-3">18/06/2025</td>

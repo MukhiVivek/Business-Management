@@ -2,13 +2,28 @@ import "../../../App.css";
 import { BsSliders } from "react-icons/bs";
 
 function CustomersList({ customerdata }) {
+  
+  // Checks all the row entries
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll(
+      'input[name="customerCheckbox"]'
+    );
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+  };
+
   return (
     <div className="customers">
       <table className="w-full border-t text-left rounded-sm">
         <thead className="bg-gray-50 text-center text-gray-500 uppercase text-xs  border-b border-l border-r dark:bg-gray-100">
           <tr>
             <th className="px-2 py-1 pl-2">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                name="customerCheckbox"
+                onChange={handleSelectAll}
+              />
             </th>
             <th className="px-4 py-3">Customer Name</th>
             <th className="px-4 py-3">Company Name</th>
@@ -22,7 +37,7 @@ function CustomersList({ customerdata }) {
           {/* Mock entries */}
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3">Lokeshbhai Ramesh Divani</td>
             <td className="px-4 py-3">Lokesh Gruh Udhyog</td>
@@ -33,7 +48,7 @@ function CustomersList({ customerdata }) {
           </tr>
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3">Mehulbhai Suresh Patel</td>
             <td className="px-4 py-3">Patel Agro Exports</td>
@@ -45,7 +60,7 @@ function CustomersList({ customerdata }) {
 
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3">Jinalben Arvind Shah</td>
             <td className="px-4 py-3">Jinal Textiles</td>

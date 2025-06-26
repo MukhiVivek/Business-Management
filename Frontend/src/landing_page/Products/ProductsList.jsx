@@ -2,13 +2,24 @@ import "../../App.css";
 import { BsSliders } from "react-icons/bs";
 
 function ProductsList({ data }) {
+  
+  // Checks all the row entries
+  const handleSelectAll = (e) => {
+    const checkboxes = document.querySelectorAll(
+      'input[name="customerCheckbox"]'
+    );
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = e.target.checked;
+    });
+  };
+
   return (
     <div className="products">
       <table className="w-full border-t rounded-sm">
         <thead className="bg-gray-50 text-center text-gray-500 uppercase text-xs  border-b border-l border-r dark:bg-gray-100">
           <tr>
             <th className="px-2 py-1 pl-2">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" onChange={handleSelectAll} />
             </th>
             <th className="px-4 py-3">Product Id</th>
             <th className="px-4 py-3">Product Name</th>
@@ -22,7 +33,7 @@ function ProductsList({ data }) {
           {/* Mock Entries */}
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#101</td>
             <td className="px-4 py-3">Swaminarayan Wheat</td>
@@ -34,7 +45,7 @@ function ProductsList({ data }) {
 
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#102</td>
             <td className="px-4 py-3">Amul Gold Milk</td>
@@ -46,7 +57,7 @@ function ProductsList({ data }) {
 
           <tr className="hover:bg-gray-50">
             <td className="px-2 py-1">
-              <input type="checkbox" />
+              <input type="checkbox" name="customerCheckbox" />
             </td>
             <td className="px-4 py-3 text-blue-600">#103</td>
             <td className="px-4 py-3">Rajwadi Basmati Rice</td>
