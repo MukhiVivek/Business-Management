@@ -7,12 +7,12 @@ function IsNotLogged() {
     return ( 
       <ul className="text-sm">
       <li>
-        <button onClick={()=> navigate('/')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
+        <button onClick={()=> navigate('/')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left cursor-pointer">
           Login
         </button>
       </li>
       <li>
-        <button onClick={()=> navigate('/signup')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left">
+        <button onClick={()=> navigate('/signup')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left cursor-pointer">
           Register
         </button>
       </li>
