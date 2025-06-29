@@ -12,7 +12,6 @@ import Products from './landing_page/Products/Products';
 import Sidebar from './landing_page/includes/Sidebar/Sidebar';
 import Settings from './landing_page/includes/Sidebar/Topbar/Settings';
 import Topnavbar from './landing_page/includes/Sidebar/Topbar/Topnavbar';
-import AddOrders from './landing_page/Orders/AddOrders';
 
 function App() {
   return (
@@ -22,7 +21,7 @@ function App() {
         <Sidebar/>
         <div className="min-h-screen">
           <Routes>
-            <Route exact path='/' element={<SignIn />} />
+            <Route exact path='/' element={<Dashboard />} />
             <Route exact path='/signin' element={<SignIn />} />
             <Route exact path='/signup' element={<SignUp/>} />
             <Route exact path='/settings' element={<Settings/>} />
@@ -33,7 +32,6 @@ function App() {
             <Route exact path='/products/add' element={<AddProducts/>} />
             
             <Route exact path='/orders' element={<Orders/>} />
-            <Route exact path='/orders/add' element={<AddOrders/>} />
 
             <Route exact path='/customers' element={<Customers/>} />
 

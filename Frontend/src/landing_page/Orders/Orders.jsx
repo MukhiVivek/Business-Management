@@ -1,10 +1,10 @@
 import "../../App.css";
+import { useInvoice } from "../../hooks/useInvoice";
 import OrdersList from "./OrdersList";
-import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
 
-  const navigate = useNavigate();
+  const { data : invoiceData} = useInvoice();
 
   return (
     <div className="pl-18 pt-2 pr-9 min-h-screen customers block rounded-lg w-full">
@@ -26,16 +26,9 @@ const Orders = () => {
         {/* Order List Table */}
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-semibold">Orders List</h1>
-          <div className="flex items-center gap-2">
-            <button
-              className="hover:bg-blue-700 bg-blue-600 hover:shadow-5xl px-2 text-white mb-2 shadow-md cursor-pointer"
-              onClick={() => navigate("/orders/add")}
-            >
-              <h1 className="text-[17px] py-1">✚ New</h1>
-            </button>
-          </div>
+          
         </div>
-        <OrdersList />
+        <OrdersList  data={invoiceData} />
       </div>
     </div>
   );

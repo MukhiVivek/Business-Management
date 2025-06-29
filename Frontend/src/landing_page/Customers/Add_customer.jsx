@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { BACKEND_URL } from "../../Config";
 
 function Add_customer() {
+  const company_name = useRef();
   const customer_name = useRef();
   const custom_code = useRef();
   const customer_phone_number = useRef();
@@ -18,6 +19,7 @@ function Add_customer() {
     await axios.post(
       BACKEND_URL + "/api/v1/customer/add",
       {
+        company: company_name.current.value,
         name: customer_name.current.value,
         work_phone_number: customer_phone_number.current.value,
         phone_number: customer_phone_number.current.value,
@@ -59,6 +61,17 @@ function Add_customer() {
         <div className="mb-4 ">
 
           <div className="border p-4">
+            {/* Company Name */}
+            <div className="mb-4">
+              <label className="block mb-1">Company Name:</label>
+              <input
+                type="text"
+                placeholder="Enter company Name"
+                ref={company_name}
+                className="w-full border border-gray-300 px-4 py-2"
+              />
+            </div>
+
             {/* Customer name */}
             <div className="mb-4">
               <label className="block mb-1">Customer Name:</label>

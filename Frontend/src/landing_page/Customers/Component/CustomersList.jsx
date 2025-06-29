@@ -1,5 +1,4 @@
 import "../../../App.css";
-import { BsSliders } from "react-icons/bs";
 
 function CustomersList({ customerdata }) {
   
@@ -29,46 +28,24 @@ function CustomersList({ customerdata }) {
             <th className="px-4 py-3">Company Name</th>
             <th className="px-4 py-3">Email</th>
             <th className="px-4 py-3">Work Phone</th>
-            <th className="px-4 py-3">Receivables (BCY)</th>
-            <th className="px-4 py-3">Unused Credits (BCY)</th>
+            <th className="px-4 py-3">Balance</th>
+            <th className="px-4 py-3">Customer Type</th>
           </tr>
         </thead>
-        <tbody className="divide-y border-b border-l border-r text-center whitespace-nowrap">
-          {/* Mock entries */}
-          <tr className="hover:bg-gray-50">
-            <td className="px-2 py-1">
-              <input type="checkbox" name="customerCheckbox" />
-            </td>
-            <td className="px-4 py-3">Lokeshbhai Ramesh Divani</td>
-            <td className="px-4 py-3">Lokesh Gruh Udhyog</td>
-            <td className="px-4 py-3">lokesh123@gmail.com</td>
-            <td className="px-4 py-3">8794651651</td>
-            <td className="px-4 py-3">20,784</td>
-            <td className="px-4 py-3">12,125</td>
-          </tr>
-          <tr className="hover:bg-gray-50">
-            <td className="px-2 py-1">
-              <input type="checkbox" name="customerCheckbox" />
-            </td>
-            <td className="px-4 py-3">Mehulbhai Suresh Patel</td>
-            <td className="px-4 py-3">Patel Agro Exports</td>
-            <td className="px-4 py-3">mehul.patel87@gmail.com</td>
-            <td className="px-4 py-3">9827345610</td>
-            <td className="px-4 py-3">35,600</td>
-            <td className="px-4 py-3">18,200</td>
-          </tr>
-
-          <tr className="hover:bg-gray-50">
-            <td className="px-2 py-1">
-              <input type="checkbox" name="customerCheckbox" />
-            </td>
-            <td className="px-4 py-3">Jinalben Arvind Shah</td>
-            <td className="px-4 py-3">Jinal Textiles</td>
-            <td className="px-4 py-3">jinalshah1990@yahoo.com</td>
-            <td className="px-4 py-3">9378124578</td>
-            <td className="px-4 py-3">48,920</td>
-            <td className="px-4 py-3">31,750</td>
-          </tr>
+        <tbody className="divide-y border-b border-l border-r text-center whitespace-nowrap">        
+          {customerdata.map((customer) => (
+            <tr key={customer.id} className="hover:bg-gray-50">
+              <td className="px-2 py-1">
+                <input type="checkbox" name="customerCheckbox" />
+              </td>
+              <td className="px-4 py-3">{customer.name}</td>
+              <td className="px-4 py-3">{customer.company}</td>
+              <td className="px-4 py-3">{customer.email ? customer.email : "---"}</td>
+              <td className="px-4 py-3">{customer.work_phone_number}</td>
+              <td className="px-4 py-3">{customer.balance}</td>
+              <td className="px-4 py-3">{customer.customer_type}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

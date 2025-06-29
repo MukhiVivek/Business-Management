@@ -26,7 +26,7 @@ const Customers = () => {
         </div>
       <div className="min-h-screen font-sans text-sm">
         <Top />
-        <CustomersList />
+        <CustomersList customerdata={customerdata} />
       </div>
     </div>
   )

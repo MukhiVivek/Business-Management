@@ -22,8 +22,7 @@ const Invoice = () => {
     const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
     const [invoiceDate, setInvoiceDate] = useState(new Date().toISOString().slice(0, 10));
     const [Subtotal, setSubtotal] = useState(0);
-    console.log(items)
-
+    
     const { data: customerdata } = useCustomer();
 
     const handleItemChange = (id, field, value) => {

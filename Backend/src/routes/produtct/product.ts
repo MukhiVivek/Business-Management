@@ -33,6 +33,7 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             product_type,
             display_name,
             description,
+            stock,
             image,
         } = req.body;
         
@@ -43,6 +44,7 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             product_type,
             display_name,
             description,
+            stock,
             image,
             // @ts-ignore
             creater_id: req?.userId,

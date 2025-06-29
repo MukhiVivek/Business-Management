@@ -18,8 +18,11 @@ interface item {
 router.get("/data", checkuserlogin , async (req, res) => {
     try{
         // @ts-ignore
-        const invoicedata = await invoice.find({creator_id :req.userId});
-        res.json(invoicedata);
+        const data = await invoice.find({creater_id :req.userId}).populate('customer_id', 'name email phone_number display_name').sort({createdAt: -1});
+
+        res.json({
+            data
+        })
     } catch(e) {
         res.status(303).json({
             message: "Not Authorized"
@@ -58,7 +61,7 @@ router.post("/add", checkuserlogin , async (req, res) => {
             description,
             items,
             // @ts-ignore
-            creator_id: req?.userId,
+            creater_id: req?.userId,
             createdAt: Date.now(),
         })
         res.status(201).json({
