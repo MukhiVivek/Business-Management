@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { HiUserAdd } from "react-icons/hi";
+import { FaSignInAlt } from "react-icons/fa";
 
 function IsNotLogged() {
 
@@ -7,13 +9,13 @@ function IsNotLogged() {
     return ( 
       <ul className="text-sm">
       <li>
-        <button onClick={()=> navigate('/')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left cursor-pointer">
-          Login
+        <button onClick={()=> navigate('/signin')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left cursor-pointer">
+          <FaSignInAlt className="inline mb-1 mr-2" size={17}/> Login
         </button>
       </li>
       <li>
         <button onClick={()=> navigate('/signup')}  className="block px-4 py-2 text-white hover:bg-gray-700 w-full text-left cursor-pointer">
-          Register
+          <HiUserAdd className="inline mb-1 mr-2" size={17}/> Register
         </button>
       </li>
     </ul>
