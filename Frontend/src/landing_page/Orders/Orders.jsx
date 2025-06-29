@@ -27,9 +27,12 @@ const Orders = () => {
         {/* Order List Table */}
         <div className="flex justify-between items-center">
           <h1 className="text-xl mb-1 font-semibold">Orders List</h1>
-          
         </div>
-        <OrdersList  data={invoiceData} />
+        {!Orders || Orders.length === 0 ? (
+          <p>No Orders found!</p>
+        ) : (
+          <OrdersList  data={invoiceData} />
+        )}
       </div>
     </div>
   );

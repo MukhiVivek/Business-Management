@@ -1,49 +1,64 @@
-import React from "react";
-import "./Dashboard.css";
-import BarsDataset from "./BarChart/BarChart";
-import LatestTransaction from "./LatestTransaction";
+import { useProduct } from "../../hooks/useProduct";
+import { useCustomer } from "../../hooks/useCustomer";
+import { useInvoice } from "../../hooks/useInvoice";
+import "./../../App.css";
+import Card from "./Card";
+import PaymentStatus from "./PaymentStatus";
+import OrderChart from "./OrderChart";
+import ProductPieChart from "./ProductPieChart";
 
 function Dashboard() {
+  // Fetch data from API
+  const { data: customerdata } = useCustomer();
+  const { data: orders } = useInvoice();
+  const { data: products } = useProduct();
+
+  // Calculate total revenue from orders
+  const totalRevenue = Array.isArray(orders)
+    ? orders.reduce((acc, curr) => acc + (Number(curr?.Subtotal) || 0), 0)
+    : 0;
+
   return (
-    <div className="flex">
+    <div className="font ml-14 p-6 min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-5 mt-1">
+        <div>
+          <h1 className="text-xl font-semibold text-black">Dashboard</h1>
+        </div>
+      </div>
 
-      {/* Main Content  */}
-      <div className="dashboard rounded-2xl min-h-screen w-full ml-11 p-5">
+      {/* Stats Cards */}
+      <div className="font grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <Card
+          title="Total Customers"
+          value={customerdata?.length || 0}
+          color="indigo"
+        />
+        <Card title="Total Orders" value={orders?.length || 0} color="blue" />
+        <Card
+          title="Total Products"
+          value={products?.length || 0}
+          color="teal"
+        />
+        <Card
+          title="Total Revenue"
+          value={`₹${totalRevenue.toLocaleString()}`}
+          color="green"
+        />
+      </div>
 
-        {/* Header */}
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h2 className="text-md text-gray-500">Welcome Back!</h2>
-            <h1 className="text-xl font-bold text-gray-800">Dhyan</h1>
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-700">Dashboard</h1>
-          </div>
+      <div className="font grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+        <div className="col-span-1">
+          <PaymentStatus />
         </div>
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            
-          {/* To Collect */}
-          <div className="bg-green-100 border border-green-300 rounded-xl p-6 shadow-sm flex justify-between items-center">
-            <div>
-              <h2 className="text-gray-600 text-lg font-medium">To Collect</h2>
-            </div>
-            <div className="text-2xl font-semibold text-green-700">₹10,789</div>
-          </div>
-
-          {/* To Pay */}
-          <div className="bg-red-100 border border-red-300 rounded-xl p-6 shadow-sm flex justify-between items-center">
-            <div>
-              <h2 className="text-gray-600 text-lg font-medium">To Pay</h2>
-            </div>
-            <div className="text-2xl font-semibold text-red-700">₹14,156</div>
-          </div>
+        <div className="col-span-1 md:col-span-1 lg:col-span-2">
+          <OrderChart />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <LatestTransaction />
-          <BarsDataset />
+        {/* Pie Chart Section */}
+        <div className="col-span-1">
+          <ProductPieChart products={products} />
         </div>
       </div>
     </div>
