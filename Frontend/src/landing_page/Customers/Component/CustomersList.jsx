@@ -34,7 +34,7 @@ function CustomersList({ customerdata }) {
         </thead>
         <tbody className="divide-y border-b border-l border-r text-center whitespace-nowrap">        
           {customerdata.map((customer) => (
-            <tr key={customer.id} className="hover:bg-gray-50">
+            <tr key={customer._id?.$oid || customer._id} className="hover:bg-gray-50">
               <td className="px-2 py-1">
                 <input type="checkbox" name="customerCheckbox" />
               </td>

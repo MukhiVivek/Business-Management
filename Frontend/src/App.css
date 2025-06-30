@@ -7,6 +7,17 @@
     }
   }
 
+.font {
+  font-family: "Noto Sans Display", serif;
+}
+
+.noto-sans {
+  font-family: "Noto Sans Display", serif;
+}
+
+.profile {
+  font-family: "Noto Sans Display", serif; 
+}
 .invoice {
   font-family: "Noto Sans Display", serif; 
 }

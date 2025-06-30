@@ -32,7 +32,7 @@ const OrdersList = ({data}) => {
           </tr>
         </thead>
         <tbody className="divide-y border-b border-l border-r text-center whitespace-nowrap">
-          {data.map((order) => (
+          {data?.map((order) => (
             <tr key={order.id} className="hover:bg-gray-50">
               <td className="px-2 py-1">
                 <input type="checkbox" name="customerCheckbox" />

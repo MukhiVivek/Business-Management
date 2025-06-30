@@ -38,7 +38,11 @@ const Products = () => {
             </button>
           </div>
         </div>
-        <ProductsList data={products} />
+        {!products || products.length === 0 ? (
+          <p>No Products found.</p>
+        ) : (
+          <ProductsList data={products} />
+        )}
       </div>
     </div>
   );
