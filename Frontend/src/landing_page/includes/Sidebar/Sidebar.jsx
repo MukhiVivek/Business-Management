@@ -12,14 +12,14 @@ const Sidebar = () => {
   // Navigation items with SVG icons and Path
   const navItems = [
     {
-      path: "/invoice",
-      label: "Invoice",
-      icon: <FaFileInvoice className="text-2xl" />,
-    },
-    {
       path: "/dashboard",
       label: "Dashboard",
       icon: <FaHome className="text-2xl" />,
+    },
+    {
+      path: "/invoice",
+      label: "Invoice",
+      icon: <FaFileInvoice className="text-2xl" />,
     },
     {
       path: "/orders",

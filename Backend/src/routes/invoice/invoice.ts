@@ -4,8 +4,10 @@ import invoice from "../../models/invoice";
 import customer from "../../models/customer";
 import { generateInvoicePdf } from "./pdf";
 import fs from "fs";
+import { PDFNet } from '@pdftron/pdfnet-node';
 
 const router = express.Router({ mergeParams: true });
+
 
 interface item {
     id: number;
@@ -51,7 +53,7 @@ router.post("/add", checkuserlogin , async (req, res) => {
 
         await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
         
-        await invoice.create({
+        const data = await invoice.create({
             customer_id,
             invoice_number,
             invoice_date,
@@ -64,7 +66,9 @@ router.post("/add", checkuserlogin , async (req, res) => {
             creater_id: req?.userId,
             createdAt: Date.now(),
         })
+
         res.status(201).json({
+            id : data._id,
             message:"invoice added"
         })
     }catch(e){

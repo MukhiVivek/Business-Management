@@ -8,8 +8,7 @@ interface data {
     customer_id: {
         _id: string;
         name: string;
-        customer_name: string;
-        customer_phone_number: string;
+        phone_number: string;
         customer_billing_address: {
             street_addres: string;
             area: string;
@@ -35,11 +34,14 @@ interface data {
 
 
 // Generate invoice PDF and return output file path
-export async function generateInvoicePdf(data: data): Promise<string> {
+export async function generateInvoicePdf(data: data): Promise<string> {    
+    
+    console.log(data);
+    
     const amount_word1 = numberToWord.toWords(data.Subtotal);
     let total_qty = 0;
 
-    const inputPart = path.resolve(__dirname, `../files/invoicePdf2.pdf`);
+    const inputPart = path.resolve(__dirname, `../files/invoicePdf.pdf`);
     const outputPart = path.resolve(__dirname, `../files/invoice.pdf`);
 
     const replaceText = async () => {
@@ -50,11 +52,11 @@ export async function generateInvoicePdf(data: data): Promise<string> {
 
         await replacer.addString('bill_number', `${data.invoice_number}`)
         await replacer.addString('date', `${new Date(data.invoice_date).toLocaleDateString('en-GB')}`)
-        await replacer.addString('customer_name', `${data.customer_id.customer_name}`)
-        await replacer.addString('customer_name1', `${data.customer_id.customer_name}`)
+        await replacer.addString('customer_name', `${data.customer_id.name}`)
+        await replacer.addString('customer_name1', `${data.customer_id.name}`)
         await replacer.addString('amount_word', `${amount_word1}`)
-        await replacer.addString('mobile_number', `${data.customer_id.customer_phone_number}`)
-        await replacer.addString('mobile_number1', `${data.customer_id.customer_phone_number}`)
+        await replacer.addString('mobile_number', `${data.customer_id.phone_number}`)
+        await replacer.addString('mobile_number1', `${data.customer_id.phone_number}`)
 
         for (let i = 0; i < data.items.length; i++) {
             await replacer.addString(`no${i}`, `${i + 1}`)
@@ -78,11 +80,11 @@ export async function generateInvoicePdf(data: data): Promise<string> {
         } else {
             await replacer.addString(
                 `customer_address`,
-                `${data.customer_id.customer_billing_address.street_addres} , ${data.customer_id.customer_billing_address.area} , ${data.customer_id.customer_billing_address.city} , ${data.customer_id.customer_billing_address.state} - ${data.customer_id.customer_billing_address.pincode}    `
+                ``
             );
             await replacer.addString(
                 `customer_address1`,
-                `${data.customer_id.customer_billing_address.street_addres} , ${data.customer_id.customer_billing_address.area} , ${data.customer_id.customer_billing_address.city} , ${data.customer_id.customer_billing_address.state} - ${data.customer_id.customer_billing_address.pincode}    `
+                ``
             );
         }
         await replacer.addString('t_qty', `${total_qty}`)

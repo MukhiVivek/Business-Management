@@ -7,6 +7,28 @@ import axios from "axios";
 import { BACKEND_URL } from "../../Config";
 
 const Invoice = () => {
+
+  const handleCreateInvoice = async (data) => {
+    try {
+      // const response = await fetch('/add', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({ /* invoice data */ }),
+      // });
+      // const data = await response.json();
+
+      // Redirect to invoice PDF page or open new window based on invoiceId
+
+      console.log(data);
+      window.open(`http://localhost:3000/api/v1/invoice/${data.data.id}/pdf`, '_blank');
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+    }
+  };
+
+
   // state management for customer popup
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -66,7 +88,7 @@ const Invoice = () => {
   }, [addItem]);
 
   const submit = async () => {
-    await axios.post(
+    const data = await axios.post(
       BACKEND_URL + "/api/v1/invoice/add",
       {
         invoice_number: invoiceNo,
@@ -83,6 +105,9 @@ const Invoice = () => {
       }
     );
     alert("Invoice Successfully Added");
+    
+    handleCreateInvoice(data); // Call the function to create and open the invoice
+    
   };
 
   return (
@@ -132,15 +157,15 @@ const Invoice = () => {
                         ?.street_addres &&
                       selectedCustomer?.customer_billing_address
                         ?.street_addres +
-                        " , " +
-                        selectedCustomer?.customer_billing_address?.area +
-                        " , " +
-                        selectedCustomer?.customer_billing_address?.city +
-                        " , " +
-                        selectedCustomer?.customer_billing_address?.state +
-                        "-" +
-                        selectedCustomer?.customer_billing_address
-                          ?.pincode}{" "}
+                      " , " +
+                      selectedCustomer?.customer_billing_address?.area +
+                      " , " +
+                      selectedCustomer?.customer_billing_address?.city +
+                      " , " +
+                      selectedCustomer?.customer_billing_address?.state +
+                      "-" +
+                      selectedCustomer?.customer_billing_address
+                        ?.pincode}{" "}
                   </b>
                 </h5>
               </div>
