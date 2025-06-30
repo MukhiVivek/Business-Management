@@ -78,7 +78,7 @@ router.post("/add", checkuserlogin , async (req, res) => {
 router.get('/:id/pdf', async (req : any , res : any) => {
     try {
         const id = req.params.id;
-        const data = await invoice.findById(id).populate('customers');
+        const data = await invoice.findById(id).populate('customer_id');
         if (!data) {
             return res.status(404).send("Invoice not found");
         }
