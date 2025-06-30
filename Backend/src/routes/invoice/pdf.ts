@@ -2,6 +2,8 @@ import { PDFNet } from '@pdftron/pdfnet-node';
 import path from 'path';
 import numberToWord from 'number-to-words';
 
+PDFNet.initialize(process.env.PDFNET_LINK);
+
 interface data {
     customer_id: {
         _id: string;
