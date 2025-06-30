@@ -16,7 +16,8 @@ const Orders = () => {
             placeholder="🔍 Search"
             className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <h1 className="text-md mt-1">Total Count: 0</h1>
+          <h1 className="text-md mt-1">Total Count: {Orders.length} </h1>
+          <h1 className="text-md mt-1">Total Orders: 0 </h1>
         </div>
         <div>
           <h1 className="text-xl font-semibold text-gray-700">Orders</h1>
@@ -25,10 +26,13 @@ const Orders = () => {
       <div className="min-h-screen font-sans text-sm">
         {/* Order List Table */}
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Orders List</h1>
-          
+          <h1 className="text-xl mb-1 font-semibold">Orders List</h1>
         </div>
-        <OrdersList  data={invoiceData} />
+        {!Orders || Orders.length === 0 ? (
+          <p>No Orders found!</p>
+        ) : (
+          <OrdersList  data={invoiceData} />
+        )}
       </div>
     </div>
   );
