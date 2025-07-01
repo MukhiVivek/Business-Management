@@ -12,31 +12,13 @@ import Products from "./landing_page/Products/Products";
 import Sidebar from "./landing_page/includes/Sidebar/Sidebar";
 import Settings from "./landing_page/includes/Sidebar/Topbar/Settings";
 import Topnavbar from "./landing_page/includes/Sidebar/Topbar/Topnavbar";
-import { useEffect } from "react";
-
-// Wrapper component to handle conditional layout
-const LayoutWrapper = ({ children }) => {
-  const location = useLocation();
-  const isAuthPage =
-    location.pathname === "/signin" || location.pathname === "/signup";
-
-  const isLoggedIn = !!localStorage.getItem("token");
-
-  return (
-    <div className="App min-h-screen flex">
-      {!isAuthPage && isLoggedIn && <Sidebar />}
-      <div className="flex-1">
-        {!isAuthPage && isLoggedIn && <Topnavbar />}
-        {children}
-      </div>
-    </div>
-  );
-};
 
 function App() {
   return (
     <Router>
-      <LayoutWrapper>
+      <Sidebar />
+      <Topnavbar />
+      <div className="App min-h-screen flex">
         <Routes>
           {/* Public routes */}
           <Route path="/signin" element={<SignIn />} />
@@ -53,7 +35,7 @@ function App() {
           <Route path="/customers" element={<Customers />} />
           <Route path="/customers/add" element={<Add_customer />} />
         </Routes>
-      </LayoutWrapper>
+      </div>
     </Router>
   );
 }
