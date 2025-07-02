@@ -34,14 +34,15 @@ interface data {
 
 
 // Generate invoice PDF and return output file path
-export async function generateInvoicePdf(data: data): Promise<string> {    
-    
+export async function generateInvoicePdf(data: data): Promise<string> {
+
     console.log(data);
-    
+
     const amount_word1 = numberToWord.toWords(data.Subtotal);
     let total_qty = 0;
 
-    const inputPart = path.resolve(__dirname, `../files/invoicePdf.pdf`);
+    // const inputPart = path.resolve(__dirname, `../files/invoicePdf.pdf`);
+    const inputPart = path.resolve(__dirname, `../files/fullinvoice.pdf`);
     const outputPart = path.resolve(__dirname, `../files/invoice.pdf`);
 
     const replaceText = async () => {
@@ -78,19 +79,13 @@ export async function generateInvoicePdf(data: data): Promise<string> {
             await replacer.addString(`customer_address`, ``)
             await replacer.addString(`customer_address1`, ``)
         } else {
-            await replacer.addString(
-                `customer_address`,
-                ``
-            );
-            await replacer.addString(
-                `customer_address1`,
-                ``
-            );
+            await replacer.addString(`customer_address`, `${data.customer_id.customer_billing_address.street_addres} , ${data.customer_id.customer_billing_address.area} , ${data.customer_id.customer_billing_address.city} , ${data.customer_id.customer_billing_address.state} - ${data.customer_id.customer_billing_address.pincode}    `)
+            await replacer.addString(`customer_address1`, `${data.customer_id.customer_billing_address.street_addres} , ${data.customer_id.customer_billing_address.area} , ${data.customer_id.customer_billing_address.city} , ${data.customer_id.customer_billing_address.state} - ${data.customer_id.customer_billing_address.pincode}    `)
         }
         await replacer.addString('t_qty', `${total_qty}`)
         await replacer.addString('charge', "150")
 
-        await replacer.addString('total_amount', `₹ ${new Intl.NumberFormat('en-IN').format(data.Subtotal)}`)
+        await replacer.addString('t_amount', `₹ ${new Intl.NumberFormat('en-IN').format(data.Subtotal)}`)
         await replacer.process(page);
 
         await pdfdoc.save(outputPart, PDFNet.SDFDoc.SaveOptions.e_linearized);
