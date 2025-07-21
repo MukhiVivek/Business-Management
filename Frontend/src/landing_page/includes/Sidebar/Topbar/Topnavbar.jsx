@@ -1,5 +1,4 @@
 import { MdOutlineLightMode, MdSettings } from "react-icons/md";
-import { Link } from "react-router-dom";
 import Dropdown from "../Dropdown/Dropdown";
 import "../../../../App.css";
 import { FaMagnet } from "react-icons/fa6";
@@ -22,13 +21,11 @@ const Topnavbar = () => {
         </div>
 
         {/* Settings */}
-        <Link to="/settings">
-          <div className="settings w-8 h-8">
-            <button className="pt-1 cursor-pointer">
-              <MdSettings size={25} />
-            </button>
-          </div>
-        </Link>
+        <div className="settings w-8 h-8">
+          <button className="pt-1 cursor-pointer">
+            <MdSettings size={25} />
+          </button>
+        </div>
 
         {/* User Login Register Dropdown Menu */}
         <div className="profile dropdown">

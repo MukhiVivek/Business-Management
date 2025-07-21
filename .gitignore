@@ -3,6 +3,8 @@ Frontend/node_modules
 
 .env
 
+my-app
+
 # Logs
 logs
 *.log

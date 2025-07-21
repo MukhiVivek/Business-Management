@@ -2,29 +2,36 @@ import React, { useState, useRef, useEffect } from 'react';
 import './Dropdown.css';
 import IsLogged from './IsLogged';
 import IsNotLogged from './IsNotLogged';
+import { useUser } from "../../../../hooks/useUser";
+import { FaUserAlt } from 'react-icons/fa';
 
 const Dropdown = () => {
+
+  const { data : userData } = useUser();
+  
   const buttonRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false); // null = not yet checked
 
-  const [profileName, setProfileName] = useState('P');
+  const [profileName, setProfileName] = useState(<FaUserAlt />);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
-      const userName = 'John Doe';
-      const intials = userName
-      .split(" ")
-      .map((name)=>name[0])
-      .join("");
-      setProfileName(intials)
+      const userName = userData.username;
+      if(userName){
+        const intials = userName
+        .split(" ")
+        .map((name)=>name[0])
+        .join("");
+        setProfileName(intials)
+      }
     } else {
       setIsLoggedIn(false);
     }
-  }, []);
+  }, [userData]);
 
   return (
     <li className="relative flex items-center">

@@ -1,11 +1,11 @@
-import { FaFileInvoice } from "react-icons/fa6";
-import { MdOutlinePayments } from "react-icons/md";
-import { MdOutlineProductionQuantityLimits } from "react-icons/md";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { CiBoxes } from "react-icons/ci";
 import { FaHome } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
-import HomeIcon from "../../../components/HomeIcon";
+import { LuBaggageClaim } from "react-icons/lu";
 import "./Sidebar.css";
+import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import Logo from "../../../assets/Logo.png";
 
 const Sidebar = () => {
@@ -19,23 +19,28 @@ const Sidebar = () => {
     {
       path: "/invoice",
       label: "Invoice",
-      icon: <FaFileInvoice className="text-2xl" />,
+      icon: <LiaFileInvoiceDollarSolid className="text-2xl" />,
     },
     {
       path: "/orders",
       label: "Orders",
-      icon: <MdOutlinePayments className="text-2xl"/>
+      icon: <LuBaggageClaim className="text-2xl"/>
     },
     {
       path: "/products",
       label: "Products",
-      icon: <MdOutlineProductionQuantityLimits className="text-2xl"/>
+      icon: <CiBoxes className="text-2xl"/>
     },
     {
       path: "/customers",
       label: "Customers",
       icon: <IoPersonSharp className="text-2xl"/>
     },
+    {
+      path: "/payment",
+      label: "Payment",
+      icon: <FaMoneyBillTransfer className="text-2xl"/>
+    }
   ];
 
   return (
@@ -48,10 +53,10 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation Links */}
-      <ul className="nav flex-col mb-auto">
+      <ul className="nav mb-auto">
         {navItems.map(({ path, icon, label }) => (
           <li key={path} className="nav-item flex items-center gap-2 py-2">
-            <Link to={path} className="flex items-center rounded-md p-2">
+            <Link to={path} className="flex items-center rounded-md p-2 gap-2">
               {icon}
             </Link>
           </li>

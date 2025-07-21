@@ -50,8 +50,6 @@ router.post("/add", checkuserlogin , async (req, res) => {
             item.amount = Number(item.qty) * Number(item.price);
             return item;
         });
-
-        await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
         
         const data = await invoice.create({
             customer_id,
@@ -66,6 +64,10 @@ router.post("/add", checkuserlogin , async (req, res) => {
             creater_id: req?.userId,
             createdAt: Date.now(),
         })
+
+        await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
+        
+        
 
         res.status(201).json({
             id : data._id,

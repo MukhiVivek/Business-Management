@@ -26,6 +26,7 @@ function AddProducts() {
       }
     );
     alert("Product Successfully Added");
+    window.location.href = "/products";
   }
 
   return (

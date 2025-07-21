@@ -1,12 +1,10 @@
-import React from "react";
 import ProductsList from "./ProductsList";
 import { useProduct } from "../../hooks/useProduct";
 import { useNavigate } from "react-router-dom"
 
 const Products = () => {
-  const { data: products } = useProduct();
 
-  console.log(products);
+  const { data: products } = useProduct();
 
   const navigate = useNavigate();
 

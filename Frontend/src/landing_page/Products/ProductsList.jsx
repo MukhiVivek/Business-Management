@@ -13,8 +13,6 @@ function ProductsList({ data }) {
     });
   };
 
-  console.log(data);
-
   return (
     <div className="products">
       <table className="w-full border-t rounded-sm">
@@ -23,24 +21,25 @@ function ProductsList({ data }) {
             <th className="px-2 py-1 pl-2">
               <input type="checkbox" name="customerCheckbox" onChange={handleSelectAll} />
             </th>
-            <th className="px-4 py-3">Product Name</th>
-            <th className="px-4 py-3">Price</th>
-            <th className="px-4 py-3">Type</th>
-            <th className="px-4 py-3">Description</th>
-            <th className="px-4 py-3">Stock</th>
+            <th className="px-1 py-3 text-left">Product Name</th>
+            <th className="px-1 py-3">Price</th>
+            <th className="px-1 py-3">Stock</th>
+            <th className="px-1 py-3">Type</th>
+            <th className="px-1 py-3">Description</th>
+            
           </tr>
         </thead>
         <tbody className="divide-y border-b border-l text-center border-r whitespace-nowrap">
           {data.map((product) => (
             <tr key={product.id} className="hover:bg-gray-50">
-              <td className="px-2 py-1">
+              <td className="px-2 py-1 ">
                 <input type="checkbox" name="customerCheckbox" />
               </td>
-              <td className="px-4 py-3">{product.name}</td>
-              <td className="px-4 py-3">{product.price}</td>
-              <td className="px-4 py-3">{product.product_type}</td>
-              <td className="px-4 py-3">{product.description}</td>
-              <td className="px-4 py-3">{product.stock}</td>
+              <td className="px-1 py-3 text-blue-600 cursor-pointer text-left">{product.name}</td>
+              <td className="px-1 py-3">{product.price}</td>
+              <td className="px-1 py-3">{product.stock}</td>
+              <td className="px-1 py-3">{product.product_type}</td>
+              <td className="px-1 py-3">{product.description}</td>              
             </tr>
           ))}          
         </tbody>

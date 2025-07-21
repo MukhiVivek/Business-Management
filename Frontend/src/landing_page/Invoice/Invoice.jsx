@@ -10,19 +10,7 @@ const Invoice = () => {
 
   const handleCreateInvoice = async (data) => {
     try {
-      // const response = await fetch('/add', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ /* invoice data */ }),
-      // });
-      // const data = await response.json();
-
-      // Redirect to invoice PDF page or open new window based on invoiceId
-
-      console.log(data);
-      window.open(`http://localhost:3000/api/v1/invoice/${data.data.id}/pdf`, '_blank');
+      window.open(`${BACKEND_URL}/api/v1/invoice/${data.data.id}/pdf`, "_blank");
     } catch (error) {
       console.error('Error creating invoice:', error);
     }
