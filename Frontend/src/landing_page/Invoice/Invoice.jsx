@@ -27,7 +27,7 @@ const Invoice = () => {
     setIsPopupOpen(false);
   };
 
-  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0 }]);
+  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0  , sgst: 0, cgst : 0, igst: 0}]);
   const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().slice(0, 10)
@@ -44,7 +44,7 @@ const Invoice = () => {
   };
 
   const addItem = () => {
-    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0 }]);
+    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0 ,  sgst: "", cgst : "", igst: "", tprice: 0 }]);
   };
 
   const removeItem = (id) => {
@@ -57,7 +57,11 @@ const Invoice = () => {
         items.reduce((sum, item) => {
           const qty = Number(item.qty);
           const price = Number(item.price);
-          return sum + qty * price;
+          const sgst = Number(item.sgst);
+          const cgst = Number(item.cgst);
+          const igst = Number(item.igst);
+          const gstprice = price + (price * (sgst + cgst + igst) / 100);
+          return  sum + qty * gstprice;
         }, 0)
       );
     };
@@ -92,11 +96,22 @@ const Invoice = () => {
         },
       }
     );
+
+    console.log("Invoice Data:", {
+      invoice_number: invoiceNo,
+      invoice_date: invoiceDate,
+      customer_id: selectedCustomer?._id,
+      items: items,
+      Subtotal: Subtotal,
+    });
+
+    
     alert("Invoice Successfully Added");
-    
+
     handleCreateInvoice(data); // Call the function to create and open the invoice
-    
+
   };
+
 
   return (
     <div className=" invoice pl-12 min-h-screen w-full mx-auto">
@@ -203,8 +218,20 @@ const Invoice = () => {
                       <th className="p-3 border-b border-indigo-100 text-right w-33">
                         Price/Item (₹)
                       </th>
+                      <th className="p-2 border-b border-indigo-100 text-right w-32">
+                        SGST (₹)
+                      </th>
+                      <th className="p-2 border-b border-indigo-100 text-right w-32">
+                        CGST (₹)
+                      </th>
+                      <th className="p-2 border-b border-indigo-100 text-right w-32">
+                        IGST (₹)
+                      </th>
                       <th className="p-3 border-b border-indigo-100 text-right w-32">
                         Amount (₹)
+                      </th>
+                      <th className="p-3 border-b border-indigo-100 text-right w-32">
+                        gst_Amount(₹)
                       </th>
                       <th className="p-3 border-b border-indigo-100 w-16"></th>
                     </tr>
@@ -224,7 +251,7 @@ const Invoice = () => {
                             onChange={(e) =>
                               handleItemChange(item.id, "name", e.target.value)
                             }
-                            className="border border-gray-300 p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition"
+                            className="border border-gray-300 p-2 w-sm rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition"
                           />
                         </td>
                         <td className="p-3">
@@ -254,12 +281,62 @@ const Invoice = () => {
                                 Number(e.target.value)
                               )
                             }
-                            className="border border-gray-300 p-2 w-24 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            className="border border-gray-300 p-2 w-16 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
                           />
                         </td>
                         <td>
-                          <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6 mt-3">
+                          <input
+                            type="number"
+                            min="0"
+                            value={item.sgst}
+                            onChange={(e) =>
+                              handleItemChange(
+                                item.id,
+                                "sgst",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-16 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            min="0"
+                            value={item.cgst}
+                            onChange={(e) =>
+                              handleItemChange(
+                                item.id,
+                                "cgst",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-16 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            min="0"
+                            value={item.igst}
+                            onChange={(e) =>
+                              handleItemChange(
+                                item.id,
+                                "igst",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-16 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          />
+                        </td>
+                        <td>
+                          <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6">
                             ₹ {(item.qty * item.price).toFixed(2)}
+                          </div>
+                        </td>                        
+                        <td>
+                          <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6 ">
+                            ₹ {(item.qty * (item.price + (item.price * (item.sgst + item.cgst + item.igst) / 100))).toFixed(2)}
                           </div>
                         </td>
                         <td className="p-3 text-center">

@@ -19,8 +19,29 @@ function Add_customer() {
   const customer_pincode = useRef();
   const customer_city = useRef();
   const customer_email = useRef();
+  const customer_gst = useRef();
 
   async function submit() {
+
+    console.log("Submitting customer data..." , {
+      company: company_name.current.value,
+        name: customer_name.current.value,
+        work_phone_number: customer_phone_number.current.value,
+        phone_number: customer_phone_number.current.value,
+        customer_type: "individual",
+        display_name: customer_name.current.value,
+        balance: customer_balance.current.value,
+        location: customer_location.current.value,
+        gst: customer_gst.current ? customer_gst.current.value : "",
+        customer_billing_address: {
+          street_address: customer_street_address.current.value,
+          state: customer_state.current.value,
+          pincode: customer_pincode.current.value,
+          city: customer_city.current.value,
+          area: customer_area.current.value,
+        },
+    });
+    
     await axios.post(
       BACKEND_URL + "/api/v1/customer/add",
       {
@@ -30,9 +51,9 @@ function Add_customer() {
         phone_number: customer_phone_number.current.value,
         customer_type: "individual",
         display_name: customer_name.current.value,
-        email: customer_email.current.value,
         balance: customer_balance.current.value,
         location: customer_location.current.value,
+        gst: customer_gst.current ? customer_gst.current.value : "",
         customer_billing_address: {
           street_address: customer_street_address.current.value,
           state: customer_state.current.value,
@@ -103,7 +124,7 @@ function Add_customer() {
             <div className="mb-4">
               <label className="block mb-1">Customer Phone_Number:</label>
               <input
-                type="text"
+                type="number"
                 ref={customer_phone_number}
                 placeholder="Enter customer phone_number"
                 className="w-full border border-gray-300 px-4 py-2"
@@ -117,6 +138,17 @@ function Add_customer() {
                 type="email"
                 ref={customer_email}
                 placeholder="Enter email"
+                className="w-full border border-gray-300 px-4 py-2"
+              />
+            </div>
+
+            {/* GST */}
+            <div className="mb-4">
+              <label className="block mb-1">GST:</label>
+              <input
+                type="text"
+                ref={customer_gst}
+                placeholder="Enter GST"
                 className="w-full border border-gray-300 px-4 py-2"
               />
             </div>
