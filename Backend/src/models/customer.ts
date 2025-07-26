@@ -14,7 +14,7 @@ const customerSchema = new Schema({
     balance:Number,
     location:String,
     customer_billing_address:{
-        street_addres:String,
+        street_address:String,
         state:String,
         pincode:Number,
         city:String,
@@ -35,7 +35,8 @@ const customerSchema = new Schema({
     updatedAt:{
         type:Date,
         default:Date.now
-    }
+    },
+    gst:String
 });
 
 

@@ -27,7 +27,7 @@ router.get("/data" , checkuserlogin , async(req, res)=> {
 router.post("/add" ,checkuserlogin , async (req, res)=> {
 
     try{
-        const {
+        let {
             name,
             work_phone_number,
             phone_number,
@@ -37,10 +37,12 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             customer_billing_address,
             display_name,
             email,
+            gst
         } = req.body;
         
         const newCustomer =await customer.create({
             name,
+            gst,
             work_phone_number,
             display_name,
             phone_number,
@@ -56,9 +58,11 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
         res.status(201).json({
             message:"customer added"
         })
-    }catch(e){
+    }catch(e : any) {
+        console.log(e);
         res.status(500).json({
-            message:"customer already exists"
+            message:"customer already exists",
+            error : e.message
         })
     }
    

@@ -11,12 +11,51 @@ const invoiceSchema = new Schema({
     Subtotal:Number,
     status:String,
     description:String,
+    gst:{
+        sgst:Number,
+        cgst:Number,
+        igst:Number
+    },
+    gst_table:{
+        basic_amount:{
+            amount_1: Number,
+            amount_2: Number,
+            amount_3: Number,
+            amount_4: Number,
+            amount_5: Number,
+        },
+        cgst_amount:{
+            amount_1: Number,
+            amount_2: Number,
+            amount_3: Number,   
+            amount_4: Number,
+            amount_5: Number,
+        },
+        sgst_amount:{
+            amount_1: Number,
+            amount_2: Number,
+            amount_3: Number,
+            amount_4: Number,
+            amount_5: Number,
+        },
+        igst_amount:{
+            amount_1: Number,
+            amount_2: Number,
+            amount_3: Number,
+            amount_4: Number,
+            amount_5: Number,
+        },
+    },
     items:[{
         id:Number,
         name:String,
         qty:Number,
         price:Number,
-        amount:Number
+        amount:Number,
+        sgst:Number,
+        cgst:Number,
+        igst:Number,
+        tamount:Number
     }],
     creater_id:{
         type:Schema.Types.ObjectId,
@@ -29,6 +68,9 @@ const invoiceSchema = new Schema({
     updatedAt:{
         type:Date,
         default:Date.now
+    },
+    tax:{
+        type:Boolean,
     }
 });
 
