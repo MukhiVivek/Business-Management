@@ -146,7 +146,7 @@ router.post("/add", checkuserlogin, async (req, res) => {
             gst_table,
         })
 
-        // await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
+        await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
 
         res.status(201).json({
             id : data._id,
@@ -162,6 +162,7 @@ router.post("/add", checkuserlogin, async (req, res) => {
 
 router.get('/:id/pdf', async (req: any, res: any) => {
     try {
+        console.log("pdf making ...." )
         const id = req.params.id;
         const data = await invoice.findById(id).populate('customer_id');
         if (!data) {

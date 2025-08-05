@@ -79,7 +79,6 @@ interface data {
 // Generate invoice PDF and return output file path
 export async function generateInvoicePdf(data: data): Promise<string> {
 
-    
     console.log("1" , data);
 
     const amount_word1 = numberToWord.toWords(data.Subtotal);
