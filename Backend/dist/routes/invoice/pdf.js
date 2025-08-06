@@ -78,10 +78,10 @@ function generateInvoicePdf(data) {
             yield replacer.addString('igst', `₹ ${data.gst.igst}`);
             yield replacer.addString('t_total', `₹ ${new Intl.NumberFormat('en-IN').format(data.Subtotal)}`);
             for (let i = 1; i <= 5; i++) {
-                yield replacer.addString(`ba${i}`, `${data.gst_table.basic_amount[`amount_${i}`] ? data.gst_table.basic_amount[`amount_${i}`] : " "}`);
-                yield replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}`] ? data.gst_table.cgst_amount[`amount_${i}`] : " "}`);
-                yield replacer.addString(`sg${i}`, `${data.gst_table.sgst_amount[`amount_${i}`] ? data.gst_table.sgst_amount[`amount_${i}`] : " "}`);
-                yield replacer.addString(`ig${i}`, `${data.gst_table.igst_amount[`amount_${i}`] ? data.gst_table.igst_amount[`amount_${i}`] : " "}`);
+                yield replacer.addString(`ba${i}`, `${data.gst_table.basic_amount[`amount_${i}`] ? data.gst_table.basic_amount[`amount_${i}`] : "0.00 "}` + "₹");
+                yield replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}`] ? data.gst_table.cgst_amount[`amount_${i}`] : "0.00 "}` + "₹");
+                yield replacer.addString(`sg${i}`, `${data.gst_table.sgst_amount[`amount_${i}`] ? data.gst_table.sgst_amount[`amount_${i}`] : "0.00 "}` + "₹");
+                yield replacer.addString(`ig${i}`, `${data.gst_table.igst_amount[`amount_${i}`] ? data.gst_table.igst_amount[`amount_${i}`] : "0.00 "}` + "₹");
             }
             for (let i = 1; i <= 6; i++) {
                 yield replacer.addString(`ob${i}`, ``);

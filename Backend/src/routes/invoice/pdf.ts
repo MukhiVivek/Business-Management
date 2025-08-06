@@ -149,10 +149,10 @@ export async function generateInvoicePdf(data: data): Promise<string> {
         await replacer.addString('t_total', `₹ ${new Intl.NumberFormat('en-IN').format(data.Subtotal)}`)
 
         for (let i=1; i<=5; i++) {
-            await replacer.addString(`ba${i}`, `${data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] ? data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] : " "}`)
-            await replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] ? data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] : " "}`)
-            await replacer.addString(`sg${i}`, `${data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] ? data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] : " "}`)
-            await replacer.addString(`ig${i}`, `${data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] ? data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] : " "}`)
+            await replacer.addString(`ba${i}`, `${data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] ? data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] : "0.00 "}` + "₹")
+            await replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount]  ? data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] : "0.00 "}` + "₹")
+            await replacer.addString(`sg${i}`, `${data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] ? data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] : "0.00 "}` + "₹")
+            await replacer.addString(`ig${i}`, `${data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] ? data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] : "0.00 "}` + "₹")
         }
 
         for (let i=1; i<=6; i++) {
