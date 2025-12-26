@@ -11,6 +11,8 @@ import AddProducts from "./landing_page/Products/AddProducts";
 import Products from "./landing_page/Products/Products";
 import Sidebar from "./landing_page/includes/Sidebar/Sidebar";
 import Topnavbar from "./landing_page/includes/Sidebar/Topbar/Topnavbar";
+import Payment from "./landing_page/payment/payment";
+import AddPayment from "./landing_page/payment/addinvoicepayment";
 
 function App() {
   return (
@@ -32,6 +34,8 @@ function App() {
           <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/customers/add" element={<Add_customer />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/payment/add" element={<AddPayment />} />
         </Routes>
       </div>
     </Router>
