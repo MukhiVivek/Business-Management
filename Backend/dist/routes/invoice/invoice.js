@@ -159,6 +159,21 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         });
     }
 }));
+router.get('/delete/:id', checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const inv = yield invoice_1.default.findById(id);
+        if (!inv) {
+            return res.status(404).json({ message: "Invoice not found" });
+        }
+        yield customer_1.default.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
+        yield invoice_1.default.findByIdAndDelete(id);
+        res.status(200).json({ message: "Invoice deleted successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error deleting invoice" });
+    }
+}));
 router.get('/:id/pdf', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("pdf making ....");

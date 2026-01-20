@@ -37,10 +37,12 @@ const user_1 = __importDefault(require("./routes/user/user"));
 const customer_1 = __importDefault(require("./routes/customer/customer"));
 const invoice_1 = __importDefault(require("./routes/invoice/invoice"));
 const product_1 = __importDefault(require("./routes/produtct/product"));
+const invoicepayment_1 = __importDefault(require("./routes/payment/invoicepayment"));
 app.use("/api/v1/user", user_1.default);
 app.use("/api/v1/customer", customer_1.default);
 app.use("/api/v1/invoice", invoice_1.default);
 app.use("/api/v1/product", product_1.default);
+app.use("/api/v1/payment", invoicepayment_1.default);
 app.get("/", (req, res) => {
     res.send("Server is on test-1");
 });
