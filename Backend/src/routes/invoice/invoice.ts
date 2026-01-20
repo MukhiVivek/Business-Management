@@ -160,6 +160,25 @@ router.post("/add", checkuserlogin, async (req, res) => {
     }
 })
 
+router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
+    try {
+        const id = req.params.id;
+        const inv : any  = await invoice.findById(id);
+        if (!inv) {
+            return res.status(404).json({ message: "Invoice not found" });
+        }
+        
+        await customer.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
+
+        await invoice.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Invoice deleted successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting invoice" });
+    }
+});
+
 router.get('/:id/pdf', async (req: any, res: any) => {
     try {
         console.log("pdf making ...." )

@@ -2,7 +2,7 @@ import React from "react";
 import { BACKEND_URL } from "../../Config";
 import DeleteIcon from "../../components/DeleteIcon";
 
-const OrdersList = ({ data }) => {
+const PaymentList = ({ data }) => {
   // Checks all the row entries
   const handleSelectAll = (e) => {
     const checkboxes = document.querySelectorAll(
@@ -13,43 +13,7 @@ const OrdersList = ({ data }) => {
     });
   };
 
-  function PDF(id) {
-    console.log(id);
-    window.open(`${BACKEND_URL}/api/v1/invoice/${id}/pdf`, "_blank");
-    
-  };
 
-  function deleteinvoice(invoice_number, id) {
-    let value = window.confirm(
-      `Are you sure you want to delete invoice number ${invoice_number}?`
-    );
-    if (value) {
-      if (value) {
-        fetch(`${BACKEND_URL}/api/v1/invoice/delete/${id}`, {
-          method: "GET",
-          headers:{
-            "token": localStorage.getItem("token")
-          }
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Success:", data);
-            window.location.reload();
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      }
-    } else {
-      console.log("Delete cancelled");
-    }
-  }
-
-  function paymentpage(id){
-    return function(){
-      window.location.href=`/payment/${id}`
-    }
-  }
 
   return (
     <div className="orders">
@@ -63,7 +27,7 @@ const OrdersList = ({ data }) => {
                 onChange={handleSelectAll}
               />
             </th>
-            <th className="px-4 py-3">Order No</th>
+            <th className="px-4 py-3">Payment No.</th>
             <th className="px-4 py-3">Date Created</th>
             <th className="px-4 py-3">Customer Name</th>
             <th className="px-4 py-3">Payment Status</th>
