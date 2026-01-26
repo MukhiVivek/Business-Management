@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const checkuser_1 = require("../../checkuser");
 const invoice_1 = __importDefault(require("../../models/invoice"));
 const customer_1 = __importDefault(require("../../models/customer"));
+const product_1 = __importDefault(require("../../models/product"));
 const pdf_1 = require("./pdf");
 const fs_1 = __importDefault(require("fs"));
 const pdfnet_node_1 = require("@pdftron/pdfnet-node");
@@ -24,7 +25,7 @@ pdfnet_node_1.PDFNet.initialize("demo:1731769745328:7ef78d2c0300000000c4e7a408d8
 router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // @ts-ignore
-        const data = yield invoice_1.default.find({ creater_id: req.userId }).populate('customer_id', 'name email phone_number display_name').sort({ createdAt: -1 });
+        const data = yield invoice_1.default.find({ creater_id: req.userId }).populate('customer_id', 'name email phone_number display_name').sort({ invoice_number: -1 });
         res.json({
             data
         });
@@ -40,8 +41,8 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         let { customer_id, invoice_number, invoice_date, Subtotal, items, due_date, description, } = req.body;
         //@ts-ignore
         items = items.map(item => {
-            item.amount = Number(item.qty) * Number(item.price);
-            item.tamount = item.amount + (item.amount * (item.sgst + item.cgst + item.igst) / 100);
+            item.amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
+            item.tamount = Number((item.amount + (item.amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
             return item;
         });
         let gst = {
@@ -51,11 +52,15 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         };
         //@ts-ignore
         items.map(item => {
-            gst.sgst += ((item.price * item.sgst / 100) * item.qty);
-            gst.cgst += ((item.price * item.cgst / 100) * item.qty);
-            gst.igst += ((item.price * item.igst / 100) * item.qty);
+            gst.sgst += ((Number(item.price) * Number(item.sgst || 0) / 100) * Number(item.qty));
+            gst.cgst += ((Number(item.price) * Number(item.cgst || 0) / 100) * Number(item.qty));
+            gst.igst += ((Number(item.price) * Number(item.igst || 0) / 100) * Number(item.qty));
             return item;
         });
+        // Round GST totals to 2 decimal places
+        gst.sgst = Number(gst.sgst.toFixed(2));
+        gst.cgst = Number(gst.cgst.toFixed(2));
+        gst.igst = Number(gst.igst.toFixed(2));
         let gst_table = {
             basic_amount: {
                 amount_1: 0,
@@ -106,8 +111,8 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
                         gstRateKey = 'amount_1';
                     else
                         return; // skip unknown IGST rate
-                    gst_table.basic_amount[gstRateKey] += item.amount;
-                    gst_table.igst_amount[gstRateKey] += ((item.price * item.igst / 100) * item.qty);
+                    gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                    gst_table.igst_amount[gstRateKey] = Number((gst_table.igst_amount[gstRateKey] + ((item.price * item.igst / 100) * item.qty)).toFixed(2));
                 }
                 else {
                     // SGST + CGST case
@@ -123,9 +128,9 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
                         gstRateKey = 'amount_5';
                     else
                         return; // skip unknown SGST+CGST rate
-                    gst_table.basic_amount[gstRateKey] += item.amount;
-                    gst_table.cgst_amount[gstRateKey] += ((item.price * item.cgst / 100) * item.qty);
-                    gst_table.sgst_amount[gstRateKey] += ((item.price * item.sgst / 100) * item.qty);
+                    gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                    gst_table.cgst_amount[gstRateKey] = Number((gst_table.cgst_amount[gstRateKey] + ((item.price * item.cgst / 100) * item.qty)).toFixed(2));
+                    gst_table.sgst_amount[gstRateKey] = Number((gst_table.sgst_amount[gstRateKey] + ((item.price * item.sgst / 100) * item.qty)).toFixed(2));
                 }
             });
         }
@@ -135,8 +140,8 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
             customer_id,
             invoice_number,
             invoice_date,
-            due_date,
-            Subtotal,
+            due_date: invoice_date,
+            Subtotal: Number(Number(Subtotal).toFixed(2)),
             status: "Pending",
             description,
             items,
@@ -146,7 +151,13 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
             gst,
             gst_table,
         });
-        yield customer_1.default.findByIdAndUpdate(customer_id, { $inc: { balance: -(Subtotal), invoice: +(1) } }, { new: true });
+        yield customer_1.default.findByIdAndUpdate(customer_id, { $inc: { balance: -Number(Number(Subtotal).toFixed(2)), invoice: +(1) } }, { new: true });
+        // Reduce stock for each product
+        for (const item of items) {
+            if (item.product_id) {
+                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } }, { new: true });
+            }
+        }
         res.status(201).json({
             id: data._id,
             message: "invoice added"
@@ -167,6 +178,12 @@ router.get('/delete/:id', checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
             return res.status(404).json({ message: "Invoice not found" });
         }
         yield customer_1.default.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
+        // Increase stock for each product when invoice is deleted
+        for (const item of inv.items) {
+            if (item.product_id) {
+                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: Number(item.qty) } }, { new: true });
+            }
+        }
         yield invoice_1.default.findByIdAndDelete(id);
         res.status(200).json({ message: "Invoice deleted successfully" });
     }

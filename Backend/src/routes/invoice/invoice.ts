@@ -2,6 +2,7 @@ import express from "express";
 import { checkuserlogin } from "../../checkuser";
 import invoice from "../../models/invoice";
 import customer from "../../models/customer";
+import product from "../../models/product";
 import { generateInvoicePdf } from "./pdf";
 import fs from "fs";
 import { PDFNet } from '@pdftron/pdfnet-node';
@@ -13,7 +14,7 @@ PDFNet.initialize("demo:1731769745328:7ef78d2c0300000000c4e7a408d8174e500aae5a20
 router.get("/data", checkuserlogin, async (req, res) => {
     try {
         // @ts-ignore
-        const data = await invoice.find({ creater_id: req.userId }).populate('customer_id', 'name email phone_number display_name').sort({ createdAt: -1 });
+        const data = await invoice.find({ creater_id: req.userId }).populate('customer_id', 'name email phone_number display_name').sort({ invoice_number: -1 });
 
         res.json({
             data
@@ -40,8 +41,8 @@ router.post("/add", checkuserlogin, async (req, res) => {
 
         //@ts-ignore
         items = items.map(item => {
-            item.amount = Number(item.qty) * Number(item.price);
-            item.tamount = item.amount + (item.amount * (item.sgst + item.cgst + item.igst) / 100);
+            item.amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
+            item.tamount = Number((item.amount + (item.amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
 
             return item;
         });
@@ -54,11 +55,16 @@ router.post("/add", checkuserlogin, async (req, res) => {
 
         //@ts-ignore
         items.map(item => {
-            gst.sgst += ((item.price * item.sgst / 100) * item.qty);
-            gst.cgst += ((item.price * item.cgst / 100) * item.qty);
-            gst.igst += ((item.price * item.igst / 100) * item.qty);
+            gst.sgst += ((Number(item.price) * Number(item.sgst || 0) / 100) * Number(item.qty));
+            gst.cgst += ((Number(item.price) * Number(item.cgst || 0) / 100) * Number(item.qty));
+            gst.igst += ((Number(item.price) * Number(item.igst || 0) / 100) * Number(item.qty));
             return item;
         });
+
+        // Round GST totals to 2 decimal places
+        gst.sgst = Number(gst.sgst.toFixed(2));
+        gst.cgst = Number(gst.cgst.toFixed(2));
+        gst.igst = Number(gst.igst.toFixed(2));
 
         let gst_table: any = {
             basic_amount: {
@@ -107,8 +113,8 @@ router.post("/add", checkuserlogin, async (req, res) => {
                     else if (item.igst === 0) gstRateKey = 'amount_1';
                     else return; // skip unknown IGST rate
 
-                    gst_table.basic_amount[gstRateKey] += item.amount;
-                    gst_table.igst_amount[gstRateKey] += ((item.price * item.igst / 100) * item.qty);
+                    gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                    gst_table.igst_amount[gstRateKey] = Number((gst_table.igst_amount[gstRateKey] + ((item.price * item.igst / 100) * item.qty)).toFixed(2));
 
                 } else {
                     // SGST + CGST case
@@ -119,9 +125,9 @@ router.post("/add", checkuserlogin, async (req, res) => {
                     else if (item.sgst === 12 && item.cgst === 12) gstRateKey = 'amount_5';
                     else return; // skip unknown SGST+CGST rate
 
-                    gst_table.basic_amount[gstRateKey] += item.amount;
-                    gst_table.cgst_amount[gstRateKey] += ((item.price * item.cgst / 100) * item.qty);
-                    gst_table.sgst_amount[gstRateKey] += ((item.price * item.sgst / 100) * item.qty);
+                    gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                    gst_table.cgst_amount[gstRateKey] = Number((gst_table.cgst_amount[gstRateKey] + ((item.price * item.cgst / 100) * item.qty)).toFixed(2));
+                    gst_table.sgst_amount[gstRateKey] = Number((gst_table.sgst_amount[gstRateKey] + ((item.price * item.sgst / 100) * item.qty)).toFixed(2));
                 }
             });
         }
@@ -134,8 +140,8 @@ router.post("/add", checkuserlogin, async (req, res) => {
             customer_id,
             invoice_number,
             invoice_date,
-            due_date,
-            Subtotal,
+            due_date: invoice_date,
+            Subtotal: Number(Number(Subtotal).toFixed(2)),
             status: "Pending",
             description,
             items,
@@ -146,11 +152,22 @@ router.post("/add", checkuserlogin, async (req, res) => {
             gst_table,
         })
 
-        await customer.findByIdAndUpdate(customer_id , { $inc: { balance : - (Subtotal) , invoice : + (1)} },{ new: true })
+        await customer.findByIdAndUpdate(customer_id, { $inc: { balance: - Number(Number(Subtotal).toFixed(2)), invoice: + (1) } }, { new: true })
+
+        // Reduce stock for each product
+        for (const item of items) {
+            if (item.product_id) {
+                await product.findByIdAndUpdate(
+                    item.product_id,
+                    { $inc: { stock: -Number(item.qty) } },
+                    { new: true }
+                );
+            }
+        }
 
         res.status(201).json({
-            id : data._id,
-            message:"invoice added"
+            id: data._id,
+            message: "invoice added"
         })
     } catch (e) {
         res.status(500).json({
@@ -163,12 +180,23 @@ router.post("/add", checkuserlogin, async (req, res) => {
 router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
     try {
         const id = req.params.id;
-        const inv : any  = await invoice.findById(id);
+        const inv: any = await invoice.findById(id);
         if (!inv) {
             return res.status(404).json({ message: "Invoice not found" });
         }
-        
+
         await customer.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
+
+        // Increase stock for each product when invoice is deleted
+        for (const item of inv.items) {
+            if (item.product_id) {
+                await product.findByIdAndUpdate(
+                    item.product_id,
+                    { $inc: { stock: Number(item.qty) } },
+                    { new: true }
+                );
+            }
+        }
 
         await invoice.findByIdAndDelete(id);
 
@@ -181,7 +209,7 @@ router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
 
 router.get('/:id/pdf', async (req: any, res: any) => {
     try {
-        console.log("pdf making ...." )
+        console.log("pdf making ....")
         const id = req.params.id;
         const data = await invoice.findById(id).populate('customer_id');
         if (!data) {

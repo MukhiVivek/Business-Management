@@ -16,7 +16,7 @@ interface data {
             city: string;
             state: string;
             pincode: string;
-            
+
         }
     };
     gst: {
@@ -24,29 +24,29 @@ interface data {
         cgst: number;
         igst: number;
     };
-    gst_table:{
-        basic_amount:{
+    gst_table: {
+        basic_amount: {
             amount_1: number;
             amount_2: number;
             amount_3: number;
             amount_4: number;
             amount_5: number;
         },
-        cgst_amount:{
-            amount_1: number;
-            amount_2: number;
-            amount_3: number;   
-            amount_4: number;
-            amount_5: number;
-        },
-        sgst_amount:{
+        cgst_amount: {
             amount_1: number;
             amount_2: number;
             amount_3: number;
             amount_4: number;
             amount_5: number;
         },
-        igst_amount:{
+        sgst_amount: {
+            amount_1: number;
+            amount_2: number;
+            amount_3: number;
+            amount_4: number;
+            amount_5: number;
+        },
+        igst_amount: {
             amount_1: number;
             amount_2: number;
             amount_3: number;
@@ -79,17 +79,17 @@ interface data {
 // Generate invoice PDF and return output file path
 export async function generateInvoicePdf(data: data): Promise<string> {
 
-    console.log("1" , data);
+    console.log("1", data);
 
     const amount_word1 = numberToWord.toWords(data.Subtotal);
 
-    console.log("2" , amount_word1);
+    console.log("2", amount_word1);
 
     const outputPart = path.resolve(__dirname, `../files/invoice.pdf`);
     const inputPart = path.resolve(__dirname, `../files/tax-bill.pdf`);
 
     console.log(data);
-    
+
     const replaceText = async () => {
         const pdfdoc = await PDFNet.PDFDoc.createFromFilePath(inputPart);
         await pdfdoc.initSecurityHandler();
@@ -110,7 +110,7 @@ export async function generateInvoicePdf(data: data): Promise<string> {
         for (let i = 0; i < data.items.length; i++) {
             await replacer.addString(`no${i}`, `${i + 1}`)
             await replacer.addString(`item_name${i}`, `${data.items[i].name}`)
-            await replacer.addString(`qty${i}`, `${data.items[i].qty} Kg`)
+            await replacer.addString(`qty${i}`, `${data.items[i].qty}`)
             await replacer.addString(`rate${i}`, `${data.items[i].price}`)
             await replacer.addString(`amont${i}`, `${new Intl.NumberFormat('en-IN').format(data.items[i].amount)} ₹`);
             await replacer.addString(`c${i}`, `${data.items[i].cgst} %`);
@@ -148,14 +148,14 @@ export async function generateInvoicePdf(data: data): Promise<string> {
 
         await replacer.addString('t_total', `₹ ${new Intl.NumberFormat('en-IN').format(data.Subtotal)}`)
 
-        for (let i=1; i<=5; i++) {
+        for (let i = 1; i <= 5; i++) {
             await replacer.addString(`ba${i}`, `${data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] ? data.gst_table.basic_amount[`amount_${i}` as keyof typeof data.gst_table.basic_amount] : "0.00 "}` + "₹")
-            await replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount]  ? data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] : "0.00 "}` + "₹")
+            await replacer.addString(`cg${i}`, `${data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] ? data.gst_table.cgst_amount[`amount_${i}` as keyof typeof data.gst_table.cgst_amount] : "0.00 "}` + "₹")
             await replacer.addString(`sg${i}`, `${data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] ? data.gst_table.sgst_amount[`amount_${i}` as keyof typeof data.gst_table.sgst_amount] : "0.00 "}` + "₹")
             await replacer.addString(`ig${i}`, `${data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] ? data.gst_table.igst_amount[`amount_${i}` as keyof typeof data.gst_table.igst_amount] : "0.00 "}` + "₹")
         }
 
-        for (let i=1; i<=6; i++) {
+        for (let i = 1; i <= 6; i++) {
             await replacer.addString(`ob${i}`, ``)
             await replacer.addString(`oba${i}`, ``)
         }
@@ -164,7 +164,7 @@ export async function generateInvoicePdf(data: data): Promise<string> {
         await replacer.addString('ifsc', ``)
         await replacer.addString('bnumber', ``)
         await replacer.addString('bname', ``)
-        
+
         await replacer.process(page);
 
         await pdfdoc.save(outputPart, PDFNet.SDFDoc.SaveOptions.e_linearized);

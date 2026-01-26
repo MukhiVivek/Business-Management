@@ -8,25 +8,49 @@ function AddProducts() {
   const product_type = useRef();
   const product_description = useRef();
   const product_stock = useRef();
+  const product_gst = useRef();
+  const product_unit = useRef();
+
+
 
   async function submit() {
-    await axios.post(
-      BACKEND_URL + "/api/v1/product/add",
-      {
-        name: product_name.current.value,
-        price: product_price.current.value,
-        product_type: product_type.current.value,
-        description: product_description.current.value,
-        stock: product_stock.current.value,
-      },
-      {
-        headers: {
-          token: localStorage.getItem("token"),
+
+    if (!product_name.current.value.trim()) {
+      alert("Product name is required");
+      return;
+    }
+
+    if (!product_price.current.value || isNaN(product_price.current.value)) {
+      alert("Valid price is required");
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${BACKEND_URL}/api/v1/product/add`,
+        {
+          name: product_name.current.value.trim(),
+          price: Number(product_price.current.value),
+          product_type: product_type.current.value,
+          description: product_description.current.value.trim(),
+          stock: Number(product_stock.current.value),
+          gst_tax_rate: Number(product_gst.current.value),
+          measuring_unit: product_unit.current.value,
         },
-      }
-    );
-    alert("Product Successfully Added");
-    window.location.href = "/products";
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+      alert("Product Successfully Added");
+      navigate("/products");
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.message || "Failed to add product. Try again."
+      );
+    }
   }
 
   return (
@@ -57,26 +81,63 @@ function AddProducts() {
               />
             </div>
 
-            {/* product price */}
-            <div className="mb-4">
-              <label className="block mb-1">Product Price:</label>
-              <input
-                type="number"
-                placeholder="Enter Product Price"
-                ref={product_price}
-                className="w-full border border-gray-300 px-4 py-2"
-              />
-            </div>
+            {/* Product description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 mb-4">
+              {/* Product State */}
+              <div>
+                <label className="block mb-1">Sales Price :</label>
+                <input
+                  type="text"
+                  placeholder="Enter customer State"
+                  ref={product_price}
+                  className="w-full border border-gray-300 px-4 py-2"
+                />
+              </div>
 
-            {/* product type */}
-            <div className="mb-4">
-              <label className="block mb-1">Product Type:</label>
-              <input
-                type="text"
-                placeholder="Enter Product Type"
-                ref={product_type}
-                className="w-full border border-gray-300 px-4 py-2"
-              />
+              {/* GST Tax Rate */}
+              <div>
+                <label className="block mb-1">GST Tax Rate(%)</label>
+                <select
+                  className="w-full border border-gray-300 px-4 py-2"
+                  ref={product_gst}
+                >
+                  <option value="0">0%</option>
+                  <option value="5">5%</option>
+                  <option value="12">12%</option>
+                  <option value="18">18%</option>
+                  <option value="28">28%</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1">Measuring Unit :</label>
+                <select
+                  className="w-full border border-gray-300 px-4 py-2"
+                  ref={product_unit}
+                >
+                  <option value="KG">KG</option>
+                  <option value="PCS">PCS</option>
+                  <option value="Box">Box</option>
+                  <option value="Packet">Packet</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1">Category :</label>
+                <select
+                  className="w-full border border-gray-300 px-4 py-2"
+                  ref={product_type}
+                >
+                  <option value="Flour">Flour</option>
+                  <option value="Farali">Farali</option>
+                  <option value="Instant">Instant</option>
+                  <option value="Premium">Premium</option>
+                  <option value="Spices">Spices</option>
+                  <option value="Whole">Whole</option>
+                  <option value="Hing">Hing</option>
+                  <option value="Papad">Papad</option>
+                </select>
+              </div>
             </div>
 
             {/* product description */}
@@ -104,7 +165,7 @@ function AddProducts() {
             {/* Add product button */}
             <div className="mt-4">
               <button
-                type="submit"
+                type="button"
                 onClick={submit}
                 className="bg-blue-600 cursor-pointer hover:bg-blue-700 text-white font-semibold py-2 px-4 mx-auto"
               >

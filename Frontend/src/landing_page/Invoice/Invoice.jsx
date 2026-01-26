@@ -3,6 +3,7 @@ import "./../../App.css";
 import Modal from "./Modal";
 import CustomerSelector from "./CustomerSelector";
 import { useCustomer } from "../../hooks/useCustomer";
+import { useProduct } from "../../hooks/useProduct";
 import axios from "axios";
 import { BACKEND_URL } from "../../Config";
 
@@ -27,24 +28,78 @@ const Invoice = () => {
     setIsPopupOpen(false);
   };
 
-  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0  , sgst: 0, cgst : 0, igst: 0}]);
+  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, tprice: 0, product_id: null }]);
   const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
   const [Subtotal, setSubtotal] = useState(0);
+  const [activeItemId, setActiveItemId] = useState(null);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const { data: customerdata } = useCustomer();
+  const { data: products } = useProduct();
+
+  const handleSelectProduct = (id, product) => {
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        // Assume SGST + CGST for now (50/50 split) if it's not 0
+        const tax = product.gst_tax_rate || 0;
+        const halfTax = tax / 2;
+
+        return {
+          ...item,
+          product_id: product._id,
+          name: product.name,
+          price: Number((product.price / (1 + (tax / 100))).toFixed(2)),
+          sgst: halfTax,
+          cgst: halfTax,
+          igst: 0,
+          tprice: product.price || 0,
+        };
+      }
+      return item;
+    });
+    setItems(updatedItems);
+    setActiveItemId(null);
+  };
 
   const handleItemChange = (id, field, value) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, [field]: value } : item
-    );
+    if (field === "name") {
+      setActiveItemId(id);
+      if (value.trim() === "") {
+        setFilteredProducts([]);
+      } else {
+        const filtered = products.filter((p) =>
+          p.name.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredProducts(filtered);
+      }
+    }
+
+    const updatedItems = items.map((item) => {
+      if (item.id === id) {
+        const updatedItem = { ...item, [field]: value };
+        if (field === "price") {
+          updatedItem.price = Number(Number(value).toFixed(2));
+        }
+        if (field === "tprice") {
+          const totalTax =
+            Number(updatedItem.sgst || 0) +
+            Number(updatedItem.cgst || 0) +
+            Number(updatedItem.igst || 0);
+          const price = value / (1 + totalTax / 100);
+          updatedItem.price = Number(price.toFixed(2));
+        }
+        return updatedItem;
+      }
+      return item;
+    });
     setItems(updatedItems);
   };
 
   const addItem = () => {
-    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0 ,  sgst: "", cgst : "", igst: "", tprice: 0 }]);
+    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0, sgst: "", cgst: "", igst: "", tprice: 0, product_id: null }]);
   };
 
   const removeItem = (id) => {
@@ -61,7 +116,7 @@ const Invoice = () => {
           const cgst = Number(item.cgst);
           const igst = Number(item.igst);
           const gstprice = price + (price * (sgst + cgst + igst) / 100);
-          return  sum + qty * gstprice;
+          return sum + qty * gstprice;
         }, 0)
       );
     };
@@ -105,7 +160,7 @@ const Invoice = () => {
       Subtotal: Subtotal,
     });
 
-    
+
     alert("Invoice Successfully Added");
 
     handleCreateInvoice(data); // Call the function to create and open the invoice
@@ -137,7 +192,7 @@ const Invoice = () => {
                 </h4>
 
                 {isPopupOpen && (
-                  <Modal onClose={() => setIsPopupOpen(false)}>
+                  <Modal onClose={() => setIsPopupOpen(false)} title="Select Customer">
                     <CustomerSelector
                       onSelect={handleCustomerClick}
                       customerData={customerdata}
@@ -202,7 +257,7 @@ const Invoice = () => {
 
             {/* Items Table */}
             <div className="p-6">
-              <div className="overflow-x-auto">
+              <div className="">
                 <table className="w-full border-collapse rounded-md ">
                   <thead>
                     <tr className="bg-gray-100 text-gray-800">
@@ -216,19 +271,22 @@ const Invoice = () => {
                         QTY
                       </th>
                       <th className="p-3 border-b border-indigo-100 text-right w-33">
-                        Price/Item (₹)
+                        Price/Item
                       </th>
                       <th className="p-2 border-b border-indigo-100 text-right w-32">
-                        SGST (₹)
+                        SGST
                       </th>
                       <th className="p-2 border-b border-indigo-100 text-right w-32">
-                        CGST (₹)
+                        CGST
                       </th>
                       <th className="p-2 border-b border-indigo-100 text-right w-32">
-                        IGST (₹)
+                        IGST
                       </th>
                       <th className="p-3 border-b border-indigo-100 text-right w-32">
-                        Amount (₹)
+                        T.Price
+                      </th>
+                      <th className="p-3 border-b border-indigo-100 text-right w-32">
+                        Amount
                       </th>
                       <th className="p-3 border-b border-indigo-100 text-right w-32">
                         gst_Amount(₹)
@@ -243,7 +301,7 @@ const Invoice = () => {
                         className="border-b border-gray-100 hover:bg-gray-50"
                       >
                         <td className="p-3 text-gray-600">{index + 1}</td>
-                        <td className="p-3">
+                        <td className="p-3 relative">
                           <input
                             type="text"
                             placeholder="Item Name"
@@ -251,8 +309,23 @@ const Invoice = () => {
                             onChange={(e) =>
                               handleItemChange(item.id, "name", e.target.value)
                             }
+                            onBlur={() => setTimeout(() => setActiveItemId(null), 200)}
                             className="border border-gray-300 p-2 w-sm rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition"
                           />
+                          {activeItemId === item.id && filteredProducts.length > 0 && (
+                            <ul className="absolute z-50 w-full left-0 bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-y-auto shadow-2xl">
+                              {filteredProducts.map((p) => (
+                                <li
+                                  key={p._id}
+                                  onClick={() => handleSelectProduct(item.id, p)}
+                                  className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-0 flex justify-between"
+                                >
+                                  <span className="font-medium">{p.name}</span>
+                                  <span className="text-gray-500 text-sm">₹{p.price}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </td>
                         <td className="p-3">
                           <input
@@ -330,10 +403,25 @@ const Invoice = () => {
                           />
                         </td>
                         <td>
+                          <input
+                            type="number"
+                            min="0"
+                            value={item.tprice}
+                            onChange={(e) =>
+                              handleItemChange(
+                                item.id,
+                                "tprice",
+                                Number(e.target.value)
+                              )
+                            }
+                            className="border border-gray-300 p-2 w-16 rounded-md text-right focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                          />
+                        </td>
+                        <td>
                           <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6">
                             ₹ {(item.qty * item.price).toFixed(2)}
                           </div>
-                        </td>                        
+                        </td>
                         <td>
                           <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6 ">
                             ₹ {(item.qty * (item.price + (item.price * (item.sgst + item.cgst + item.igst) / 100))).toFixed(2)}

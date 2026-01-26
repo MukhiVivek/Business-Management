@@ -82,6 +82,10 @@ const invoiceSchema = new mongoose_1.Schema({
     },
     items: [{
             id: Number,
+            product_id: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: "product"
+            },
             name: String,
             qty: Number,
             price: Number,
