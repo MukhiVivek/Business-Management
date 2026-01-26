@@ -43,7 +43,7 @@ function generateInvoicePdf(data) {
             for (let i = 0; i < data.items.length; i++) {
                 yield replacer.addString(`no${i}`, `${i + 1}`);
                 yield replacer.addString(`item_name${i}`, `${data.items[i].name}`);
-                yield replacer.addString(`qty${i}`, `${data.items[i].qty} Kg`);
+                yield replacer.addString(`qty${i}`, `${data.items[i].qty}`);
                 yield replacer.addString(`rate${i}`, `${data.items[i].price}`);
                 yield replacer.addString(`amont${i}`, `${new Intl.NumberFormat('en-IN').format(data.items[i].amount)} ₹`);
                 yield replacer.addString(`c${i}`, `${data.items[i].cgst} %`);

@@ -34,27 +34,40 @@ router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
 }));
 router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, unit, price, product_type, display_name, description, stock, image, } = req.body;
-        const newCustomer = yield product_1.default.create({
-            name,
-            unit,
-            price,
+        const { name, price, product_type, description, stock, gst_tax_rate, measuring_unit, image, } = req.body;
+        // Validation
+        if (!name || !price || !product_type) {
+            return res.status(400).json({
+                message: "Required fields missing",
+            });
+        }
+        const newProduct = yield product_1.default.create({
+            name: name.trim(),
+            price: Number(price),
             product_type,
-            display_name,
-            description,
-            stock,
+            description: description === null || description === void 0 ? void 0 : description.trim(),
+            stock: Number(stock) || 0,
+            gst_tax_rate: Number(gst_tax_rate) || 0,
+            measuring_unit,
             image,
-            // @ts-ignore
-            creater_id: req === null || req === void 0 ? void 0 : req.userId,
-            createdAt: Date.now(),
+            creater_id: req.userId,
+            createdAt: new Date(),
         });
         res.status(201).json({
-            message: "customer added"
+            message: "Product added successfully",
+            product: newProduct,
         });
     }
-    catch (e) {
+    catch (error) {
+        console.error(error);
+        // @ts-ignore
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "Product already exists",
+            });
+        }
         res.status(500).json({
-            message: "customer already exists"
+            message: "Internal server error",
         });
     }
 }));

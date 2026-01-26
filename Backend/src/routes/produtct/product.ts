@@ -7,8 +7,8 @@ const router = express.Router({ mergeParams: true });
 // create : update , delete
 
 // Done :  data , add 
- 
-router.get("/data" , checkuserlogin , async(req, res)=> {
+
+router.get("/data", checkuserlogin, async (req: any, res: any) => {
     try {
         // @ts-ignore
         const data = await product.find({ creater_id: req.userId })
@@ -16,49 +16,66 @@ router.get("/data" , checkuserlogin , async(req, res)=> {
         res.json({
             data
         })
-    } catch(e) {
+    } catch (e) {
         res.status(403).json({
             message: "You are not logged in"
         })
     }
 })
 
-router.post("/add" ,checkuserlogin , async (req, res)=> {
-
-    try{
+router.post("/add", checkuserlogin, async (req: any, res: any) => {
+    try {
         const {
             name,
-            unit,
             price,
             product_type,
-            display_name,
             description,
             stock,
+            gst_tax_rate,
+            measuring_unit,
             image,
         } = req.body;
-        
-        const newCustomer =await product.create({
-            name,
-            unit,
-            price,
+
+        // Validation
+        if (!name || !price || !product_type) {
+            return res.status(400).json({
+                message: "Required fields missing",
+            });
+        }
+
+        const newProduct = await product.create({
+            name: name.trim(),
+            price: Number(price),
             product_type,
-            display_name,
-            description,
-            stock,
+            description: description?.trim(),
+            stock: Number(stock) || 0,
+            gst_tax_rate: Number(gst_tax_rate) || 0,
+            measuring_unit,
             image,
-            // @ts-ignore
-            creater_id: req?.userId,
-            createdAt: Date.now(),
-        })
+            creater_id: req.userId,
+            createdAt: new Date(),
+        });
+
         res.status(201).json({
-            message:"customer added"
-        })
-    }catch(e){
+            message: "Product added successfully",
+            product: newProduct,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        // @ts-ignore
+        if (error.code === 11000) {
+            return res.status(409).json({
+                message: "Product already exists",
+            });
+        }
+
         res.status(500).json({
-            message:"customer already exists"
-        })
+            message: "Internal server error",
+        });
     }
-   
-})
+});
+
 
 export default router;
