@@ -7,29 +7,44 @@ import { useCustomer } from "../../hooks/useCustomer";
 const Customers = () => {
   const { data: customerdata } = useCustomer();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 25;
+
+  // Filter logic
+  const filteredCustomers = Array.isArray(customerdata) ? customerdata.filter(customer =>
+    String(customer.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(customer.company || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(customer.email || "").toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCustomers = customerdata ? customerdata.slice(indexOfFirstItem, indexOfLastItem) : [];
-  const totalPages = customerdata ? Math.ceil(customerdata.length / itemsPerPage) : 0;
+  const currentCustomers = filteredCustomers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
   return (
-    <div className="pl-18 pt-2 pr-9 min-h-screen customers block rounded-lg w-full">
+    <div className="ml-14 p-6 min-h-screen bg-gray-50 flex-1 block">
       {/* Header */}
       <div className="flex justify-between items-start mb-2 mt-1">
         <div className="flex gap-3">
           <input
             type="text"
-            placeholder="🔍 Search"
-            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="🔍 Search (Name, Company, Email)"
+            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+            value={searchTerm}
+            onChange={handleSearch}
           />
-          <h1 className="text-md mt-1">Total Count: {customerdata ? customerdata.length : 0}</h1>
+          <h1 className="text-md mt-1">Total Count: {filteredCustomers.length}</h1>
           <h1 className="text-md mt-1 font-medium text-gray-500 ml-2">
-            (Showing {customerdata?.length > 0 ? indexOfFirstItem + 1 : 0}-{Math.min(indexOfLastItem, customerdata?.length || 0)} of {customerdata?.length || 0})
+            (Showing {filteredCustomers.length > 0 ? indexOfFirstItem + 1 : 0}-{Math.min(indexOfLastItem, filteredCustomers.length)} of {filteredCustomers.length})
           </h1>
         </div>
         <div>
@@ -39,8 +54,10 @@ const Customers = () => {
       <div className="min-h-screen font-sans text-sm">
         <Top />
         {/* Error Fallback */}
-        {!customerdata || customerdata.length === 0 ? (
-          <p>No customers found.</p>
+        {!filteredCustomers || filteredCustomers.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500 text-lg">No customers found matching "{searchTerm}".</p>
+          </div>
         ) : (
           <>
             <CustomersList customerdata={currentCustomers} />

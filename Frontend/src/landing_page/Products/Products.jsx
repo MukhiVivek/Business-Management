@@ -7,31 +7,46 @@ const Products = () => {
 
   const { data: products } = useProduct();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const itemsPerPage = 25;
 
   const navigate = useNavigate();
 
+  // Filter logic
+  const filteredProducts = Array.isArray(products) ? products.filter(product =>
+    String(product.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(product.product_type || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(product.description || "").toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
+
   // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentProducts = products ? products.slice(indexOfFirstItem, indexOfLastItem) : [];
-  const totalPages = products ? Math.ceil(products.length / itemsPerPage) : 0;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
   return (
-    <div className="pl-18 pt-2 pr-9 min-h-screen block rounded-lg w-full">
+    <div className="ml-14 p-6 min-h-screen bg-gray-50 flex-1 block">
       {/* Header */}
       <div className="flex justify-between items-start mb-2 mt-1">
         <div className="flex gap-3">
           <input
             type="text"
-            placeholder="🔍 Search"
-            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="🔍 Search (Name, Type, Desc)"
+            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+            value={searchTerm}
+            onChange={handleSearch}
           />
-          <h1 className="text-md mt-1">Total Count: {products ? products.length : 0}</h1>
+          <h1 className="text-md mt-1">Total Count: {filteredProducts.length}</h1>
           <h1 className="text-md mt-1 font-medium text-gray-500 ml-2">
-            (Showing {products?.length > 0 ? indexOfFirstItem + 1 : 0}-{Math.min(indexOfLastItem, products?.length || 0)} of {products?.length || 0})
+            (Showing {filteredProducts.length > 0 ? indexOfFirstItem + 1 : 0}-{Math.min(indexOfLastItem, filteredProducts.length)} of {filteredProducts.length})
           </h1>
         </div>
         <div>
@@ -50,8 +65,10 @@ const Products = () => {
             </button>
           </div>
         </div>
-        {!products || products.length === 0 ? (
-          <p>No Products found.</p>
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500 text-lg">No products found matching "{searchTerm}".</p>
+          </div>
         ) : (
           <>
             <ProductsList data={currentProducts} />

@@ -1,67 +1,66 @@
 import React from "react";
-import { BACKEND_URL } from "../../Config";
 import DeleteIcon from "../../components/DeleteIcon";
+import { BACKEND_URL } from "../../Config";
 
-const PaymentList = ({ data }) => {
-  // Checks all the row entries
-  const handleSelectAll = (e) => {
-    const checkboxes = document.querySelectorAll(
-      'input[name="customerCheckbox"]'
-    );
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = e.target.checked;
-    });
+const PaymentList = ({ data, refetch }) => {
+  const deletePayment = (id) => {
+    if (window.confirm("Are you sure you want to delete this payment record?")) {
+      fetch(`${BACKEND_URL}/api/v1/payment/delete/${id}`, {
+        method: "GET",
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      })
+        .then((res) => res.json())
+        .then(() => {
+          refetch();
+        })
+        .catch((err) => console.error(err));
+    }
   };
 
-
-
   return (
-    <div className="orders">
-      <table className="w-full border-t text-left rounded-sm">
-        <thead className="bg-gray-50 text-center text-gray-500 uppercase text-xs  border-b border-l border-r dark:bg-gray-100">
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead className="bg-gray-50 text-gray-500 uppercase text-xs font-semibold">
           <tr>
-            <th className="px-2 py-1 pl-2">
-              <input
-                type="checkbox"
-                name="customerCheckbox"
-                onChange={handleSelectAll}
-              />
-            </th>
-            <th className="px-4 py-3">Payment No.</th>
-            <th className="px-4 py-3">Date Created</th>
-            <th className="px-4 py-3">Customer Name</th>
-            <th className="px-4 py-3">Payment Status</th>
-            {/* <th className="px-4 py-3">Due Date</th> */}
-            <th className="px-4 py-3">Amount</th>
-            <th className=" py-3">Delete</th>
+            <th className="px-6 py-4">Status</th>
+            <th className="px-6 py-4">Date</th>
+            <th className="px-6 py-4">Method</th>
+            <th className="px-6 py-4">Description</th>
+            <th className="px-6 py-4">Amount</th>
+            <th className="px-6 py-4 text-center">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y border-b border-l border-r text-center whitespace-nowrap">
-
-          {data.map((order) => (
-            <tr key={order.id} className="hover:bg-gray-50">
-              <td className="px-2 py-1">
-                <input type="checkbox" name="customerCheckbox" />
+        <tbody className="divide-y divide-gray-100 whitespace-nowrap">
+          {data.map((payment) => (
+            <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
+              <td className="px-6 py-4">
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${payment.status === "Completed" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
+                  }`}>
+                  {payment.status || "Completed"}
+                </span>
               </td>
-              <td
-                className="px-4 py-3 text-blue-500 cursor-pointer"
-                onClick={PDF.bind(null, order._id)}
-              >
-                {order.invoice_number}
+              <td className="px-6 py-4 text-sm text-gray-600">
+                {new Date(payment.createdAt).toLocaleDateString()}
               </td>
-              <td className="px-4 py-3">{new Date(order.createdAt).toLocaleDateString()}</td>
-              <td className="px-4 py-3">{order.customer_id.name}</td>
-              <td 
-                className="px-4 py-3 text-blue-500 cursor-pointer "
-                onClick={paymentpage(order._id)}
-                >{order.status}</td>
-              {/* <td className="px-4 py-3">{new Date(order.due_date).toLocaleDateString()}</td> */}
-              <td className="px-4 py-3">{order.Subtotal}</td>
-              <td
-                className="py-3 pl-4 cursor-pointer text-red-500 hover:text-red-700"
-                onClick={deleteinvoice.bind(null, order.invoice_number, order._id)}
-              >
-                <DeleteIcon />
+              <td className="px-6 py-4 text-sm font-medium text-gray-700 uppercase">
+                {payment.payment_method}
+              </td>
+              <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                {payment.description || "N/A"}
+              </td>
+              <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                ₹{Number(payment.amount).toLocaleString()}
+              </td>
+              <td className="px-6 py-4 text-center">
+                <button
+                  onClick={() => deletePayment(payment._id)}
+                  className="text-red-500 hover:text-red-700 transition-colors"
+                  title="Delete Payment"
+                >
+                  <DeleteIcon />
+                </button>
               </td>
             </tr>
           ))}
@@ -71,4 +70,4 @@ const PaymentList = ({ data }) => {
   );
 };
 
-export default OrdersList;
+export default PaymentList;

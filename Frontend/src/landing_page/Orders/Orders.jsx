@@ -1,78 +1,159 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "../../App.css";
 import { useInvoice } from "../../hooks/useInvoice";
 import OrdersList from "./OrdersList";
 
 const Orders = () => {
-
-  const { data: invoiceData } = useInvoice();
+  const { data: invoiceData, refetch } = useInvoice();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("today"); // "today", "all"
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 25;
 
-  // Calculate pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = invoiceData ? invoiceData.slice(indexOfFirstItem, indexOfLastItem) : [];
-  const totalPages = invoiceData ? Math.ceil(invoiceData.length / itemsPerPage) : 0;
+  const today = new Date().setHours(0, 0, 0, 0);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const filteredOrders = useMemo(() => {
+    if (!Array.isArray(invoiceData)) return [];
+    return invoiceData.filter((order) => {
+      const orderDate = new Date(order.createdAt).setHours(0, 0, 0, 0);
+
+      // Date filter
+      if (filterType === "today" && orderDate !== today) return false;
+
+      // Search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          String(order.invoice_number || "").toLowerCase().includes(searchLower) ||
+          String(order.customer_id?.name || "").toLowerCase().includes(searchLower)
+        );
+      }
+
+      return true;
+    });
+  }, [invoiceData, filterType, searchTerm, today]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const currentOrders = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredOrders.slice(start, start + itemsPerPage);
+  }, [filteredOrders, currentPage]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleFilterChange = (type) => {
+    setFilterType(type);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className="pl-18 pt-2 pr-9 min-h-screen customers block rounded-lg w-full">
+    <div className="font ml-14 p-6 min-h-screen bg-gray-50 flex flex-col flex-1">
       {/* Header */}
-      <div className="flex justify-between items-start mb-2 mt-1">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="🔍 Search"
-            className="pl-3 border-2 border-gray-400 bg-gray-100 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <h1 className="text-md mt-1">Total Count: {invoiceData ? invoiceData.length : 0} </h1>
-          <h1 className="text-md mt-1">Total Orders: {invoiceData ? invoiceData.length : 0} </h1>
-          <h1 className="text-md mt-1 font-medium text-gray-500 ml-2">
-            (Showing {invoiceData?.length > 0 ? indexOfFirstItem + 1 : 0}-{Math.min(indexOfLastItem, invoiceData?.length || 0)} of {invoiceData?.length || 0})
-          </h1>
-        </div>
-        <div>
-          <h1 className="text-xl font-semibold text-gray-700">Orders</h1>
+      <div className="w-full mb-8">
+        <div className="flex justify-between items-end">
+          <div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Orders</h1>
+            <p className="text-gray-500 mt-2 font-medium">
+              Showing <span className="text-blue-600 font-bold">{filterType === 'today' ? "Today's" : "All"}</span> orders
+            </p>
+          </div>
         </div>
       </div>
-      <div className="min-h-screen font-sans text-sm">
-        {/* Order List Table */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl mb-1 font-semibold">Orders List</h1>
-        </div>
-        {/* {!Orders || Orders.length === 0 ? (
-          <p>No Orders found!</p>
-        ) : ( */}
-        <OrdersList data={currentOrders} />
-        {/* )} */}
 
-        {/* Pagination Controls */}
-        <div className="flex justify-center items-center gap-4 mt-6 mb-8">
-          <button
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 border rounded ${currentPage === 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-500 hover:bg-blue-50 border-blue-500"
-              }`}
-          >
-            Previous
-          </button>
-          <span className="text-gray-700">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            onClick={() => paginate(currentPage + 1)}
-            disabled={currentPage === totalPages || totalPages === 0}
-            className={`px-4 py-2 border rounded ${currentPage === totalPages || totalPages === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-white text-blue-500 hover:bg-blue-50 border-blue-500"
-              }`}
-          >
-            Next
-          </button>
+      {/* Control Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex gap-4 items-center flex-1 min-w-[300px]">
+          <div className="flex bg-gray-100 p-1 rounded-xl">
+            <button
+              onClick={() => handleFilterChange("today")}
+              className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${filterType === "today" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              Today
+            </button>
+            <button
+              onClick={() => handleFilterChange("all")}
+              className={`px-6 py-2 text-sm font-bold rounded-lg transition-all ${filterType === "all" ? "bg-white text-blue-600 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                }`}
+            >
+              All Time
+            </button>
+          </div>
+
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search by order # or customer name..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-transparent rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all font-medium"
+            />
+            <svg className="w-5 h-5 text-gray-400 absolute left-4 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
         </div>
+      </div>
+
+      {/* Table Container */}
+      <div className="flex-1 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+        <div className="px-8 py-6 border-b border-gray-50 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-gray-800">Order Management</h2>
+          <span className="bg-blue-50 text-blue-700 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-tighter">
+            {filteredOrders.length} orders
+          </span>
+        </div>
+
+        <div className="flex-1 overflow-auto">
+          {filteredOrders.length === 0 ? (
+            <div className="p-20 text-center flex flex-col items-center">
+              <div className="bg-gray-50 p-6 rounded-full mb-4">
+                <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-800">No orders found</h3>
+              <p className="text-gray-500 mt-1 max-w-sm">Try changing your filters or checking a different date.</p>
+            </div>
+          ) : (
+            <OrdersList data={currentOrders} refetch={refetch} />
+          )}
+        </div>
+
+        {/* Modern Pagination */}
+        {totalPages > 1 && (
+          <div className="px-8 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+            <span className="text-xs font-bold text-gray-500">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "bg-white text-blue-600 shadow-sm hover:bg-gray-50"
+                  }`}
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${currentPage === totalPages ? "text-gray-300 cursor-not-allowed" : "bg-white text-blue-600 shadow-sm hover:bg-gray-50"
+                  }`}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 export default Orders;
+

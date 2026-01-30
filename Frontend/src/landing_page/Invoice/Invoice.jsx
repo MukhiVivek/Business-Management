@@ -6,8 +6,12 @@ import { useCustomer } from "../../hooks/useCustomer";
 import { useProduct } from "../../hooks/useProduct";
 import axios from "axios";
 import { BACKEND_URL } from "../../Config";
+import { useParams, useNavigate } from "react-router-dom";
 
 const Invoice = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEditMode = !!id;
 
   const handleCreateInvoice = async (data) => {
     try {
@@ -16,7 +20,6 @@ const Invoice = () => {
       console.error('Error creating invoice:', error);
     }
   };
-
 
   // state management for customer popup
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -39,6 +42,33 @@ const Invoice = () => {
 
   const { data: customerdata } = useCustomer();
   const { data: products } = useProduct();
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchInvoice = async () => {
+        try {
+          const res = await axios.get(`${BACKEND_URL}/api/v1/invoice/${id}`, {
+            headers: {
+              token: localStorage.getItem("token")
+            }
+          });
+          const data = res.data.data;
+          setInvoiceNo(data.invoice_number);
+          setInvoiceDate(new Date(data.invoice_date).toISOString().slice(0, 10));
+          setSelectedCustomer(data.customer_id);
+          setItems(data.items.map(item => ({
+            ...item,
+            id: item.id || Math.random() // Ensure we have a unique ID for React keys
+          })));
+          setSubtotal(data.Subtotal);
+        } catch (error) {
+          console.error("Error fetching invoice:", error);
+          alert("Failed to fetch invoice data");
+        }
+      };
+      fetchInvoice();
+    }
+  }, [id, isEditMode]);
 
   const handleSelectProduct = (id, product) => {
     const updatedItems = items.map((item) => {
@@ -135,36 +165,41 @@ const Invoice = () => {
   }, [addItem]);
 
   const submit = async () => {
-    const data = await axios.post(
-      BACKEND_URL + "/api/v1/invoice/add",
-      {
-        invoice_number: invoiceNo,
-        invoice_date: invoiceDate,
-        customer_id: selectedCustomer?._id,
-        Subtotal: Subtotal,
-        // description: "",
-        items: items,
-      },
-      {
-        headers: {
-          token: localStorage.getItem("token"),
+    try {
+      const url = isEditMode
+        ? `${BACKEND_URL}/api/v1/invoice/update/${id}`
+        : `${BACKEND_URL}/api/v1/invoice/add`;
+
+      const method = isEditMode ? 'put' : 'post';
+
+      const res = await axios[method](
+        url,
+        {
+          invoice_number: invoiceNo,
+          invoice_date: invoiceDate,
+          customer_id: selectedCustomer?._id,
+          Subtotal: Subtotal,
+          items: items,
         },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        }
+      );
+
+      console.log("Invoice Response:", res.data);
+      alert(isEditMode ? "Invoice Successfully Updated" : "Invoice Successfully Added");
+
+      if (isEditMode) {
+        navigate("/orders");
+      } else {
+        handleCreateInvoice(res);
       }
-    );
-
-    console.log("Invoice Data:", {
-      invoice_number: invoiceNo,
-      invoice_date: invoiceDate,
-      customer_id: selectedCustomer?._id,
-      items: items,
-      Subtotal: Subtotal,
-    });
-
-
-    alert("Invoice Successfully Added");
-
-    handleCreateInvoice(data); // Call the function to create and open the invoice
-
+    } catch (error) {
+      console.error("Error submitting invoice:", error);
+      alert(error.response?.data?.message || "Failed to submit invoice");
+    }
   };
 
 
@@ -487,13 +522,13 @@ const Invoice = () => {
               </div>
             </div>
 
-            {/* Download Button */}
+            {/* Download/Update Button */}
             <div className="text-center p-6 bg-gray-50 border-gray-200">
               <button
                 onClick={submit}
                 className=" cursor-pointer bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition shadow-md"
               >
-                Download Invoice
+                {isEditMode ? "Update Invoice" : "Download Invoice"}
               </button>
             </div>
           </div>

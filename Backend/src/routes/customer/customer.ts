@@ -7,26 +7,26 @@ const router = express.Router({ mergeParams: true });
 // create : update , delete
 
 // Done : data , add
- 
-router.get("/data" , checkuserlogin , async(req, res)=> {
+
+router.get("/data", checkuserlogin, async (req, res) => {
     try {
         // @ts-ignore
-        const data = await customer.find({creater_id :req.userId})
+        const data = await customer.find({ creater_id: req.userId })
 
         res.json({
             data
         })
-        
-    } catch(e) {
+
+    } catch (e) {
         res.status(403).json({
             message: "You are not logged in"
         })
     }
 })
 
-router.post("/add" ,checkuserlogin , async (req, res)=> {
+router.post("/add", checkuserlogin, async (req, res) => {
 
-    try{
+    try {
         let {
             name,
             work_phone_number,
@@ -39,8 +39,8 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             email,
             gst
         } = req.body;
-        
-        const newCustomer =await customer.create({
+
+        const newCustomer = await customer.create({
             name,
             gst,
             work_phone_number,
@@ -56,16 +56,16 @@ router.post("/add" ,checkuserlogin , async (req, res)=> {
             createdAt: Date.now(),
         })
         res.status(201).json({
-            message:"customer added"
+            message: "customer added"
         })
-    }catch(e : any) {
+    } catch (e: any) {
         console.log(e);
         res.status(500).json({
-            message:"customer already exists",
-            error : e.message
+            message: "customer already exists",
+            error: e.message
         })
     }
-   
+
 })
 
 export default router;

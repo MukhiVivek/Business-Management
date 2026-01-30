@@ -25,7 +25,13 @@ pdfnet_node_1.PDFNet.initialize("demo:1731769745328:7ef78d2c0300000000c4e7a408d8
 router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // @ts-ignore
-        const data = yield invoice_1.default.find({ creater_id: req.userId }).populate('customer_id', 'name email phone_number display_name').sort({ invoice_number: -1 });
+        const data = yield invoice_1.default.find({ creater_id: req.userId })
+            .populate('customer_id', 'name email phone_number display_name')
+            .populate({
+            path: 'items.product_id',
+            select: 'product_type'
+        })
+            .sort({ invoice_number: -1 });
         res.json({
             data
         });
@@ -212,6 +218,139 @@ router.get('/:id/pdf', (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (err) {
         res.status(500).send(`Error during conversion: ${err.message}`);
+    }
+}));
+router.get("/:id", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield invoice_1.default.findById(req.params.id)
+            .populate('customer_id', 'name email phone_number display_name')
+            .populate({
+            path: 'items.product_id',
+            select: 'product_type'
+        });
+        if (!data) {
+            return res.status(404).json({ message: "Invoice not found" });
+        }
+        res.json({ data });
+    }
+    catch (e) {
+        res.status(500).json({ message: "Error fetching invoice" });
+    }
+}));
+router.put("/update/:id", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        let { customer_id, invoice_number, invoice_date, Subtotal, items, description, } = req.body;
+        const oldInvoice = yield invoice_1.default.findById(id);
+        if (!oldInvoice) {
+            return res.status(404).json({ message: "Invoice not found" });
+        }
+        // 1. Reverse old impact on customer balance
+        yield customer_1.default.findByIdAndUpdate(oldInvoice.customer_id, {
+            $inc: {
+                balance: +(oldInvoice.Subtotal),
+                invoice: -(1)
+            }
+        });
+        // 2. Reverse old impact on product stock
+        for (const item of oldInvoice.items) {
+            if (item.product_id) {
+                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: Number(item.qty) } });
+            }
+        }
+        // 3. Prepare new data
+        //@ts-ignore
+        items = items.map(item => {
+            item.amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
+            item.tamount = Number((item.amount + (item.amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
+            return item;
+        });
+        let gst = { sgst: 0, cgst: 0, igst: 0 };
+        //@ts-ignore
+        items.forEach(item => {
+            gst.sgst += ((Number(item.price) * Number(item.sgst || 0) / 100) * Number(item.qty));
+            gst.cgst += ((Number(item.price) * Number(item.cgst || 0) / 100) * Number(item.qty));
+            gst.igst += ((Number(item.price) * Number(item.igst || 0) / 100) * Number(item.qty));
+        });
+        gst.sgst = Number(gst.sgst.toFixed(2));
+        gst.cgst = Number(gst.cgst.toFixed(2));
+        gst.igst = Number(gst.igst.toFixed(2));
+        let gst_table = {
+            basic_amount: { amount_1: 0, amount_2: 0, amount_3: 0, amount_4: 0, amount_5: 0 },
+            cgst_amount: { amount_1: 0, amount_2: 0, amount_3: 0, amount_4: 0, amount_5: 0 },
+            sgst_amount: { amount_1: 0, amount_2: 0, amount_3: 0, amount_4: 0, amount_5: 0 },
+            igst_amount: { amount_1: 0, amount_2: 0, amount_3: 0, amount_4: 0, amount_5: 0 }
+        };
+        //@ts-ignore
+        items.forEach(item => {
+            let gstRateKey = '';
+            if (item.igst > 0) {
+                if (item.igst === 5)
+                    gstRateKey = 'amount_2';
+                else if (item.igst === 12)
+                    gstRateKey = 'amount_3';
+                else if (item.igst === 18)
+                    gstRateKey = 'amount_4';
+                else if (item.igst === 24)
+                    gstRateKey = 'amount_5';
+                else if (item.igst === 0)
+                    gstRateKey = 'amount_1';
+                else
+                    return;
+                gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                gst_table.igst_amount[gstRateKey] = Number((gst_table.igst_amount[gstRateKey] + ((item.price * item.igst / 100) * item.qty)).toFixed(2));
+            }
+            else {
+                if (item.sgst === 0 && item.cgst === 0)
+                    gstRateKey = 'amount_1';
+                else if (item.sgst === 2.5 && item.cgst === 2.5)
+                    gstRateKey = 'amount_2';
+                else if (item.sgst === 6 && item.cgst === 6)
+                    gstRateKey = 'amount_3';
+                else if (item.sgst === 9 && item.cgst === 9)
+                    gstRateKey = 'amount_4';
+                else if (item.sgst === 12 && item.cgst === 12)
+                    gstRateKey = 'amount_5';
+                else
+                    return;
+                gst_table.basic_amount[gstRateKey] = Number((gst_table.basic_amount[gstRateKey] + item.amount).toFixed(2));
+                gst_table.cgst_amount[gstRateKey] = Number((gst_table.cgst_amount[gstRateKey] + ((item.price * item.cgst / 100) * item.qty)).toFixed(2));
+                gst_table.sgst_amount[gstRateKey] = Number((gst_table.sgst_amount[gstRateKey] + ((item.price * item.sgst / 100) * item.qty)).toFixed(2));
+            }
+        });
+        // 4. Update the invoice
+        const updatedInvoice = yield invoice_1.default.findByIdAndUpdate(id, {
+            customer_id,
+            invoice_number,
+            invoice_date,
+            due_date: invoice_date,
+            Subtotal: Number(Number(Subtotal).toFixed(2)),
+            description,
+            items,
+            gst,
+            gst_table,
+            updatedAt: Date.now()
+        }, { new: true });
+        // 5. Apply new impact on customer balance
+        yield customer_1.default.findByIdAndUpdate(customer_id, {
+            $inc: {
+                balance: -Number(Number(Subtotal).toFixed(2)),
+                invoice: 1
+            }
+        });
+        // 6. Apply new impact on product stock
+        for (const item of items) {
+            if (item.product_id) {
+                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } });
+            }
+        }
+        res.status(200).json({
+            id: updatedInvoice === null || updatedInvoice === void 0 ? void 0 : updatedInvoice._id,
+            message: "Invoice updated successfully"
+        });
+    }
+    catch (e) {
+        res.status(500).json({ message: "Error updating invoice: " + e.message });
     }
 }));
 exports.default = router;

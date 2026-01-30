@@ -1,22 +1,22 @@
 import axios from "axios";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../Config";
 
 export function usePayment() {
-    const [data , setData] = useState([]);
+    const [data, setData] = useState([]);
 
     async function getData() {
         await axios.get(`${BACKEND_URL}/api/v1/payment/data`, {
-            headers:{
+            headers: {
                 "token": localStorage.getItem("token")
             }
         })
-        .then((res) => {
-            setData(res.data.data);
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+            .then((res) => {
+                setData(res.data.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     useEffect(() => {
@@ -29,7 +29,7 @@ export function usePayment() {
             clearInterval(interval);
         }
     }, []);
-    
-    return {data};
+
+    return { data, refetch: getData };
 }
 
