@@ -13,6 +13,8 @@ import Sidebar from "./landing_page/includes/Sidebar/Sidebar";
 import Topnavbar from "./landing_page/includes/Sidebar/Topbar/Topnavbar";
 import Payment from "./landing_page/payment/payment";
 import AddPayment from "./landing_page/payment/addinvoicepayment";
+import Purchase from "./landing_page/Purchase/Purchase";
+import PurchaseList from "./landing_page/Purchase/PurchaseList";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
           <Route path="/customers/add" element={<Add_customer />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/add" element={<AddPayment />} />
+          <Route path="/purchase" element={<PurchaseList />} />
+          <Route path="/purchase/add" element={<Purchase />} />
         </Routes>
       </div>
     </Router>

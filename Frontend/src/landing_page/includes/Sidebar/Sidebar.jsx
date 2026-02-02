@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { LuBaggageClaim } from "react-icons/lu";
 import "./Sidebar.css";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
+import { BiCartDownload } from "react-icons/bi";
 import Logo from "../../../assets/Logo.png";
 
 const Sidebar = () => {
@@ -24,22 +25,27 @@ const Sidebar = () => {
     {
       path: "/orders",
       label: "Orders",
-      icon: <LuBaggageClaim className="text-2xl"/>
+      icon: <LuBaggageClaim className="text-2xl" />
     },
     {
       path: "/products",
       label: "Products",
-      icon: <CiBoxes className="text-2xl"/>
+      icon: <CiBoxes className="text-2xl" />
     },
     {
       path: "/customers",
       label: "Customers",
-      icon: <IoPersonSharp className="text-2xl"/>
+      icon: <IoPersonSharp className="text-2xl" />
     },
     {
       path: "/payment",
       label: "Payment",
-      icon: <FaMoneyBillTransfer className="text-2xl"/>
+      icon: <FaMoneyBillTransfer className="text-2xl" />
+    },
+    {
+      path: "/purchase",
+      label: "Purchase",
+      icon: <BiCartDownload className="text-2xl" />
     }
   ];
 

@@ -55,11 +55,19 @@ const invoiceSchema = new Schema({
         name: String,
         qty: Number,
         price: Number,
+        purchase_price: Number,
         amount: Number,
         sgst: Number,
         cgst: Number,
         igst: Number,
-        tamount: Number
+        tamount: Number,
+        lot_details: [{
+            lot_id: {
+                type: Schema.Types.ObjectId,
+                ref: "purchase"
+            },
+            qty: Number
+        }]
     }],
     creater_id: {
         type: Schema.Types.ObjectId,

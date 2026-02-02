@@ -89,11 +89,19 @@ const invoiceSchema = new mongoose_1.Schema({
             name: String,
             qty: Number,
             price: Number,
+            purchase_price: Number,
             amount: Number,
             sgst: Number,
             cgst: Number,
             igst: Number,
-            tamount: Number
+            tamount: Number,
+            lot_details: [{
+                    lot_id: {
+                        type: mongoose_1.Schema.Types.ObjectId,
+                        ref: "purchase"
+                    },
+                    qty: Number
+                }]
         }],
     creater_id: {
         type: mongoose_1.Schema.Types.ObjectId,

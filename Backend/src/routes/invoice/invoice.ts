@@ -3,6 +3,7 @@ import { checkuserlogin } from "../../checkuser";
 import invoice from "../../models/invoice";
 import customer from "../../models/customer";
 import product from "../../models/product";
+import purchase from "../../models/purchase";
 import { generateInvoicePdf } from "./pdf";
 import fs from "fs";
 import { PDFNet } from '@pdftron/pdfnet-node';
@@ -142,6 +143,51 @@ router.post("/add", checkuserlogin, async (req, res) => {
         // Update the GST table with the items data
         updateGSTTable(items);
 
+        // Prepare items with FIFO stock deduction and purchase price tracking
+        const detailedItems = [];
+        for (const item of items) {
+            let remainingToDeduct = Number(item.qty);
+            let totalPurchaseCost = 0;
+            const lotDeductions = [];
+
+            if (item.product_id) {
+                // Find available lots sorted by date (FIFO)
+                const lots = await purchase.find({
+                    product_id: item.product_id,
+                    remaining_stock: { $gt: 0 }
+                }).sort({ purchase_date: 1 });
+
+                for (const lot of lots) {
+                    if (remainingToDeduct <= 0) break;
+
+                    const deduction = Math.min(lot.remaining_stock, remainingToDeduct);
+                    lot.remaining_stock -= deduction;
+                    remainingToDeduct -= deduction;
+
+                    totalPurchaseCost += (deduction * lot.purchase_price);
+                    lotDeductions.push({
+                        lot_id: lot._id,
+                        qty: deduction
+                    });
+
+                    await lot.save();
+                }
+
+                // Update total product stock
+                await product.findByIdAndUpdate(item.product_id, {
+                    $inc: { stock: -Number(item.qty) }
+                });
+            }
+
+            const avgPurchasePrice = item.qty > 0 ? (totalPurchaseCost / Number(item.qty)) : 0;
+
+            detailedItems.push({
+                ...item,
+                purchase_price: Number(avgPurchasePrice.toFixed(2)),
+                lot_details: lotDeductions
+            });
+        }
+
         const data = await invoice.create({
             customer_id,
             invoice_number,
@@ -150,7 +196,7 @@ router.post("/add", checkuserlogin, async (req, res) => {
             Subtotal: Number(Number(Subtotal).toFixed(2)),
             status: "Pending",
             description,
-            items,
+            items: detailedItems,
             // @ts-ignore
             creater_id: req?.userId,
             createdAt: Date.now(),
@@ -159,17 +205,6 @@ router.post("/add", checkuserlogin, async (req, res) => {
         })
 
         await customer.findByIdAndUpdate(customer_id, { $inc: { balance: - Number(Number(Subtotal).toFixed(2)), invoice: + (1) } }, { new: true })
-
-        // Reduce stock for each product
-        for (const item of items) {
-            if (item.product_id) {
-                await product.findByIdAndUpdate(
-                    item.product_id,
-                    { $inc: { stock: -Number(item.qty) } },
-                    { new: true }
-                );
-            }
-        }
 
         res.status(201).json({
             id: data._id,
@@ -193,9 +228,19 @@ router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
 
         await customer.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
 
-        // Increase stock for each product when invoice is deleted
+        // Reverse impact on product stock and purchase lots when invoice is deleted
         for (const item of inv.items) {
             if (item.product_id) {
+                // 1. Add back to purchase lots
+                if (item.lot_details && item.lot_details.length > 0) {
+                    for (const detail of item.lot_details) {
+                        await purchase.findByIdAndUpdate(detail.lot_id, {
+                            $inc: { remaining_stock: detail.qty }
+                        });
+                    }
+                }
+
+                // 2. Add back to total product stock
                 await product.findByIdAndUpdate(
                     item.product_id,
                     { $inc: { stock: Number(item.qty) } },
@@ -279,9 +324,19 @@ router.put("/update/:id", checkuserlogin, async (req: any, res: any) => {
             }
         });
 
-        // 2. Reverse old impact on product stock
+        // 2. Reverse old impact on product stock and purchase lots
         for (const item of oldInvoice.items) {
             if (item.product_id) {
+                // Reverse purchase lots
+                if (item.lot_details && item.lot_details.length > 0) {
+                    for (const detail of item.lot_details) {
+                        await purchase.findByIdAndUpdate(detail.lot_id, {
+                            $inc: { remaining_stock: detail.qty }
+                        });
+                    }
+                }
+
+                // Reverse total product stock
                 await product.findByIdAndUpdate(
                     item.product_id,
                     { $inc: { stock: Number(item.qty) } }
@@ -341,6 +396,51 @@ router.put("/update/:id", checkuserlogin, async (req: any, res: any) => {
             }
         });
 
+        // 6. Apply new impact on product stock and apply FIFO logic
+        const detailedItems = [];
+        for (const item of items) {
+            let remainingToDeduct = Number(item.qty);
+            let totalPurchaseCost = 0;
+            const lotDeductions = [];
+
+            if (item.product_id) {
+                // Find available lots sorted by date (FIFO)
+                const lots = await purchase.find({
+                    product_id: item.product_id,
+                    remaining_stock: { $gt: 0 }
+                }).sort({ purchase_date: 1 });
+
+                for (const lot of lots) {
+                    if (remainingToDeduct <= 0) break;
+
+                    const deduction = Math.min(lot.remaining_stock, remainingToDeduct);
+                    lot.remaining_stock -= deduction;
+                    remainingToDeduct -= deduction;
+
+                    totalPurchaseCost += (deduction * lot.purchase_price);
+                    lotDeductions.push({
+                        lot_id: lot._id,
+                        qty: deduction
+                    });
+
+                    await lot.save();
+                }
+
+                // Update total product stock
+                await product.findByIdAndUpdate(item.product_id, {
+                    $inc: { stock: -Number(item.qty) }
+                });
+            }
+
+            const avgPurchasePrice = item.qty > 0 ? (totalPurchaseCost / Number(item.qty)) : 0;
+
+            detailedItems.push({
+                ...item,
+                purchase_price: Number(avgPurchasePrice.toFixed(2)),
+                lot_details: lotDeductions
+            });
+        }
+
         // 4. Update the invoice
         const updatedInvoice = await invoice.findByIdAndUpdate(id, {
             customer_id,
@@ -349,7 +449,7 @@ router.put("/update/:id", checkuserlogin, async (req: any, res: any) => {
             due_date: invoice_date,
             Subtotal: Number(Number(Subtotal).toFixed(2)),
             description,
-            items,
+            items: detailedItems,
             gst,
             gst_table,
             updatedAt: Date.now()
@@ -362,16 +462,6 @@ router.put("/update/:id", checkuserlogin, async (req: any, res: any) => {
                 invoice: 1
             }
         });
-
-        // 6. Apply new impact on product stock
-        for (const item of items) {
-            if (item.product_id) {
-                await product.findByIdAndUpdate(
-                    item.product_id,
-                    { $inc: { stock: -Number(item.qty) } }
-                );
-            }
-        }
 
         res.status(200).json({
             id: updatedInvoice?._id,
