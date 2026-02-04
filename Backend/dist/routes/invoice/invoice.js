@@ -17,6 +17,7 @@ const checkuser_1 = require("../../checkuser");
 const invoice_1 = __importDefault(require("../../models/invoice"));
 const customer_1 = __importDefault(require("../../models/customer"));
 const product_1 = __importDefault(require("../../models/product"));
+const counter_1 = require("../../models/counter");
 const pdf_1 = require("./pdf");
 const fs_1 = __importDefault(require("fs"));
 const pdfnet_node_1 = require("@pdftron/pdfnet-node");
@@ -40,6 +41,16 @@ router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         res.status(303).json({
             message: "Not Authorized"
         });
+    }
+}));
+router.get("/next-number", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const counter = yield counter_1.Counter.findOne({ user_id: req.userId });
+        const nextNumber = counter ? counter.seq + 1 : 1;
+        res.json({ nextNumber });
+    }
+    catch (e) {
+        res.status(500).json({ message: "Error fetching next invoice number" });
     }
 }));
 router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -142,9 +153,18 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         }
         // Update the GST table with the items data
         updateGSTTable(items);
+        let finalInvoiceNumber = Number(invoice_number);
+        if (!finalInvoiceNumber || finalInvoiceNumber <= 0) {
+            const counter = yield counter_1.Counter.findOneAndUpdate({ user_id: req === null || req === void 0 ? void 0 : req.userId }, { $inc: { seq: 1 } }, { new: true, upsert: true });
+            finalInvoiceNumber = counter.seq;
+        }
+        else {
+            // Update counter to the provided number if it's higher than the current sequence
+            yield counter_1.Counter.findOneAndUpdate({ user_id: req === null || req === void 0 ? void 0 : req.userId }, { $max: { seq: finalInvoiceNumber } }, { upsert: true });
+        }
         const data = yield invoice_1.default.create({
             customer_id,
-            invoice_number,
+            invoice_number: finalInvoiceNumber,
             invoice_date,
             due_date: invoice_date,
             Subtotal: Number(Number(Subtotal).toFixed(2)),

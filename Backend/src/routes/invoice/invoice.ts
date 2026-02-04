@@ -3,6 +3,7 @@ import { checkuserlogin } from "../../checkuser";
 import invoice from "../../models/invoice";
 import customer from "../../models/customer";
 import product from "../../models/product";
+import { Counter } from "../../models/counter";
 import { generateInvoicePdf } from "./pdf";
 import fs from "fs";
 import { PDFNet } from '@pdftron/pdfnet-node';
@@ -32,7 +33,17 @@ router.get("/data", checkuserlogin, async (req, res) => {
     }
 });
 
-router.post("/add", checkuserlogin, async (req, res) => {
+router.get("/next-number", checkuserlogin, async (req: any, res: any) => {
+    try {
+        const counter = await Counter.findOne({ user_id: req.userId });
+        const nextNumber = counter ? counter.seq + 1 : 1;
+        res.json({ nextNumber });
+    } catch (e) {
+        res.status(500).json({ message: "Error fetching next invoice number" });
+    }
+});
+
+router.post("/add", checkuserlogin, async (req: any, res: any) => {
 
     try {
         let {
@@ -142,9 +153,27 @@ router.post("/add", checkuserlogin, async (req, res) => {
         // Update the GST table with the items data
         updateGSTTable(items);
 
+        let finalInvoiceNumber = Number(invoice_number);
+
+        if (!finalInvoiceNumber || finalInvoiceNumber <= 0) {
+            const counter = await Counter.findOneAndUpdate(
+                { user_id: req?.userId },
+                { $inc: { seq: 1 } },
+                { new: true, upsert: true }
+            );
+            finalInvoiceNumber = counter.seq;
+        } else {
+            // Update counter to the provided number if it's higher than the current sequence
+            await Counter.findOneAndUpdate(
+                { user_id: req?.userId },
+                { $max: { seq: finalInvoiceNumber } },
+                { upsert: true }
+            );
+        }
+
         const data = await invoice.create({
             customer_id,
-            invoice_number,
+            invoice_number: finalInvoiceNumber,
             invoice_date,
             due_date: invoice_date,
             Subtotal: Number(Number(Subtotal).toFixed(2)),

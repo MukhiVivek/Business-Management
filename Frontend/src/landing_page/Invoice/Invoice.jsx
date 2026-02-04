@@ -67,6 +67,22 @@ const Invoice = () => {
         }
       };
       fetchInvoice();
+    } else {
+      const fetchNextInvoiceNumber = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) return;
+          const res = await axios.get(`${BACKEND_URL}/api/v1/invoice/next-number`, {
+            headers: { token }
+          });
+          if (res.data && res.data.nextNumber !== undefined) {
+            setInvoiceNo(res.data.nextNumber);
+          }
+        } catch (error) {
+          console.error("Error fetching next invoice number:", error);
+        }
+      };
+      fetchNextInvoiceNumber();
     }
   }, [id, isEditMode]);
 
@@ -155,9 +171,10 @@ const Invoice = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey) {
-        console.log("Hello");
-        addItem(); // or any other action
+      // Shortcut for Add Item: Command + 9 (Mac) or Ctrl + 9 (Windows/Linux)
+      if ((event.metaKey || event.ctrlKey) && event.key === '9') {
+        event.preventDefault();
+        addItem();
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -272,8 +289,8 @@ const Invoice = () => {
                   <input
                     type="number"
                     value={invoiceNo}
-                    onChange={(e) => setInvoiceNo(e.target.value)}
-                    className="border border-gray-300 p-2 rounded-md w-20 focus:outline-none focus:ring-2 focus:ring-gray-800 focus:border-transparent transition"
+                    onChange={(e) => setInvoiceNo(Number(e.target.value))}
+                    className="border border-gray-300 p-2 rounded-md w-24 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
                 <div className="flex items-center">
