@@ -1,6 +1,7 @@
 import { useProduct } from "../../hooks/useProduct";
 import { useCustomer } from "../../hooks/useCustomer";
 import { useInvoice } from "../../hooks/useInvoice";
+import { useProfit } from "../../hooks/useProfit";
 import "./../../App.css";
 import Card from "./Card";
 import PaymentStatus from "./PaymentStatus";
@@ -13,6 +14,7 @@ function Dashboard() {
   const { data: customerdata } = useCustomer();
   const { data: orders } = useInvoice();
   const { data: products } = useProduct();
+  const { data: profitData } = useProfit();
 
   const today = new Date().setHours(0, 0, 0, 0);
 
@@ -57,10 +59,10 @@ function Dashboard() {
           description="Quantity of orders placed today"
         />
         <Card
-          title="Total Customers"
-          value={customerdata?.length || 0}
+          title="Today Profit"
+          value={`₹${(profitData?.todayProfit || 0).toLocaleString()}`}
           color="teal"
-          description="Engaged customer base"
+          description="Net earnings after costs"
         />
         <Card
           title="Total Products"

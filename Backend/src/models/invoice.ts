@@ -59,6 +59,7 @@ const invoiceSchema = new Schema({
         sgst: Number,
         cgst: Number,
         igst: Number,
+        taxprice: Number,
         tamount: Number
     }],
     creater_id: {

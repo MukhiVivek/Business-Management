@@ -15,6 +15,12 @@ const productSchema = new Schema(
             min: 0,
         },
 
+        purchase_price: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+
         product_type: {
             type: String,
             required: true,
@@ -45,6 +51,12 @@ const productSchema = new Schema(
             type: Number,
             enum: [0, 5, 12, 18, 28],
             default: 0,
+        },
+
+        tax_purchase_price: {
+            type: Number,
+            default: 0,
+            min: 0,
         },
 
         measuring_unit: {

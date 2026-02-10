@@ -93,6 +93,7 @@ const invoiceSchema = new mongoose_1.Schema({
             sgst: Number,
             cgst: Number,
             igst: Number,
+            taxprice: Number,
             tamount: Number
         }],
     creater_id: {
