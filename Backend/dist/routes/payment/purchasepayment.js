@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const purchasepayment_1 = __importDefault(require("../../models/purchasepayment"));
+const vendor_1 = __importDefault(require("../../models/vendor"));
 const checkuser_1 = require("../../checkuser");
 const router = express_1.default.Router();
 // Get all purchase payments
@@ -29,9 +30,16 @@ router.get("/", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void
 // Add purchase payment
 router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { vendor_id, amount_paid } = req.body;
         const paymentData = Object.assign(Object.assign({}, req.body), { creater_id: req.userId });
         const newPayment = new purchasepayment_1.default(paymentData);
         yield newPayment.save();
+        // Update Vendor Balance
+        if (vendor_id) {
+            yield vendor_1.default.findByIdAndUpdate(vendor_id, {
+                $inc: { balance: -Number(amount_paid || 0) }
+            });
+        }
         res.status(201).json({ message: "Payment added successfully", data: newPayment });
     }
     catch (error) {

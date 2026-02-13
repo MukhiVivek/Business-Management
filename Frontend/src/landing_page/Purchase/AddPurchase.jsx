@@ -111,9 +111,22 @@ const AddPurchase = () => {
 
         const updatedItems = items.map((item) => {
             if (item.id === itemId) {
+                // Allow empty strings for typing
                 const updatedItem = { ...item, [field]: value };
-                if (field === "qty" || field === "price") {
-                    updatedItem.tamount = Number(updatedItem.qty) * Number(updatedItem.price);
+
+                // Recalculate derived fields
+                if (field === "qty") {
+                    const price = Number(updatedItem.price || 0);
+                    const qty = Number(updatedItem.qty || 0);
+                    updatedItem.tamount = price * qty;
+                } else if (field === "price") {
+                    const price = Number(updatedItem.price || 0);
+                    const qty = Number(updatedItem.qty || 0);
+                    updatedItem.tamount = price * qty;
+                } else if (field === "tamount") {
+                    const tamount = Number(updatedItem.tamount || 0);
+                    const qty = Number(updatedItem.qty || 1); // Avoid division by zero
+                    updatedItem.price = qty > 0 ? (tamount / qty).toFixed(2) : 0;
                 }
                 return updatedItem;
             }
@@ -250,92 +263,84 @@ const AddPurchase = () => {
                 </div>
 
                 {/* Items Table */}
-                <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-sm border border-gray-100">
                     <table className="w-full text-left border-collapse">
-                        <thead className="bg-gray-50/50">
+                        <thead className="bg-gray-50/80">
                             <tr>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-12 text-center">#</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Item Description</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-24 text-center">Qty</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-32 text-right">Price</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-24 text-center">GST %</th>
-                                <th className="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest w-32 text-right">Total (Incl. Tax)</th>
-                                <th className="px-6 py-4 w-12"></th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-12 text-center">#</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest min-w-[250px]">Item Description</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-34 text-center">Qty</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-36 text-right">Price</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-40 text-right">Total Amount</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest w-40 text-right">Total (Incl. Tax)</th>
+                                <th className="px-6 py-5 w-12"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {items.map((item, index) => (
-                                <tr key={item.id} className="border-t border-gray-50 group hover:bg-gray-50/30 transition-colors">
-                                    <td className="px-6 py-4 text-xs font-black text-gray-300 text-center">{index + 1}</td>
+                                <tr key={item.id} className="border-t border-gray-100 group hover:bg-gray-50/50 transition-colors">
+                                    <td className="px-6 py-4 text-xs font-black text-gray-400 text-center">{index + 1}</td>
                                     <td className="px-6 py-4 relative">
-                                        <input
-                                            type="text"
-                                            placeholder="Search or enter item name..."
-                                            value={item.name}
-                                            onChange={(e) => handleItemChange(item.id, "name", e.target.value)}
-                                            onBlur={() => setTimeout(() => setActiveItemId(null), 200)}
-                                            className="w-full bg-transparent border-none p-0 font-bold text-gray-800 placeholder-gray-300 focus:ring-0 outline-none"
-                                        />
-                                        {activeItemId === item.id && filteredProducts.length > 0 && (
-                                            <ul className="absolute z-50 w-full left-0 bg-white border border-gray-100 rounded-2xl mt-2 max-h-60 overflow-y-auto shadow-2xl p-2 border border-gray-100">
-                                                {filteredProducts.map((p) => (
-                                                    <li
-                                                        key={p._id}
-                                                        onClick={() => handleSelectProduct(item.id, p)}
-                                                        className="p-3 hover:bg-blue-50 cursor-pointer rounded-xl flex justify-between items-center transition-colors"
-                                                    >
-                                                        <div>
-                                                            <div className="font-black text-gray-800 text-sm">{p.name}</div>
-                                                            <div className="text-[10px] text-gray-400">Stock: {p.stock || 0}</div>
-                                                        </div>
-                                                        <span className="text-blue-600 font-black text-sm">₹{p.purchase_price || p.price}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
+                                        <div className="flex flex-col">
+                                            <input
+                                                type="text"
+                                                placeholder="Enter item name..."
+                                                value={item.name}
+                                                onChange={(e) => handleItemChange(item.id, "name", e.target.value)}
+                                                onBlur={() => setTimeout(() => setActiveItemId(null), 200)}
+                                                className="w-full bg-transparent border-none p-0 font-black text-gray-900 placeholder-gray-300 focus:ring-0 outline-none text-sm"
+                                            />
+                                            {activeItemId === item.id && filteredProducts.length > 0 && (
+                                                <ul className="absolute z-50 w-full left-0 bg-white border border-gray-100 rounded-2xl bottom-full mb-2 max-h-60 overflow-y-auto shadow-2xl p-2 border border-blue-50">
+                                                    {filteredProducts.map((p) => (
+                                                        <li
+                                                            key={p._id}
+                                                            onClick={() => handleSelectProduct(item.id, p)}
+                                                            className="p-3 hover:bg-blue-50 cursor-pointer rounded-xl flex justify-between items-center transition-colors mb-1 last:mb-0"
+                                                        >
+                                                            <div>
+                                                                <div className="font-black text-gray-800 text-sm">{p.name}</div>
+                                                                <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">In Stock: {p.stock || 0}</div>
+                                                            </div>
+                                                            <span className="text-blue-600 font-black text-sm">₹{p.purchase_price || p.price}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <input
                                             type="number"
                                             value={item.qty}
-                                            onChange={(e) => handleItemChange(item.id, "qty", Number(e.target.value))}
-                                            className="w-full bg-gray-50 border-none rounded-xl p-2 text-center font-black text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                                            onChange={(e) => handleItemChange(item.id, "qty", e.target.value)}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-3 text-center font-black text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
                                         />
                                     </td>
                                     <td className="px-6 py-4">
                                         <input
                                             type="number"
                                             value={item.price}
-                                            onChange={(e) => handleItemChange(item.id, "price", Number(e.target.value))}
-                                            className="w-full bg-gray-50 border-none rounded-xl p-2 text-right font-black text-gray-700 focus:ring-2 focus:ring-blue-500 outline-none"
+                                            onChange={(e) => handleItemChange(item.id, "price", e.target.value)}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-3 text-right font-black text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
                                         />
                                     </td>
                                     <td className="px-6 py-4">
-                                        <div className="flex gap-1">
-                                            <input
-                                                type="number"
-                                                placeholder="S"
-                                                value={item.sgst}
-                                                onChange={(e) => handleItemChange(item.id, "sgst", Number(e.target.value))}
-                                                className="w-full bg-gray-50 border-none rounded-lg p-1.5 text-[10px] text-center font-bold text-gray-500 outline-none"
-                                            />
-                                            <input
-                                                type="number"
-                                                placeholder="C"
-                                                value={item.cgst}
-                                                onChange={(e) => handleItemChange(item.id, "cgst", Number(e.target.value))}
-                                                className="w-full bg-gray-50 border-none rounded-lg p-1.5 text-[10px] text-center font-bold text-gray-500 outline-none"
-                                            />
-                                        </div>
+                                        <input
+                                            type="number"
+                                            value={item.tamount}
+                                            onChange={(e) => handleItemChange(item.id, "tamount", e.target.value)}
+                                            className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-3 text-right font-black text-gray-900 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
+                                        />
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="font-black text-gray-900">
-                                            ₹{(Number(item.qty) * Number(item.price) * (1 + (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2)}
+                                        <div className="font-black text-gray-900 text-sm">
+                                            ₹{(Number(item.qty || 0) * Number(item.price || 0) * (1 + (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2)}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-center">
                                         {items.length > 1 && (
-                                            <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-500 transition-colors">
+                                            <button onClick={() => removeItem(item.id)} className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                                             </button>
                                         )}
