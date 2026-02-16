@@ -34,24 +34,44 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const profitSchema = new mongoose_1.Schema({
-    date: {
-        type: String, // YYYY-MM-DD
-        required: true,
+const ordermateInvoiceSchema = new mongoose_1.Schema({
+    customer_id: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "customer",
     },
-    totalProfit: {
-        type: Number,
-        default: 0
+    invoice_number: String,
+    invoice_date: {
+        type: Date,
+        default: Date.now
     },
+    items: [{
+            product_id: {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: "product"
+            },
+            name: String,
+            qty: Number,
+            price: Number,
+            tamount: Number
+        }],
+    subtotal: Number,
+    tax: Number,
+    total: Number,
+    status: {
+        type: String,
+        enum: ['pending', 'paid'],
+        default: 'pending'
+    },
+    customerName: String,
+    customerPhone: String,
     creater_id: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: "user",
-        required: true
+        ref: "user"
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-}, {
-    timestamps: true
 });
-// Ensure a user can only have one profit record per date
-profitSchema.index({ date: 1, creater_id: 1 }, { unique: true });
-const Profit = mongoose_1.default.model("profit", profitSchema);
-exports.default = Profit;
+const OrdermateInvoice = mongoose_1.default.model("ordermate_invoice", ordermateInvoiceSchema);
+exports.default = OrdermateInvoice;

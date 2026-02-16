@@ -36,6 +36,8 @@ import purchasepayment from "./routes/payment/purchasepayment"
 import profit from "./routes/profit/profit"
 
 
+import ordermate from "./routes/ordermate/invoice"
+
 app.use("/api/v1/user", user);
 app.use("/api/v1/customer", customer);
 app.use("/api/v1/invoice", invoice);
@@ -45,6 +47,7 @@ app.use("/api/v1/vendor", vendor);
 app.use("/api/v1/purchase", purchase);
 app.use("/api/v1/purchase-payment", purchasepayment);
 app.use("/api/v1/profit", profit);
+app.use("/api/v1/ordermate", ordermate);
 
 
 app.get("/", (req, res) => {

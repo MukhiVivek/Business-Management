@@ -104,7 +104,6 @@ const Invoice = () => {
           sgst: halfTax,
           cgst: halfTax,
           igst: 0,
-          taxprice: item.tprice,
           tprice: product.price || 0,
         };
       }
@@ -361,7 +360,7 @@ const Invoice = () => {
                         Amount
                       </th>
                       <th className="p-3 border-b border-indigo-100 text-right w-32">
-                        Tax Price(₹)
+                        gst_Amount(₹)
                       </th>
                       <th className="p-3 border-b border-indigo-100 w-16"></th>
                     </tr>
@@ -496,7 +495,7 @@ const Invoice = () => {
                         </td>
                         <td>
                           <div className="flex p-2 border border-gray-300 w-27 rounded-lg ml-6 ">
-                            ₹ {item.taxprice?.toFixed(2) || "0.00"}
+                            ₹ {(item.qty * (item.price + (item.price * (item.sgst + item.cgst + item.igst) / 100))).toFixed(2)}
                           </div>
                         </td>
                         <td className="p-3 text-center">

@@ -42,6 +42,7 @@ const vendor_1 = __importDefault(require("./routes/vendor/vendor"));
 const purchase_1 = __importDefault(require("./routes/purchase/purchase"));
 const purchasepayment_1 = __importDefault(require("./routes/payment/purchasepayment"));
 const profit_1 = __importDefault(require("./routes/profit/profit"));
+const invoice_2 = __importDefault(require("./routes/ordermate/invoice"));
 app.use("/api/v1/user", user_1.default);
 app.use("/api/v1/customer", customer_1.default);
 app.use("/api/v1/invoice", invoice_1.default);
@@ -51,6 +52,7 @@ app.use("/api/v1/vendor", vendor_1.default);
 app.use("/api/v1/purchase", purchase_1.default);
 app.use("/api/v1/purchase-payment", purchasepayment_1.default);
 app.use("/api/v1/profit", profit_1.default);
+app.use("/api/v1/ordermate", invoice_2.default);
 app.get("/", (req, res) => {
     res.send("Server is on test-1");
 });

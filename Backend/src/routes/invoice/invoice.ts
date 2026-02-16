@@ -59,11 +59,16 @@ router.post("/add", checkuserlogin, async (req: any, res: any) => {
 
         //@ts-ignore
         items = items.map(item => {
-            const amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
-            const tamount = Number((amount + (amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
+            const qty = Number(item.qty || 1);
+            const price = Number(item.price || 0);
+            const taxRate = Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0);
+
+            const amount = Number((qty * price).toFixed(2));
+            const tamount = Number((amount * (1 + taxRate / 100)).toFixed(2));
+            const taxprice = qty > 0 ? Number((tamount / qty).toFixed(2)) : 0;
 
             item.amount = amount;
-            item.taxprice = item.tprice || 0;
+            item.taxprice = taxprice; // Unit price including tax
             item.tamount = tamount;
 
             return item;
@@ -241,39 +246,53 @@ router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
             return res.status(404).json({ message: "Invoice not found" });
         }
 
-        await customer.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
+        // Only increase balance if customer exists
+        if (inv.customer_id) {
+            await customer.findByIdAndUpdate(inv.customer_id, {
+                $inc: {
+                    balance: Number(inv.Subtotal || 0),
+                    invoice: -1
+                }
+            });
+        }
 
         // Increase stock for each product and calculate profit to subtract
         let totalProfitToRemove = 0;
-        for (const item of inv.items) {
-            if (item.product_id) {
-                const prod = await product.findByIdAndUpdate(
-                    item.product_id,
-                    { $inc: { stock: Number(item.qty) } },
-                    { new: true }
-                );
-                if (prod) {
-                    const purchaseTaxPrice = prod.tax_purchase_price || 0;
-                    const sellingTaxPrice = item.taxprice || 0;
-                    totalProfitToRemove += (sellingTaxPrice - purchaseTaxPrice) * Number(item.qty);
+        if (inv.items && Array.isArray(inv.items)) {
+            for (const item of inv.items) {
+                if (item.product_id) {
+                    const prod = await product.findByIdAndUpdate(
+                        item.product_id,
+                        { $inc: { stock: Number(item.qty || 0) } },
+                        { new: true }
+                    );
+                    if (prod) {
+                        const purchaseTaxPrice = Number(prod.tax_purchase_price || 0);
+                        const sellingTaxPrice = Number(item.taxprice || 0);
+                        const qty = Number(item.qty || 0);
+                        totalProfitToRemove += (sellingTaxPrice - purchaseTaxPrice) * qty;
+                    }
                 }
             }
         }
 
         // Update Daily Profit (Subtract)
         const today = new Date().toISOString().slice(0, 10);
-        await Profit.findOneAndUpdate(
-            { date: today, creater_id: req.userId },
-            { $inc: { totalProfit: -Number(totalProfitToRemove.toFixed(2)) } },
-            { upsert: true, new: true }
-        );
+        if (!isNaN(totalProfitToRemove)) {
+            await Profit.findOneAndUpdate(
+                { date: today, creater_id: req.userId },
+                { $inc: { totalProfit: -Number(totalProfitToRemove.toFixed(2)) } },
+                { upsert: true, new: true }
+            );
+        }
 
         await invoice.findByIdAndDelete(id);
 
         res.status(200).json({ message: "Invoice deleted successfully" });
 
-    } catch (error) {
-        res.status(500).json({ message: "Error deleting invoice" });
+    } catch (error: any) {
+        console.error("Delete Invoice Error:", error);
+        res.status(500).json({ message: "Error deleting invoice: " + error.message });
     }
 });
 
@@ -369,11 +388,16 @@ router.put("/update/:id", checkuserlogin, async (req: any, res: any) => {
         // 3. Prepare new data
         //@ts-ignore
         items = items.map(item => {
-            const amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
-            const tamount = Number((amount + (amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
+            const qty = Number(item.qty || 1);
+            const price = Number(item.price || 0);
+            const taxRate = Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0);
+
+            const amount = Number((qty * price).toFixed(2));
+            const tamount = Number((amount * (1 + taxRate / 100)).toFixed(2));
+            const taxprice = qty > 0 ? Number((tamount / qty).toFixed(2)) : 0;
 
             item.amount = amount;
-            item.taxprice = Number((tamount - amount).toFixed(2));
+            item.taxprice = taxprice; // Unit price including tax
             item.tamount = tamount;
 
             return item;
