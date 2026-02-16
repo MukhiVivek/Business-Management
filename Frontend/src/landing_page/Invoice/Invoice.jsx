@@ -31,7 +31,7 @@ const Invoice = () => {
     setIsPopupOpen(false);
   };
 
-  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, tprice: 0, product_id: null }]);
+  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, taxprice: 0, tprice: 0, product_id: null }]);
   const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().slice(0, 10)
@@ -92,12 +92,15 @@ const Invoice = () => {
         // Assume SGST + CGST for now (50/50 split) if it's not 0
         const tax = product.gst_tax_rate || 0;
         const halfTax = tax / 2;
+        const qty = item.qty || 1;
+        const basicPrice = Number((product.price / (1 + (tax / 100))).toFixed(2));
+        const taxAmountPerUnit = product.price - basicPrice;
 
         return {
           ...item,
           product_id: product._id,
           name: product.name,
-          price: Number((product.price / (1 + (tax / 100))).toFixed(2)),
+          price: basicPrice,
           sgst: halfTax,
           cgst: halfTax,
           igst: 0,
@@ -126,17 +129,33 @@ const Invoice = () => {
     const updatedItems = items.map((item) => {
       if (item.id === id) {
         const updatedItem = { ...item, [field]: value };
-        if (field === "price") {
-          updatedItem.price = Number(Number(value).toFixed(2));
-        }
+
+        // Recalculate price if tprice changes
         if (field === "tprice") {
-          const totalTax =
+          const totalTaxRate =
             Number(updatedItem.sgst || 0) +
             Number(updatedItem.cgst || 0) +
             Number(updatedItem.igst || 0);
-          const price = value / (1 + totalTax / 100);
+          const price = value / (1 + totalTaxRate / 100);
           updatedItem.price = Number(price.toFixed(2));
         }
+
+        // Always recalculate taxprice
+        const currentQty = Number(updatedItem.qty || 0);
+        const currentPrice = Number(updatedItem.price || 0);
+        const currentTaxRate =
+          Number(updatedItem.sgst || 0) +
+          Number(updatedItem.cgst || 0) +
+          Number(updatedItem.igst || 0);
+
+        updatedItem.taxprice = Number((currentQty * currentPrice * currentTaxRate / 100).toFixed(2));
+
+        if (field === "price") {
+          updatedItem.price = Number(Number(value).toFixed(2));
+          // Recalculate tprice (price + tax)
+          updatedItem.tprice = Number((currentPrice * (1 + currentTaxRate / 100)).toFixed(2));
+        }
+
         return updatedItem;
       }
       return item;
@@ -145,7 +164,7 @@ const Invoice = () => {
   };
 
   const addItem = () => {
-    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0, sgst: "", cgst: "", igst: "", tprice: 0, product_id: null }]);
+    setItems([...items, { id: items.length + 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, taxprice: 0, tprice: 0, product_id: null }]);
   };
 
   const removeItem = (id) => {

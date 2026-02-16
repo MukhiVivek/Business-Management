@@ -10,11 +10,9 @@ function AddProducts() {
   const product_stock = useRef();
   const product_gst = useRef();
   const product_unit = useRef();
-
-
+  const product_purchase_price = useRef();
 
   async function submit() {
-
     if (!product_name.current.value.trim()) {
       alert("Product name is required");
       return;
@@ -31,6 +29,7 @@ function AddProducts() {
         {
           name: product_name.current.value.trim(),
           price: Number(product_price.current.value),
+          purchase_price: Number(product_purchase_price.current.value || 0),
           product_type: product_type.current.value,
           description: product_description.current.value.trim(),
           stock: Number(product_stock.current.value),
@@ -88,8 +87,18 @@ function AddProducts() {
                 <label className="block mb-1">Sales Price :</label>
                 <input
                   type="text"
-                  placeholder="Enter customer State"
+                  placeholder="Enter Selling Price"
                   ref={product_price}
+                  className="w-full border border-gray-300 px-4 py-2"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Purchase Price :</label>
+                <input
+                  type="text"
+                  placeholder="Enter Purchase Price"
+                  ref={product_purchase_price}
                   className="w-full border border-gray-300 px-4 py-2"
                 />
               </div>

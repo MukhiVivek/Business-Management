@@ -17,6 +17,7 @@ const checkuser_1 = require("../../checkuser");
 const invoice_1 = __importDefault(require("../../models/invoice"));
 const customer_1 = __importDefault(require("../../models/customer"));
 const product_1 = __importDefault(require("../../models/product"));
+const profit_1 = __importDefault(require("../../models/profit"));
 const counter_1 = require("../../models/counter");
 const pdf_1 = require("./pdf");
 const fs_1 = __importDefault(require("fs"));
@@ -58,8 +59,15 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
         let { customer_id, invoice_number, invoice_date, Subtotal, items, due_date, description, } = req.body;
         //@ts-ignore
         items = items.map(item => {
-            item.amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
-            item.tamount = Number((item.amount + (item.amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
+            const qty = Number(item.qty || 1);
+            const price = Number(item.price || 0);
+            const taxRate = Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0);
+            const amount = Number((qty * price).toFixed(2));
+            const tamount = Number((amount * (1 + taxRate / 100)).toFixed(2));
+            const taxprice = qty > 0 ? Number((tamount / qty).toFixed(2)) : 0;
+            item.amount = amount;
+            item.taxprice = taxprice; // Unit price including tax
+            item.tamount = tamount;
             return item;
         });
         let gst = {
@@ -178,12 +186,22 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
             gst_table,
         });
         yield customer_1.default.findByIdAndUpdate(customer_id, { $inc: { balance: -Number(Number(Subtotal).toFixed(2)), invoice: +(1) } }, { new: true });
-        // Reduce stock for each product
+        // Reduce stock for each product and calculate profit
+        let totalInvoiceProfit = 0;
         for (const item of items) {
             if (item.product_id) {
-                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } }, { new: true });
+                const prod = yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } }, { new: true });
+                if (prod) {
+                    const purchaseTaxPrice = prod.tax_purchase_price || 0;
+                    const sellingTaxPrice = item.taxprice || 0;
+                    const itemProfit = (sellingTaxPrice - purchaseTaxPrice) * Number(item.qty);
+                    totalInvoiceProfit += itemProfit;
+                }
             }
         }
+        // Update Daily Profit
+        const today = new Date().toISOString().slice(0, 10);
+        yield profit_1.default.findOneAndUpdate({ date: today, creater_id: req.userId }, { $inc: { totalProfit: Number(totalInvoiceProfit.toFixed(2)) } }, { upsert: true, new: true });
         res.status(201).json({
             id: data._id,
             message: "invoice added"
@@ -203,18 +221,41 @@ router.get('/delete/:id', checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
         if (!inv) {
             return res.status(404).json({ message: "Invoice not found" });
         }
-        yield customer_1.default.findByIdAndUpdate(inv.customer_id, { $inc: { balance: +(inv.Subtotal), invoice: -(1) } }, { new: true });
-        // Increase stock for each product when invoice is deleted
-        for (const item of inv.items) {
-            if (item.product_id) {
-                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: Number(item.qty) } }, { new: true });
+        // Only increase balance if customer exists
+        if (inv.customer_id) {
+            yield customer_1.default.findByIdAndUpdate(inv.customer_id, {
+                $inc: {
+                    balance: Number(inv.Subtotal || 0),
+                    invoice: -1
+                }
+            });
+        }
+        // Increase stock for each product and calculate profit to subtract
+        let totalProfitToRemove = 0;
+        if (inv.items && Array.isArray(inv.items)) {
+            for (const item of inv.items) {
+                if (item.product_id) {
+                    const prod = yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: Number(item.qty || 0) } }, { new: true });
+                    if (prod) {
+                        const purchaseTaxPrice = Number(prod.tax_purchase_price || 0);
+                        const sellingTaxPrice = Number(item.taxprice || 0);
+                        const qty = Number(item.qty || 0);
+                        totalProfitToRemove += (sellingTaxPrice - purchaseTaxPrice) * qty;
+                    }
+                }
             }
+        }
+        // Update Daily Profit (Subtract)
+        const today = new Date().toISOString().slice(0, 10);
+        if (!isNaN(totalProfitToRemove)) {
+            yield profit_1.default.findOneAndUpdate({ date: today, creater_id: req.userId }, { $inc: { totalProfit: -Number(totalProfitToRemove.toFixed(2)) } }, { upsert: true, new: true });
         }
         yield invoice_1.default.findByIdAndDelete(id);
         res.status(200).json({ message: "Invoice deleted successfully" });
     }
     catch (error) {
-        res.status(500).json({ message: "Error deleting invoice" });
+        console.error("Delete Invoice Error:", error);
+        res.status(500).json({ message: "Error deleting invoice: " + error.message });
     }
 }));
 router.get('/:id/pdf', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -265,6 +306,18 @@ router.put("/update/:id", checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
         if (!oldInvoice) {
             return res.status(404).json({ message: "Invoice not found" });
         }
+        // Calculate old profit to reverse it
+        let oldTotalProfit = 0;
+        for (const item of oldInvoice.items) {
+            if (item.product_id) {
+                const prod = yield product_1.default.findById(item.product_id);
+                if (prod) {
+                    const purchaseTaxPrice = prod.tax_purchase_price || 0;
+                    const sellingTaxPrice = item.taxprice || 0;
+                    oldTotalProfit += (sellingTaxPrice - purchaseTaxPrice) * Number(item.qty);
+                }
+            }
+        }
         // 1. Reverse old impact on customer balance
         yield customer_1.default.findByIdAndUpdate(oldInvoice.customer_id, {
             $inc: {
@@ -281,8 +334,15 @@ router.put("/update/:id", checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
         // 3. Prepare new data
         //@ts-ignore
         items = items.map(item => {
-            item.amount = Number((Number(item.qty) * Number(item.price)).toFixed(2));
-            item.tamount = Number((item.amount + (item.amount * (Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0)) / 100)).toFixed(2));
+            const qty = Number(item.qty || 1);
+            const price = Number(item.price || 0);
+            const taxRate = Number(item.sgst || 0) + Number(item.cgst || 0) + Number(item.igst || 0);
+            const amount = Number((qty * price).toFixed(2));
+            const tamount = Number((amount * (1 + taxRate / 100)).toFixed(2));
+            const taxprice = qty > 0 ? Number((tamount / qty).toFixed(2)) : 0;
+            item.amount = amount;
+            item.taxprice = taxprice; // Unit price including tax
+            item.tamount = tamount;
             return item;
         });
         let gst = { sgst: 0, cgst: 0, igst: 0 };
@@ -358,12 +418,22 @@ router.put("/update/:id", checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
                 invoice: 1
             }
         });
-        // 6. Apply new impact on product stock
+        // 6. Apply new impact on product stock and calculate new profit
+        let newTotalProfit = 0;
         for (const item of items) {
             if (item.product_id) {
-                yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } });
+                const prod = yield product_1.default.findByIdAndUpdate(item.product_id, { $inc: { stock: -Number(item.qty) } }, { new: true });
+                if (prod) {
+                    const purchaseTaxPrice = prod.tax_purchase_price || 0;
+                    const sellingTaxPrice = item.taxprice || 0;
+                    newTotalProfit += (sellingTaxPrice - purchaseTaxPrice) * Number(item.qty);
+                }
             }
         }
+        // Update Daily Profit with Difference
+        const today = new Date().toISOString().slice(0, 10);
+        const profitDiff = Number((newTotalProfit - oldTotalProfit).toFixed(2));
+        yield profit_1.default.findOneAndUpdate({ date: today, creater_id: req.userId }, { $inc: { totalProfit: profitDiff } }, { upsert: true, new: true });
         res.status(200).json({
             id: updatedInvoice === null || updatedInvoice === void 0 ? void 0 : updatedInvoice._id,
             message: "Invoice updated successfully"

@@ -69,6 +69,7 @@ interface data {
         cgst: number;
         sgst: number;
         igst: number;
+        taxprice: number;
         tamount: number;
     }[];
     Subtotal: number;

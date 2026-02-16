@@ -13,6 +13,13 @@ import Sidebar from "./landing_page/includes/Sidebar/Sidebar";
 import Topnavbar from "./landing_page/includes/Sidebar/Topbar/Topnavbar";
 import Payment from "./landing_page/payment/payment";
 import AddPayment from "./landing_page/payment/addinvoicepayment";
+import Purchase from "./landing_page/Purchase/Purchase";
+import AddPurchase from "./landing_page/Purchase/AddPurchase";
+import PurchaseDashboard from "./landing_page/Purchase/PurchaseDashboard";
+import PurchasePayment from "./landing_page/Purchase/PurchasePayment";
+import Vendors from "./landing_page/Purchase/Vendors";
+import AddVendor from "./landing_page/Purchase/AddVendor";
+
 
 function App() {
   return (
@@ -37,6 +44,15 @@ function App() {
           <Route path="/customers/add" element={<Add_customer />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/payment/add" element={<AddPayment />} />
+          <Route path="/purchase" element={<Purchase />} />
+          <Route path="/purchase/dashboard" element={<PurchaseDashboard />} />
+          <Route path="/purchase/add" element={<AddPurchase />} />
+          <Route path="/purchase/edit/:id" element={<AddPurchase />} />
+          <Route path="/purchase/payment" element={<PurchasePayment />} />
+          <Route path="/vendors" element={<Vendors />} />
+          <Route path="/vendors/add" element={<AddVendor />} />
+          <Route path="/vendors/edit/:id" element={<AddVendor />} />
+
         </Routes>
       </div>
     </Router>

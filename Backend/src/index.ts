@@ -11,7 +11,7 @@ app.use(cors());
 
 //mongose 
 
-const dburl :any  = process.env.MONGO_URI ;
+const dburl: any = process.env.MONGO_URI;
 
 main().then(() => {
   console.log("connected to DB");
@@ -30,14 +30,27 @@ import customer from "./routes/customer/customer"
 import invoice from "./routes/invoice/invoice"
 import product from "./routes/produtct/product"
 import payment from "./routes/payment/invoicepayment"
+import vendor from "./routes/vendor/vendor"
+import purchase from "./routes/purchase/purchase"
+import purchasepayment from "./routes/payment/purchasepayment"
+import profit from "./routes/profit/profit"
+
+
+import ordermate from "./routes/ordermate/invoice"
 
 app.use("/api/v1/user", user);
 app.use("/api/v1/customer", customer);
 app.use("/api/v1/invoice", invoice);
 app.use("/api/v1/product", product);
 app.use("/api/v1/payment", payment);
- 
-app.get("/", (req, res) =>{
+app.use("/api/v1/vendor", vendor);
+app.use("/api/v1/purchase", purchase);
+app.use("/api/v1/purchase-payment", purchasepayment);
+app.use("/api/v1/profit", profit);
+app.use("/api/v1/ordermate", ordermate);
+
+
+app.get("/", (req, res) => {
   res.send("Server is on test-1");
 });
 

@@ -2,7 +2,7 @@ import "../../App.css";
 import { BsSliders } from "react-icons/bs";
 
 function ProductsList({ data }) {
-  
+
   // Checks all the row entries
   const handleSelectAll = (e) => {
     const checkboxes = document.querySelectorAll(
@@ -22,11 +22,12 @@ function ProductsList({ data }) {
               <input type="checkbox" name="customerCheckbox" onChange={handleSelectAll} />
             </th>
             <th className="px-1 py-3 text-left">Product Name</th>
-            <th className="px-1 py-3">Price</th>
+            <th className="px-1 py-3">Sales Price</th>
+            <th className="px-1 py-3">Purchase Price</th>
             <th className="px-1 py-3">Stock</th>
             <th className="px-1 py-3">Type</th>
             <th className="px-1 py-3">Description</th>
-            
+
           </tr>
         </thead>
         <tbody className="divide-y border-b border-l text-center border-r whitespace-nowrap">
@@ -37,11 +38,12 @@ function ProductsList({ data }) {
               </td>
               <td className="px-1 py-3 text-blue-600 cursor-pointer text-left">{product.name}</td>
               <td className="px-1 py-3">{product.price}</td>
+              <td className="px-1 py-3 font-semibold text-gray-500">{product.purchase_price || 0}</td>
               <td className="px-1 py-3">{product.stock}</td>
               <td className="px-1 py-3">{product.product_type}</td>
-              <td className="px-1 py-3">{product.description}</td>              
+              <td className="px-1 py-3 text-left pr-4">{product.description}</td>
             </tr>
-          ))}          
+          ))}
         </tbody>
       </table>
     </div>

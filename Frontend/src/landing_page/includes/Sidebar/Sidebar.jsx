@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import { LuBaggageClaim } from "react-icons/lu";
 import "./Sidebar.css";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
+import { FaCartArrowDown } from "react-icons/fa";
 import Logo from "../../../assets/Logo.png";
+
 
 const Sidebar = () => {
   // Navigation items with SVG icons and Path
@@ -24,23 +26,34 @@ const Sidebar = () => {
     {
       path: "/orders",
       label: "Orders",
-      icon: <LuBaggageClaim className="text-2xl"/>
+      icon: <LuBaggageClaim className="text-2xl" />
     },
     {
       path: "/products",
       label: "Products",
-      icon: <CiBoxes className="text-2xl"/>
+      icon: <CiBoxes className="text-2xl" />
     },
     {
       path: "/customers",
       label: "Customers",
-      icon: <IoPersonSharp className="text-2xl"/>
+      icon: <IoPersonSharp className="text-2xl" />
+    },
+    {
+      path: "/vendors",
+      label: "Vendors",
+      icon: <IoPersonSharp className="text-2xl" />
     },
     {
       path: "/payment",
       label: "Payment",
-      icon: <FaMoneyBillTransfer className="text-2xl"/>
+      icon: <FaMoneyBillTransfer className="text-2xl" />
+    },
+    {
+      path: "/purchase",
+      label: "Purchase",
+      icon: <FaCartArrowDown className="text-2xl" />
     }
+
   ];
 
   return (
