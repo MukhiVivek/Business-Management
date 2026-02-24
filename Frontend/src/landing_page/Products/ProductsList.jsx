@@ -38,7 +38,7 @@ function ProductsList({ data }) {
               </td>
               <td className="px-1 py-3 text-blue-600 cursor-pointer text-left">{product.name}</td>
               <td className="px-1 py-3">{product.price}</td>
-              <td className="px-1 py-3 font-semibold text-gray-500">{product.purchase_price || 0}</td>
+              <td className="px-1 py-3 font-semibold text-gray-500">{product.tax_purchase_price || 0}</td>
               <td className="px-1 py-3">{product.stock}</td>
               <td className="px-1 py-3">{product.product_type}</td>
               <td className="px-1 py-3 text-left pr-4">{product.description}</td>

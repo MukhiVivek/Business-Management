@@ -64,6 +64,11 @@ const ordermateInvoiceSchema = new mongoose_1.Schema({
     },
     customerName: String,
     customerPhone: String,
+    notes: String,
+    location: {
+        latitude: Number,
+        longitude: Number,
+    },
     creater_id: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "user"

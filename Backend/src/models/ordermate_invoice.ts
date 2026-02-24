@@ -30,6 +30,11 @@ const ordermateInvoiceSchema = new Schema({
     },
     customerName: String,
     customerPhone: String,
+    notes: String,
+    location: {
+        latitude: Number,
+        longitude: Number,
+    },
     creater_id: {
         type: Schema.Types.ObjectId,
         ref: "user"
