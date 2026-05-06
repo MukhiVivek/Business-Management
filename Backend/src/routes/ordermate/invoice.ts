@@ -60,7 +60,7 @@ router.post("/add", checkuserlogin, async (req: any, res: any) => {
 
 router.get("/data", checkuserlogin, async (req: any, res: any) => {
     try {
-        const invoices = await OrdermateInvoice.find({ creater_id: req.userId }).sort({ createdAt: -1 });
+        const invoices = await OrdermateInvoice.find({ creater_id: req.userId }).populate("customer_id").sort({ createdAt: -1 });
         res.status(200).json({
             data: invoices
         });

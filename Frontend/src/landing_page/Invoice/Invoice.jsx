@@ -6,12 +6,14 @@ import { useCustomer } from "../../hooks/useCustomer";
 import { useProduct } from "../../hooks/useProduct";
 import axios from "axios";
 import { BACKEND_URL } from "../../Config";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 const Invoice = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEditMode = !!id;
+  const prefillData = location.state?.prefillData;
 
   const handleCreateInvoice = async (data) => {
     try {
@@ -23,7 +25,7 @@ const Invoice = () => {
 
   // state management for customer popup
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(prefillData?.customer || null);
 
   // customer function
   const handleCustomerClick = (customer) => {
@@ -31,12 +33,25 @@ const Invoice = () => {
     setIsPopupOpen(false);
   };
 
-  const [items, setItems] = useState([{ id: 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, taxprice: 0, tprice: 0, product_id: null }]);
+  const initialItems = prefillData?.items?.map((item, index) => ({
+    id: item.id || Math.random(),
+    name: item.name || "",
+    qty: item.qty || 1,
+    price: item.price || 0,
+    sgst: 0,
+    cgst: 0,
+    igst: 0,
+    taxprice: 0,
+    tprice: item.price || 0,
+    product_id: item.product_id || null
+  })) || [{ id: 1, name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, taxprice: 0, tprice: 0, product_id: null }];
+
+  const [items, setItems] = useState(initialItems);
   const [invoiceNo, setInvoiceNo] = useState(0 | selectedCustomer?.invoice);
   const [invoiceDate, setInvoiceDate] = useState(
     new Date().toISOString().slice(0, 10)
   );
-  const [Subtotal, setSubtotal] = useState(0);
+  const [Subtotal, setSubtotal] = useState(prefillData?.subtotal || 0);
   const [activeItemId, setActiveItemId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
 

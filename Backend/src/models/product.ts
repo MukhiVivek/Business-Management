@@ -15,6 +15,12 @@ const productSchema = new Schema(
             min: 0,
         },
 
+        mrp: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+
         purchase_price: {
             type: Number,
             default: 0,
@@ -63,6 +69,16 @@ const productSchema = new Schema(
             type: String,
             enum: ["KG", "PCS", "Box", "Packet"],
             required: true,
+        },
+
+        packet_size: {
+            type: Number,
+            default: 0,
+        },
+
+        box_size: {
+            type: Number,
+            default: 0,
         },
 
         creater_id: {

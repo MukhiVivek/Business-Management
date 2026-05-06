@@ -5,9 +5,10 @@ import customer from "../../models/customer";
 import product from "../../models/product";
 import Profit from "../../models/profit";
 import { Counter } from "../../models/counter";
-import { generateInvoicePdf } from "./pdf";
 import fs from "fs";
+import path from "path";
 import { PDFNet } from '@pdftron/pdfnet-node';
+import { generateNewInvoicePdf } from "./new_pdf";
 
 const router = express.Router({ mergeParams: true });
 
@@ -296,6 +297,203 @@ router.get('/delete/:id', checkuserlogin, async (req: any, res: any) => {
     }
 });
 
+// Bulk PDF generation - POST /bulk-pdf
+router.post('/bulk-pdf', async (req: any, res: any) => {
+    try {
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).send("No invoice IDs provided");
+        }
+
+        console.log(`Bulk PDF: generating ${ids.length} invoices...`);
+
+        const tmpDir = path.resolve(__dirname, '../files');
+
+        // ── 1. Fetch all invoice data ──────────────────────────────────────────
+        const invoicesData: any[] = [];
+        for (const id of ids) {
+            const data = await invoice.findById(id).populate('customer_id');
+            if (data) invoicesData.push(data);
+        }
+
+        if (invoicesData.length === 0) {
+            return res.status(404).send("No valid invoices found");
+        }
+
+        // ── 2. Build aggregated product summary ───────────────────────────────
+        const productMap: Record<string, { name: string; qty: number; hsn: string }> = {};
+        for (const inv of invoicesData) {
+            for (const item of (inv.items || [])) {
+                const key = String(item.name || '').trim().toLowerCase();
+                if (!key) continue;
+                if (productMap[key]) {
+                    productMap[key].qty += Number(item.qty || 0);
+                } else {
+                    productMap[key] = {
+                        name: String(item.name || ''),
+                        qty: Number(item.qty || 0),
+                        hsn: String(item.hsn_code || ''),
+                    };
+                }
+            }
+        }
+        const productSummary = Object.values(productMap);
+
+        // ── 3. Generate summary PDF using PDFKit ──────────────────────────────
+        const summaryPdfPath = path.join(tmpDir, `summary_${Date.now()}.pdf`);
+
+        await new Promise<void>((resolve, reject) => {
+            const PDFDocument = require('pdfkit');
+            const doc = new PDFDocument({ margin: 40, size: 'A4' });
+            const stream = fs.createWriteStream(summaryPdfPath);
+            doc.pipe(stream);
+
+            // ─── Helper functions ───
+            const COL_WIDTHS_ORDER = [32, 58, 250, 60, 35, 40, 45];
+            const COL_WIDTHS_PROD = [40, 60, 220, 110, 80];
+            const TABLE_X = 40;
+            const ROW_H = 24;
+            const HEADER_H = 28;
+
+            const drawRow = (
+                y: number, cols: string[], widths: number[],
+                bgColor: string, textColor: string, fontSize: number, bold: boolean
+            ) => {
+                let x = TABLE_X;
+                // draw row background
+                doc.rect(x, y, widths.reduce((a, b) => a + b, 0), ROW_H).fill(bgColor);
+                doc.fillColor(textColor).fontSize(fontSize);
+                for (let i = 0; i < cols.length; i++) {
+                    const opts: any = { width: widths[i] - 8, lineBreak: false };
+                    if (bold) doc.font('Helvetica-Bold'); else doc.font('Helvetica');
+                    doc.text(cols[i], x + 4, y + (ROW_H - fontSize) / 2, opts);
+                    x += widths[i];
+                }
+                // border lines
+                x = TABLE_X;
+                doc.strokeColor('#c0c0c0').lineWidth(0.5);
+                let totalW = widths.reduce((a, b) => a + b, 0);
+                doc.rect(TABLE_X, y, totalW, ROW_H).stroke();
+                for (let i = 0; i < widths.length; i++) {
+                    doc.moveTo(x, y).lineTo(x, y + ROW_H).stroke();
+                    x += widths[i];
+                }
+                doc.moveTo(x, y).lineTo(x, y + ROW_H).stroke();
+            };
+
+            const pageW = doc.page.width - 80;
+
+            // ════════════════════════════ PAGE 1: ORDER SUMMARY ══════════════
+            doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a3a6b')
+                .text('Order Summary', TABLE_X, 40);
+            doc.moveDown(0.3);
+
+            let y = 70;
+
+            // Header row
+            drawRow(y, ['S.No.', 'Bill No.', 'Name of Retailer', 'Amount', 'Del', 'Method', 'Sign'],
+                COL_WIDTHS_ORDER, '#2d5fa6', '#ffffff', 9, true);
+            y += HEADER_H;
+
+            invoicesData.forEach((inv, idx) => {
+                const bg = idx % 2 === 0 ? '#f5f7fc' : '#ffffff';
+                const custName = inv.customer_id?.name || 'N/A';
+                const amount = Number(inv.Subtotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                const orderNo = String(inv.invoice_number || '');
+                const payStatus = String(inv.status || '');
+                drawRow(y, [String(idx + 1), orderNo, custName, amount, '', '', ''],
+                    COL_WIDTHS_ORDER, bg, '#333333', 9, false);
+                y += ROW_H;
+            });
+
+            for (let i = 0; i < 5; i++) {
+                drawRow(y, ['', '', '', '', '', '', ''], COL_WIDTHS_ORDER, '#ffffff', '#333333', 9, false);
+                y += ROW_H;
+            }
+
+            doc.moveDown(1);
+            doc.font('Helvetica-Oblique').fontSize(8).fillColor('#666666')
+                .text('*This is a system generated copy. Signature not required', TABLE_X, y + 10);
+
+            // ════════════════════════════ PAGE 2: PRODUCT SUMMARY ════════════
+            doc.addPage();
+
+            doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a3a6b')
+                .text('Product Summary', TABLE_X, 40);
+
+            y = 70;
+
+            // Header row
+            drawRow(y, ['S.No.', 'Picture', 'Goods / Service', 'Product Code', 'Quantity'],
+                COL_WIDTHS_PROD, '#2d5fa6', '#ffffff', 9, true);
+            y += HEADER_H;
+
+            productSummary.forEach((prod, idx) => {
+                const bg = idx % 2 === 0 ? '#f5f7fc' : '#ffffff';
+                const qtyStr = `${prod.qty} PCS`;
+                drawRow(y, [String(idx + 1), '', prod.name, prod.hsn, qtyStr],
+                    COL_WIDTHS_PROD, bg, '#333333', 9, false);
+                y += ROW_H;
+            });
+
+            doc.moveDown(1);
+            doc.font('Helvetica-Oblique').fontSize(8).fillColor('#666666')
+                .text('*This is a system generated copy. Signature not required', TABLE_X, y + 10);
+
+            doc.end();
+            stream.on('finish', resolve);
+            stream.on('error', reject);
+        });
+
+        // ── 4. Generate individual invoice PDFs ───────────────────────────────
+        const pdfPaths: string[] = [];
+        for (let i = 0; i < invoicesData.length; i++) {
+            const singlePdfPath = await generateNewInvoicePdf(invoicesData[i] as any);
+            const tmpPath = path.join(tmpDir, `bulk_tmp_${i}_${Date.now()}.pdf`);
+            fs.copyFileSync(singlePdfPath, tmpPath);
+            pdfPaths.push(tmpPath);
+        }
+
+        // ── 5. Merge: summary pages first, then individual invoices ───────────
+        const mergedOutputPath = path.join(tmpDir, `bulk_invoices_${Date.now()}.pdf`);
+
+        await PDFNet.runWithCleanup(async () => {
+            // Start with summary doc
+            const mergedDoc = await PDFNet.PDFDoc.createFromFilePath(summaryPdfPath);
+            await mergedDoc.initSecurityHandler();
+
+            // Append each individual invoice
+            for (const p of pdfPaths) {
+                const srcDoc = await PDFNet.PDFDoc.createFromFilePath(p);
+                await srcDoc.initSecurityHandler();
+                const srcPageCount = await srcDoc.getPageCount();
+                await mergedDoc.insertPages(
+                    await mergedDoc.getPageCount() + 1,
+                    srcDoc, 1, srcPageCount,
+                    PDFNet.PDFDoc.InsertFlag.e_none
+                );
+            }
+
+            await mergedDoc.save(mergedOutputPath, PDFNet.SDFDoc.SaveOptions.e_linearized);
+        });
+
+        // ── 6. Send merged PDF ────────────────────────────────────────────────
+        const mergedData = fs.readFileSync(mergedOutputPath);
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename="bulk_invoices.pdf"`);
+        res.end(mergedData);
+
+        // ── 7. Cleanup temp files ─────────────────────────────────────────────
+        for (const p of [...pdfPaths, summaryPdfPath, mergedOutputPath]) {
+            try { fs.unlinkSync(p); } catch { }
+        }
+
+    } catch (err: any) {
+        console.error("Bulk PDF error:", err);
+        res.status(500).send(`Error during bulk PDF generation: ${err.message}`);
+    }
+});
+
 router.get('/:id/pdf', async (req: any, res: any) => {
     try {
         console.log("pdf making ....")
@@ -305,7 +503,7 @@ router.get('/:id/pdf', async (req: any, res: any) => {
             return res.status(404).send("Invoice not found");
         }
 
-        const outputPart = await generateInvoicePdf(data as any);
+        const outputPart = await generateNewInvoicePdf(data as any);
 
         fs.readFile(outputPart, (err: NodeJS.ErrnoException | null, fileData: Buffer) => {
             if (err) {

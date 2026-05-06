@@ -8,6 +8,7 @@ import PaymentStatus from "./PaymentStatus";
 import RevenueLineChart from "./RevenueLineChart";
 import TodayProductSalesChart from "./TodayProductSalesChart";
 import RecentSalesItems from "./RecentSalesItems";
+import TodayProductSummary from "./TodayProductSummary";
 
 function Dashboard() {
   // Fetch data from API
@@ -84,12 +85,11 @@ function Dashboard() {
 
       {/* Data Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
-        {/* Recent Items Sold (The "Lost/Last Item Table") */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-8">
+          <TodayProductSummary orders={orders} />
           <RecentSalesItems orders={orders} />
         </div>
 
-        {/* Payment Status */}
         <div className="lg:col-span-1">
           <PaymentStatus />
         </div>

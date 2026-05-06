@@ -23,6 +23,8 @@ const AddPurchase = () => {
     const [activeItemId, setActiveItemId] = useState(null);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [description, setDescription] = useState("");
+    const [isBulkPopupOpen, setIsBulkPopupOpen] = useState(false);
+    const [bulkJson, setBulkJson] = useState("");
 
     const { data: vendorData } = useVendor();
     const { data: products } = useProduct();
@@ -137,6 +139,46 @@ const AddPurchase = () => {
 
     const addItem = () => {
         setItems([...items, { id: Date.now(), name: "", qty: 1, price: 0, sgst: 0, cgst: 0, igst: 0, tamount: 0, product_id: null }]);
+    };
+
+    const handleBulkAdd = () => {
+        try {
+            const parsedData = JSON.parse(bulkJson);
+            const itemsToProcess = Array.isArray(parsedData) ? parsedData : [parsedData];
+
+            const newItems = itemsToProcess.map((itemData) => {
+                // Try to find matching product
+                const matchedProduct = products.find(p =>
+                    p.name.toLowerCase() === itemData.name?.toLowerCase()
+                );
+
+                const qty = Number(itemData.qty || 1);
+                const price = Number(itemData.price || matchedProduct?.tax_purchase_price);
+                const tax = Number(itemData.gst !== undefined ? itemData.gst : (matchedProduct?.gst_tax_rate || 0));
+                const halfTax = tax / 2;
+
+                return {
+                    id: Date.now() + Math.random(),
+                    product_id: matchedProduct?._id || null,
+                    name: itemData.name || matchedProduct?.name || "",
+                    qty: qty,
+                    price: price,
+                    sgst: halfTax,
+                    cgst: halfTax,
+                    igst: 0,
+                    tamount: price * qty
+                };
+            });
+
+            // Remove the empty initial item if it exists and is empty
+            const filteredExistingItems = items.filter(item => item.name !== "" || item.product_id !== null);
+            setItems([...filteredExistingItems, ...newItems]);
+            setIsBulkPopupOpen(false);
+            setBulkJson("");
+            alert(`${newItems.length} items added from JSON`);
+        } catch (error) {
+            alert("Invalid JSON format. Please check your data.");
+        }
     };
 
     const removeItem = (itemId) => {
@@ -302,7 +344,7 @@ const AddPurchase = () => {
                                                                 <div className="font-black text-gray-800 text-sm">{p.name}</div>
                                                                 <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">In Stock: {p.stock || 0}</div>
                                                             </div>
-                                                            <span className="text-blue-600 font-black text-sm">₹{p.purchase_price || p.price}</span>
+                                                            <span className="text-blue-600 font-black text-sm">₹{p.tax_purchase_price}</span>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -349,10 +391,19 @@ const AddPurchase = () => {
                             ))}
                         </tbody>
                     </table>
-                    <div className="p-4 bg-gray-50/50">
+                    <div className="p-4 bg-gray-50/50 flex justify-between items-center">
                         <button onClick={addItem} className="flex items-center gap-2 text-blue-600 font-black text-xs hover:text-blue-800 transition-all uppercase tracking-widest">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4v16m8-8H4" /></svg>
                             Add Another Item
+                        </button>
+                        <button
+                            onClick={() => setIsBulkPopupOpen(true)}
+                            className="flex items-center gap-2 text-indigo-600 font-black text-xs hover:text-indigo-800 transition-all uppercase tracking-widest bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100 hover:bg-indigo-100 transition-colors"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Bulk Add (JSON)
                         </button>
                     </div>
                 </div>
@@ -395,6 +446,47 @@ const AddPurchase = () => {
             {isPopupOpen && (
                 <PurchaseModal onClose={() => setIsPopupOpen(false)} title="Select Vendor">
                     <VendorSelector onSelect={handleVendorSelect} vendorData={vendorData} />
+                </PurchaseModal>
+            )}
+
+            {isBulkPopupOpen && (
+                <PurchaseModal onClose={() => setIsBulkPopupOpen(false)} title="Bulk Add Items via JSON">
+                    <div className="p-6">
+                        <div className="mb-4">
+                            <label className="block text-sm font-black text-gray-700 mb-2 uppercase tracking-widest">Paste JSON Data</label>
+                            <textarea
+                                value={bulkJson}
+                                onChange={(e) => setBulkJson(e.target.value)}
+                                placeholder='[
+  { "name": "Product Name", "qty": 10, "price": 500 },
+  { "name": "Product Name 2", "qty": 5, "price": 1000 }
+]'
+                                className="w-full h-64 p-4 bg-gray-50 border border-gray-200 rounded-2xl font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                            ></textarea>
+                            <div className="mt-3 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                <h4 className="text-[10px] font-black text-blue-800 uppercase tracking-widest mb-1">JSON Tips:</h4>
+                                <ul className="text-[10px] text-blue-600 font-bold space-y-1">
+                                    <li>• Matching product names will auto-fill tax rates.</li>
+                                    <li>• Fields: name, qty, price, gst (optional).</li>
+                                    <li>• Example: {"{ \"name\": \"Item\", \"qty\": 1, \"price\": 100 }"}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleBulkAdd}
+                                className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all uppercase tracking-widest text-xs"
+                            >
+                                Add items to list
+                            </button>
+                            <button
+                                onClick={() => setIsBulkPopupOpen(false)}
+                                className="flex-1 py-4 bg-gray-100 text-gray-500 rounded-2xl font-black hover:bg-gray-200 transition-all uppercase tracking-widest text-xs"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
                 </PurchaseModal>
             )}
         </div>

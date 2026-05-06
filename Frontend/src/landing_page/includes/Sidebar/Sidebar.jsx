@@ -29,6 +29,11 @@ const Sidebar = () => {
       icon: <LuBaggageClaim className="text-2xl" />
     },
     {
+      path: "/order-to-invoice",
+      label: "Order To Invoice",
+      icon: <LiaFileInvoiceDollarSolid className="text-2xl" />
+    },
+    {
       path: "/products",
       label: "Products",
       icon: <CiBoxes className="text-2xl" />
