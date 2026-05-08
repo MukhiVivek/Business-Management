@@ -19,6 +19,7 @@ import PurchaseDashboard from "./landing_page/Purchase/PurchaseDashboard";
 import PurchasePayment from "./landing_page/Purchase/PurchasePayment";
 import Vendors from "./landing_page/Purchase/Vendors";
 import AddVendor from "./landing_page/Purchase/AddVendor";
+import OrderToInvoice from "./landing_page/Ordermate/OrderToInvoice";
 
 
 function App() {
@@ -39,7 +40,9 @@ function App() {
           <Route path="/invoice/edit/:id" element={<Invoice />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/add" element={<AddProducts />} />
+          <Route path="/products/edit/:id" element={<AddProducts />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/order-to-invoice" element={<OrderToInvoice />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/customers/add" element={<Add_customer />} />
           <Route path="/payment" element={<Payment />} />

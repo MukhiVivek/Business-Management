@@ -19,9 +19,10 @@ const customer_1 = __importDefault(require("../../models/customer"));
 const product_1 = __importDefault(require("../../models/product"));
 const profit_1 = __importDefault(require("../../models/profit"));
 const counter_1 = require("../../models/counter");
-const pdf_1 = require("./pdf");
 const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const pdfnet_node_1 = require("@pdftron/pdfnet-node");
+const new_pdf_1 = require("./new_pdf");
 const router = express_1.default.Router({ mergeParams: true });
 pdfnet_node_1.PDFNet.initialize("demo:1731769745328:7ef78d2c0300000000c4e7a408d8174e500aae5a205c09705bd6949150");
 router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -258,6 +259,171 @@ router.get('/delete/:id', checkuser_1.checkuserlogin, (req, res) => __awaiter(vo
         res.status(500).json({ message: "Error deleting invoice: " + error.message });
     }
 }));
+// Bulk PDF generation - POST /bulk-pdf
+router.post('/bulk-pdf', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { ids } = req.body;
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).send("No invoice IDs provided");
+        }
+        console.log(`Bulk PDF: generating ${ids.length} invoices...`);
+        const tmpDir = path_1.default.resolve(__dirname, '../files');
+        // ── 1. Fetch all invoice data ──────────────────────────────────────────
+        const invoicesData = [];
+        for (const id of ids) {
+            const data = yield invoice_1.default.findById(id).populate('customer_id');
+            if (data)
+                invoicesData.push(data);
+        }
+        if (invoicesData.length === 0) {
+            return res.status(404).send("No valid invoices found");
+        }
+        // ── 2. Build aggregated product summary ───────────────────────────────
+        const productMap = {};
+        for (const inv of invoicesData) {
+            for (const item of (inv.items || [])) {
+                const key = String(item.name || '').trim().toLowerCase();
+                if (!key)
+                    continue;
+                if (productMap[key]) {
+                    productMap[key].qty += Number(item.qty || 0);
+                }
+                else {
+                    productMap[key] = {
+                        name: String(item.name || ''),
+                        qty: Number(item.qty || 0),
+                        hsn: String(item.hsn_code || ''),
+                    };
+                }
+            }
+        }
+        const productSummary = Object.values(productMap);
+        // ── 3. Generate summary PDF using PDFKit ──────────────────────────────
+        const summaryPdfPath = path_1.default.join(tmpDir, `summary_${Date.now()}.pdf`);
+        yield new Promise((resolve, reject) => {
+            const PDFDocument = require('pdfkit');
+            const doc = new PDFDocument({ margin: 40, size: 'A4' });
+            const stream = fs_1.default.createWriteStream(summaryPdfPath);
+            doc.pipe(stream);
+            // ─── Helper functions ───
+            const COL_WIDTHS_ORDER = [32, 58, 250, 60, 35, 40, 45];
+            const COL_WIDTHS_PROD = [40, 60, 220, 110, 80];
+            const TABLE_X = 40;
+            const ROW_H = 24;
+            const HEADER_H = 28;
+            const drawRow = (y, cols, widths, bgColor, textColor, fontSize, bold) => {
+                let x = TABLE_X;
+                // draw row background
+                doc.rect(x, y, widths.reduce((a, b) => a + b, 0), ROW_H).fill(bgColor);
+                doc.fillColor(textColor).fontSize(fontSize);
+                for (let i = 0; i < cols.length; i++) {
+                    const opts = { width: widths[i] - 8, lineBreak: false };
+                    if (bold)
+                        doc.font('Helvetica-Bold');
+                    else
+                        doc.font('Helvetica');
+                    doc.text(cols[i], x + 4, y + (ROW_H - fontSize) / 2, opts);
+                    x += widths[i];
+                }
+                // border lines
+                x = TABLE_X;
+                doc.strokeColor('#c0c0c0').lineWidth(0.5);
+                let totalW = widths.reduce((a, b) => a + b, 0);
+                doc.rect(TABLE_X, y, totalW, ROW_H).stroke();
+                for (let i = 0; i < widths.length; i++) {
+                    doc.moveTo(x, y).lineTo(x, y + ROW_H).stroke();
+                    x += widths[i];
+                }
+                doc.moveTo(x, y).lineTo(x, y + ROW_H).stroke();
+            };
+            const pageW = doc.page.width - 80;
+            // ════════════════════════════ PAGE 1: ORDER SUMMARY ══════════════
+            doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a3a6b')
+                .text('Order Summary', TABLE_X, 40);
+            doc.moveDown(0.3);
+            let y = 70;
+            // Header row
+            drawRow(y, ['S.No.', 'Bill No.', 'Name of Retailer', 'Amount', 'Del', 'Method', 'Sign'], COL_WIDTHS_ORDER, '#2d5fa6', '#ffffff', 9, true);
+            y += HEADER_H;
+            invoicesData.forEach((inv, idx) => {
+                var _a;
+                const bg = idx % 2 === 0 ? '#f5f7fc' : '#ffffff';
+                const custName = ((_a = inv.customer_id) === null || _a === void 0 ? void 0 : _a.name) || 'N/A';
+                const amount = Number(inv.Subtotal || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                const orderNo = String(inv.invoice_number || '');
+                const payStatus = String(inv.status || '');
+                drawRow(y, [String(idx + 1), orderNo, custName, amount, '', '', ''], COL_WIDTHS_ORDER, bg, '#333333', 9, false);
+                y += ROW_H;
+            });
+            for (let i = 0; i < 5; i++) {
+                drawRow(y, ['', '', '', '', '', '', ''], COL_WIDTHS_ORDER, '#ffffff', '#333333', 9, false);
+                y += ROW_H;
+            }
+            doc.moveDown(1);
+            doc.font('Helvetica-Oblique').fontSize(8).fillColor('#666666')
+                .text('*This is a system generated copy. Signature not required', TABLE_X, y + 10);
+            // ════════════════════════════ PAGE 2: PRODUCT SUMMARY ════════════
+            doc.addPage();
+            doc.font('Helvetica-Bold').fontSize(13).fillColor('#1a3a6b')
+                .text('Product Summary', TABLE_X, 40);
+            y = 70;
+            // Header row
+            drawRow(y, ['S.No.', 'Picture', 'Goods / Service', 'Product Code', 'Quantity'], COL_WIDTHS_PROD, '#2d5fa6', '#ffffff', 9, true);
+            y += HEADER_H;
+            productSummary.forEach((prod, idx) => {
+                const bg = idx % 2 === 0 ? '#f5f7fc' : '#ffffff';
+                const qtyStr = `${prod.qty} PCS`;
+                drawRow(y, [String(idx + 1), '', prod.name, prod.hsn, qtyStr], COL_WIDTHS_PROD, bg, '#333333', 9, false);
+                y += ROW_H;
+            });
+            doc.moveDown(1);
+            doc.font('Helvetica-Oblique').fontSize(8).fillColor('#666666')
+                .text('*This is a system generated copy. Signature not required', TABLE_X, y + 10);
+            doc.end();
+            stream.on('finish', resolve);
+            stream.on('error', reject);
+        });
+        // ── 4. Generate individual invoice PDFs ───────────────────────────────
+        const pdfPaths = [];
+        for (let i = 0; i < invoicesData.length; i++) {
+            const singlePdfPath = yield (0, new_pdf_1.generateNewInvoicePdf)(invoicesData[i]);
+            const tmpPath = path_1.default.join(tmpDir, `bulk_tmp_${i}_${Date.now()}.pdf`);
+            fs_1.default.copyFileSync(singlePdfPath, tmpPath);
+            pdfPaths.push(tmpPath);
+        }
+        // ── 5. Merge: summary pages first, then individual invoices ───────────
+        const mergedOutputPath = path_1.default.join(tmpDir, `bulk_invoices_${Date.now()}.pdf`);
+        yield pdfnet_node_1.PDFNet.runWithCleanup(() => __awaiter(void 0, void 0, void 0, function* () {
+            // Start with summary doc
+            const mergedDoc = yield pdfnet_node_1.PDFNet.PDFDoc.createFromFilePath(summaryPdfPath);
+            yield mergedDoc.initSecurityHandler();
+            // Append each individual invoice
+            for (const p of pdfPaths) {
+                const srcDoc = yield pdfnet_node_1.PDFNet.PDFDoc.createFromFilePath(p);
+                yield srcDoc.initSecurityHandler();
+                const srcPageCount = yield srcDoc.getPageCount();
+                yield mergedDoc.insertPages((yield mergedDoc.getPageCount()) + 1, srcDoc, 1, srcPageCount, pdfnet_node_1.PDFNet.PDFDoc.InsertFlag.e_none);
+            }
+            yield mergedDoc.save(mergedOutputPath, pdfnet_node_1.PDFNet.SDFDoc.SaveOptions.e_linearized);
+        }));
+        // ── 6. Send merged PDF ────────────────────────────────────────────────
+        const mergedData = fs_1.default.readFileSync(mergedOutputPath);
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `attachment; filename="bulk_invoices.pdf"`);
+        res.end(mergedData);
+        // ── 7. Cleanup temp files ─────────────────────────────────────────────
+        for (const p of [...pdfPaths, summaryPdfPath, mergedOutputPath]) {
+            try {
+                fs_1.default.unlinkSync(p);
+            }
+            catch (_a) { }
+        }
+    }
+    catch (err) {
+        console.error("Bulk PDF error:", err);
+        res.status(500).send(`Error during bulk PDF generation: ${err.message}`);
+    }
+}));
 router.get('/:id/pdf', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         console.log("pdf making ....");
@@ -266,7 +432,7 @@ router.get('/:id/pdf', (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!data) {
             return res.status(404).send("Invoice not found");
         }
-        const outputPart = yield (0, pdf_1.generateInvoicePdf)(data);
+        const outputPart = yield (0, new_pdf_1.generateNewInvoicePdf)(data);
         fs_1.default.readFile(outputPart, (err, fileData) => {
             if (err) {
                 res.status(500).send("Error reading output PDF.");

@@ -54,7 +54,7 @@ router.post("/add", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, 
 }));
 router.get("/data", checkuser_1.checkuserlogin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const invoices = yield ordermate_invoice_1.default.find({ creater_id: req.userId }).sort({ createdAt: -1 });
+        const invoices = yield ordermate_invoice_1.default.find({ creater_id: req.userId }).populate("customer_id").sort({ createdAt: -1 });
         res.status(200).json({
             data: invoices
         });
