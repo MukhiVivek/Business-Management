@@ -27,7 +27,7 @@ const OrdersList = ({ data, refetch, onSelectionChange }) => {
     if (e.target.checked) {
       setSelectedIds(data.map((order) => order._id));
     } else {
-      setSelectedIds([]);
+      // setSelectedIds([]);
     }
   };
 
@@ -80,7 +80,7 @@ const OrdersList = ({ data, refetch, onSelectionChange }) => {
         );
         setTimeout(() => {
           window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, "_blank");
-        }, 500);
+        }, 10000);
       }
     } catch (err) {
       console.error("WhatsApp share failed:", err);
